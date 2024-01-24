@@ -1,0 +1,96 @@
+/* Archivo: static/style.css */
+
+:root {
+    --main-background-color: #f4f4f4;
+    --primary-color: #333;
+    --secondary-color: #fff;
+    --error-color: #f44336;
+    --accent-color: #222;
+    --success-color: #4caf50;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--main-background-color);
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 50px;
+}
+
+.nav-bar {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-bar a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    padding: 10px;
+}
+
+.end {
+    align-self: auto;
+}
+
+.form {
+    margin-top: 2rem;
+    padding: 2rem;
+    width: 400px;
+    margin: 0 auto;
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px var(--accent-color);
+    display: grid;
+}
+
+.form input {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    display: block;
+}
+
+.btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error {
+    color: var(--error-color);
+    font-size: 0.8rem;
+}
+
+.menu {
+    margin-top: 2rem;
+    padding: 2rem;
+    width: 400px;
+    margin: 0 auto;
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px var(--accent-color);
+    display: grid;
+}
+/* Puedes agregar más estilos según tus necesidades */

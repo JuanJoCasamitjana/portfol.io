@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -12,5 +13,9 @@ func SetUpDB() {
 	GormConn, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
+	}
+	err = GormConn.AutoMigrate(&model.Password{}, &model.User{}, &model.Auth{})
+	if err != nil {
+		panic("failed to migrate database")
 	}
 }

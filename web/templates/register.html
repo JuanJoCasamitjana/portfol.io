@@ -1,0 +1,33 @@
+<div class="container" id="main-app">
+    <form id="registrationForm" class="form" hx-post="/register" hx-target="#main-app" hx-swap="outerHTML">
+        {{if .Errors.other}}
+            <p class="error">{{.Errors.other}}</p>
+        {{end}}
+        <input placeholder="Username" type="text" id="username" name="username" required value="{{.FormValues.username}}">
+        {{if .Errors.username}}
+            <p class="error">{{.Errors.username}}</p>
+        {{end}}
+        
+        <input placeholder="First Name" type="text" id="firstName" name="firstName" value="{{.FormValues.firstName}}">
+        {{if .Errors.firstName}}
+            <p class="error">{{.Errors.firstName}}</p>
+        {{end}}
+
+        <input placeholder="Last Name" type="text" id="lastName" name="lastName" value="{{.FormValues.lastName}}">
+        {{if .Errors.lastName}}
+            <p class="error">{{.Errors.lastName}}</p>
+        {{end}}
+
+        <input placeholder="Password" type="password" id="password" name="password" required>
+        {{if .Errors.password}}
+            <p class="error">{{.Errors.password}}</p>
+        {{end}}
+    
+        <input placeholder="Comfirm password" type="password" id="password2" name="password2" required>
+        {{if .Errors.password2}}
+            <p class="error">{{.Errors.password2}}</p>
+        {{end}}
+    
+        <button class="btn" type="submit">Register</button>
+    </form>
+</div>

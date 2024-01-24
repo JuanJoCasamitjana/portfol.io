@@ -1,0 +1,16 @@
+<div class="container" id="main-app">
+    <form hx-post="/login" hx-target="#main-app" hx-swap="outerHTML" class="form">
+        {{if .Errors.other}}
+            <p class="error">{{.Errors.other}}</p>
+        {{end}}
+        <input placeholder="Username" type="text" id="username" name="username" required value="{{.FormValues.username}}">
+        {{if .Errors.username}}
+            <p class="error">{{.Errors.username}}</p>
+        {{end}}
+        <input placeholder="Password" type="password" id="password" name="password" required>
+        {{if .Errors.password}}
+            <p class="error">{{.Errors.password}}</p>
+        {{end}}
+        <button class="btn" type="submit">Login</button>
+    </form>
+</div>

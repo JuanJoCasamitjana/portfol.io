@@ -1,0 +1,27 @@
+<nav id="navbar" class="nav-bar">
+    {{if .IsAuthenticated}}
+        {{if .UserInfo.fullname}}
+        <div>Welcome {{.UserInfo.fullname}}</div>
+        {{else}}
+        <div>Welcome {{.UserInfo.username}}</div>
+        {{end}}
+    <div class="end"><a href="/logout">Logout</a></div>
+    {{else}}
+    <div class="end">
+        <a hx-get="/register"
+                hx-trigger="click"
+                hx-target="#main-app"
+                hx-swap="outerHTML"
+                href="#"
+                >Register</a>
+    </div>
+    <div class="end">
+        <a hx-get="/login"
+                hx-trigger="click"
+                hx-target="#main-app"
+                hx-swap="outerHTML"
+                href="#"
+                >Login</a>
+    </div>
+    {{end}}
+</nav>
