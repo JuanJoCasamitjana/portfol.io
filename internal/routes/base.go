@@ -11,4 +11,5 @@ func SetUpRoutes(app *echo.Echo) {
 	app.GET("/body", handlers.GetBody)
 	app.GET("/navbar", handlers.GetNavbar)
 	SetUpUserRoutes(app)
+	SetUpPublicationRotes(app)
 }

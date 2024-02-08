@@ -36,10 +36,16 @@ func CreateUser(c echo.Context) error {
 	formValuesmap["firstName"] = firstName
 	formValuesmap["lastName"] = lastName
 	if err == nil {
-		errorsmap["username"] = "Username already taken."
+		errorsmap["username"] = "Username already taken. "
 	} else {
 		formValuesmap["username"] = username
 		data.FormValues = formValuesmap
+	}
+	if username == "" {
+		errorsmap["username"] = "Username cannot be empty. "
+	}
+	if err := user.ValidateAndSetUsername(username); err == model.ErrInvalidUsername {
+		errorsmap["username"] = errorsmap["username"] + "Username must only contain characters from A-Z, a-z, 0-9 and [-,_,.]. "
 	}
 	if password != passwordConfirmation {
 		errorsmap["password2"] = "Passwords do not match. "
@@ -72,7 +78,6 @@ func CreateUser(c echo.Context) error {
 		data.ErrorsExist = true
 		return c.Render(http.StatusOK, "register.html", data)
 	}
-	user.Username = username
 	if firstName != "" {
 		user.Firstname = &firstName
 	}
@@ -132,5 +137,20 @@ func Login(c echo.Context) error {
 		return c.Render(http.StatusOK, "login.html", data)
 	}
 	data.Message = "Login successful."
+	c.Response().Header().Set("HX-Trigger", "session-changed")
 	return c.Render(http.StatusOK, "success.html", data)
+}
+
+func Logout(c echo.Context) error {
+	sess, err := session.Get("session", c)
+	if err != nil {
+		return c.Render(http.StatusOK, "logout.html", nil)
+	}
+	sess.Values["user_id"] = nil
+	err = sess.Save(c.Request(), c.Response())
+	if err != nil {
+		return c.Render(http.StatusOK, "logout.html", nil)
+	}
+	c.Response().Header().Set("HX-Trigger", "session-changed")
+	return c.Render(http.StatusOK, "logout.html", nil)
 }

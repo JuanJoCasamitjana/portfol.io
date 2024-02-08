@@ -1,0 +1,19 @@
+{{define "article"}}
+<div class="container">
+    <div class="mx-auto mt-3">
+        <h1>{{.Others.title}}</h1>
+        <p>by {{.Others.author}}</p>
+        <p>{{.Others.createdAt}}</p>
+    </div>
+    <div class="border border-dark mt-3 rounded mx-auto">
+        <div class="m-3">{{.PureHTML}}</div>
+    </div>
+    {{if .Others.isAuthor}}
+    <div class="mx-auto mt-3">
+        <button class="btn btn-warning" hx-get="/articles/edit/{{.Others.id}}"
+        hx-target="#main-app" hx-swap="innerHTML">Edit</button>
+        <button class="btn btn-danger">Delete</button>
+    </div>
+    {{end}}
+</div>
+{{end}}

@@ -1,33 +1,44 @@
 <div class="container" id="main-app">
-    <form id="registrationForm" class="form" hx-post="/register" hx-target="#main-app" hx-swap="outerHTML">
-        {{if .Errors.other}}
-            <p class="error">{{.Errors.other}}</p>
-        {{end}}
-        <input placeholder="Username" type="text" id="username" name="username" required value="{{.FormValues.username}}">
-        {{if .Errors.username}}
-            <p class="error">{{.Errors.username}}</p>
-        {{end}}
-        
-        <input placeholder="First Name" type="text" id="firstName" name="firstName" value="{{.FormValues.firstName}}">
-        {{if .Errors.firstName}}
-            <p class="error">{{.Errors.firstName}}</p>
-        {{end}}
-
-        <input placeholder="Last Name" type="text" id="lastName" name="lastName" value="{{.FormValues.lastName}}">
-        {{if .Errors.lastName}}
-            <p class="error">{{.Errors.lastName}}</p>
-        {{end}}
-
-        <input placeholder="Password" type="password" id="password" name="password" required>
-        {{if .Errors.password}}
-            <p class="error">{{.Errors.password}}</p>
-        {{end}}
-    
-        <input placeholder="Comfirm password" type="password" id="password2" name="password2" required>
-        {{if .Errors.password2}}
-            <p class="error">{{.Errors.password2}}</p>
-        {{end}}
-    
-        <button class="btn" type="submit">Register</button>
-    </form>
+    <div class="row justify-content-center mt-3">
+        <form id="registrationForm" class="w-25" hx-post="/register" hx-target="#main-app" hx-swap="outerHTML">
+            <h3 class="text-center">Register</h3>
+            <div class="input-group has-validation">
+            {{if .Errors.other}}
+                <div class="invalid-feedback">{{.Errors.other}}</div>
+            {{end}}
+                <div class="input-group has-validation">
+                    <div class="input-group has-validation">
+                        <input class="form-control rounded  mb-1 {{if .Errors.username}} is-invalid {{end}}" placeholder="Username" type="text" id="username" name="username" required value="{{.FormValues.username}}">
+                        {{if .Errors.username}}
+                            <div class="invalid-feedback">{{.Errors.username}}</div>
+                        {{end}}
+                    </div>
+                    <div class="input-group has-validation">
+                        <input class="form-control rounded  mb-1 {{if .Errors.firstName}} is-invalid {{end}}" placeholder="First Name" type="text" id="firstName" name="firstName" value="{{.FormValues.firstName}}">
+                        {{if .Errors.firstName}}
+                            <div class="invalid-feedback">{{.Errors.firstName}}</div>
+                        {{end}}
+                    </div>
+                    <div class="input-group has-validation">
+                        <input class="form-control rounded  mb-1 {{if .Errors.lastName}} is-invalid {{end}}" placeholder="Last Name" type="text" id="lastName" name="lastName" value="{{.FormValues.lastName}}">
+                        {{if .Errors.lastName}}
+                            <div class="invalid-feedback">{{.Errors.lastName}}</div>
+                        {{end}}
+                    </div>
+                    <div class="input-group has-validation">
+                        <input class="form-control rounded  mb-1 {{if .Errors.password}} is-invalid {{end}}" placeholder="Password" type="password" id="password" name="password" required>
+                        {{if .Errors.password}}
+                            <div class="invalid-feedback">{{.Errors.password}}</div>
+                        {{end}}
+                    </div>
+                    <div class="input-group has-validation">
+                        <input class="form-control rounded  mb-1 {{if .Errors.password2}} is-invalid {{end}}" placeholder="Comfirm password" type="password" id="password2" name="password2" required>
+                        {{if .Errors.password2}}
+                            <div class="invalid-feedback">{{.Errors.password2}}</div>
+                        {{end}}
+                    </div>
+                </div>
+            <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Register</button>
+        </form>
+    </div>
 </div>

@@ -25,3 +25,6 @@ go.work
 
 # Log files
 *.log
+
+# Static files and directories
+/web/static/images/*

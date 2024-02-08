@@ -1,0 +1,40 @@
+{{define "posts"}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                {{range .posts}}
+                {{if eq .post_type "article"}}
+                <div class="col-md-4 mt-3">
+                    <div class="card border-secondary" style="min-height: 100%;">
+                        <div class="card-header">
+                            <h3>{{.title}}</h3><span class="badge badge-secondary">Article</span>
+                        </div>
+                        <div class="card-body">
+                            <p>by <strong>{{.author}}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                {{else if eq .post_type "image"}}
+                <div class="col-md-4 mt-3">
+                    <div class="card border-primary" style="min-height: 100%;">
+                        <div class="card-header">
+                            <h3>{{.title}}</h3><span class="badge badge-primary">Image</span>
+                        </div>
+                        <div class="card-body">
+                            <div style=" display: flex; justify-content: center; width: 100%;">
+                                <img src="{{.url}}" alt="{{.title}} by {{.author}}" class="img-fluid" style="max-height: 7rem;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{if .more}}
+<div class="mb-3" hx-trigger="revealed" hx-swap="outerHTML" hx-get="/posts?page={{.next}}"></div>
+{{end}}
+{{end}}

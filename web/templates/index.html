@@ -2,9 +2,18 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <script src="/static/jquery-3.7.1.min.js"></script>
+    <script src="/static/bootstrap.bundle.min.js"></script>
     <script src="/static/htmx.min.js"></script>
+    <script src="/static/summernote-bs4.min.js"></script>
+    <link rel="stylesheet" href="/static/summernote-bs4.min.css">
     <title>{{.Title}}</title>
 </head>
-<body hx-get="/body" hx-swap="outerHTML" hx-trigger="load"></body>
+<body>
+    {{template "navbar" .navbar}}
+    <div id="main-app">
+        {{template "main-app" .main_app}}
+    </div>
+</body>
 </html>

@@ -11,6 +11,7 @@ import (
 
 var ErrPasswordTooLong = errors.New("password too long")
 var ErrPasswordContainsUnsuportedCharacters = errors.New("password contains unsuported characters")
+var ErrInvalidUsername = errors.New("invalid username")
 
 // Migration should be Password -> User -> Auth
 // For now no email will be required
@@ -72,4 +73,18 @@ func (p *Password) ValidateAndSetPassword(password string) error {
 		return ErrPasswordTooLong
 	}
 	return p.SetPasswordAsHash(password)
+}
+
+func isValidUsername(username string) bool {
+	// Expresión regular para verificar el formato del nombre de usuario
+	re := regexp.MustCompile(`^[a-zA-Z0-9_\-\.]+$`)
+	return re.MatchString(username)
+}
+
+func (u *User) ValidateAndSetUsername(username string) error {
+	if !isValidUsername(username) {
+		return ErrInvalidUsername
+	}
+	u.Username = username
+	return nil
 }

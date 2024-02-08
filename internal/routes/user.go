@@ -10,5 +10,6 @@ func SetUpUserRoutes(app *echo.Echo) {
 	app.POST("/register", handlers.CreateUser)
 	app.GET("/login", handlers.GetLogin)
 	app.POST("/login", handlers.Login)
+	app.GET("/logout", handlers.Logout)
 	//users := app.Group("/user")
 }
