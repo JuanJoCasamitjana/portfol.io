@@ -31,6 +31,12 @@ func GetImageCollectionById(id uint64) (model.ImageCollection, error) {
 	return sesion, result.Error
 }
 
+func GetImageCollectionByIdIfPublished(id uint64) (model.ImageCollection, error) {
+	var sesion model.ImageCollection
+	result := GormConn.Preload("Images").Where("published = ?", true).First(&sesion, id)
+	return sesion, result.Error
+}
+
 func GetAllArticlesOfUser(username string) ([]model.Article, error) {
 	var articles []model.Article
 	result := GormConn.Where("author = ?", username).Find(&articles).Order("updated_at desc")
@@ -52,6 +58,12 @@ func GetAllArticleCollectionsOfUser(username string) ([]model.ArticleCollection,
 func GetAllImageCollectionsOfUser(username string) ([]model.ImageCollection, error) {
 	var sesions []model.ImageCollection
 	result := GormConn.Where("author = ?", username).Find(&sesions).Order("updated_at desc")
+	return sesions, result.Error
+}
+
+func GetAllImageCollectionsOfUserWithImages(username string) ([]model.ImageCollection, error) {
+	var sesions []model.ImageCollection
+	result := GormConn.Preload("Images").Where("author = ?", username).Find(&sesions).Order("updated_at desc")
 	return sesions, result.Error
 }
 
@@ -271,4 +283,13 @@ func GetPosts(page int, pageSize int) ([]model.Post, error) {
 	result := GormConn.Order("updated_at desc").Limit(pageSize).Offset(page * pageSize).
 		Preload("User").Preload("BasePost").Find(&posts)
 	return posts, result.Error
+}
+
+func DeleteImageByID(id uint64) error {
+	return GormConn.Transaction(func(tx *gorm.DB) error {
+		if result := tx.Delete(&model.Image{}, id); result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
 }

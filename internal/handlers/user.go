@@ -15,7 +15,11 @@ func GetUserByUsername(c echo.Context) error {
 	if err != nil {
 		return c.Render(http.StatusNotFound, "404", nil)
 	}
-	return c.Render(http.StatusOK, "user", user)
+	data := map[string]string{
+		"username": user.Username,
+		"fullname": user.FullName,
+	}
+	return c.Render(http.StatusOK, "user_profile", data)
 }
 
 func RegisterUser(c echo.Context) error {
@@ -29,12 +33,10 @@ func CreateUser(c echo.Context) error {
 	formValuesmap := make(map[string]string)
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	firstName := c.FormValue("firstName")
-	lastName := c.FormValue("lastName")
+	fullname := c.FormValue("fullname")
 	passwordConfirmation := c.FormValue("password2")
 	_, err := database.GetUserByUsername(username)
-	formValuesmap["firstName"] = firstName
-	formValuesmap["lastName"] = lastName
+	formValuesmap["fullname"] = fullname
 	if err == nil {
 		errorsmap["username"] = "Username already taken. "
 	} else {
@@ -67,22 +69,16 @@ func CreateUser(c echo.Context) error {
 	if err != nil && err != model.ErrPasswordTooLong && err != model.ErrPasswordContainsUnsuportedCharacters {
 		errorsmap["password"] = "Something went worng while hashing your password, please try again later. "
 	}
-	if len(firstName) > 256 {
-		errorsmap["firstName"] = "First name is too long. "
-	}
-	if len(lastName) > 256 {
-		errorsmap["lastName"] = "Last name is too long. "
+	if len(fullname) > 512 {
+		errorsmap["firstName"] = "Full name is too long. "
 	}
 	if len(errorsmap) > 0 {
 		data.Errors = errorsmap
 		data.ErrorsExist = true
 		return c.Render(http.StatusOK, "register.html", data)
 	}
-	if firstName != "" {
-		user.Firstname = &firstName
-	}
-	if lastName != "" {
-		user.Lastname = &lastName
+	if fullname != "" {
+		user.FullName = fullname
 	}
 	err = database.SaveUser(&user)
 	if err != nil {
@@ -94,7 +90,7 @@ func CreateUser(c echo.Context) error {
 		return c.Render(http.StatusOK, "register.html", data)
 	}
 	data.Message = "User created successfully."
-	return c.Render(http.StatusOK, "success.html", data)
+	return c.Render(http.StatusOK, "success", data)
 }
 
 func GetLogin(c echo.Context) error {
@@ -138,7 +134,7 @@ func Login(c echo.Context) error {
 	}
 	data.Message = "Login successful."
 	c.Response().Header().Set("HX-Trigger", "session-changed")
-	return c.Render(http.StatusOK, "success.html", data)
+	return c.Render(http.StatusOK, "success", data)
 }
 
 func Logout(c echo.Context) error {
@@ -152,5 +148,117 @@ func Logout(c echo.Context) error {
 		return c.Render(http.StatusOK, "logout.html", nil)
 	}
 	c.Response().Header().Set("HX-Trigger", "session-changed")
-	return c.Render(http.StatusOK, "logout.html", nil)
+	return c.Render(http.StatusOK, "success", nil)
+}
+
+func GetEditUser(c echo.Context) error {
+	sess, err := session.Get("session", c)
+	userID := sess.Values["user_id"].(uint64)
+	if err != nil {
+		return c.Render(http.StatusUnauthorized, "401.html", nil)
+	}
+	user, err := database.GetUserByID(userID)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "404.html", nil)
+	}
+	data := Data{
+		FormValues: map[string]string{
+			"username": user.Username,
+			"fullname": user.FullName,
+		},
+	}
+	return c.Render(http.StatusOK, "edit_user", data)
+}
+
+func GetMyProfile(c echo.Context) error {
+	sess, err := session.Get("session", c)
+	userID := sess.Values["user_id"].(uint64)
+	if err != nil {
+		return c.Render(http.StatusUnauthorized, "401.html", nil)
+	}
+	user, err := database.GetUserByID(userID)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "404.html", nil)
+	}
+	data := map[string]string{
+		"username": user.Username,
+		"fullname": user.FullName,
+	}
+	return c.Render(http.StatusOK, "user", data)
+}
+
+func GetPasswordEdit(c echo.Context) error {
+	return c.Render(http.StatusOK, "change_password", nil)
+}
+
+func ChangePassword(c echo.Context) error {
+	var data Data
+	sess, err := session.Get("session", c)
+	userID := sess.Values["user_id"].(uint64)
+	if err != nil {
+		return c.Render(http.StatusUnauthorized, "401.html", nil)
+	}
+	user, err := database.GetUserByID(userID)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "404.html", nil)
+	}
+	oldPassword := c.FormValue("old_password")
+	newPassword := c.FormValue("password")
+	newPasswordConfirmation := c.FormValue("password2")
+	errorsmap := make(map[string]string)
+	ok := user.Password.ComparePassword(oldPassword)
+	if !ok {
+		errorsmap["old_password"] = "Password is incorrect. "
+	}
+	if newPassword != newPasswordConfirmation {
+		errorsmap["password2"] = "Passwords do not match. "
+	}
+	if len(newPassword) < 12 {
+		errorsmap["password"] = "Password must be at least 12 characters long and at most 72 characters long. "
+	}
+	if len(newPassword) > 72 {
+		errorsmap["password"] = "Password must be at least 12 characters long and at most 72 characters long. "
+	}
+	err = user.Password.ValidateAndSetPassword(newPassword)
+	if err == model.ErrPasswordTooLong {
+		errorsmap["password"] = "Password must be at least 12 characters long and at most 72 characters long. "
+	}
+	if err == model.ErrPasswordContainsUnsuportedCharacters {
+		errorsmap["password"] = errorsmap["password"] + "Password must only contain caharcters from A-Z a-z 0-9 !#$%&()*+,-.:;<=>?@[]_{} and spaces. "
+	}
+	//Fallback error message
+	if err != nil && err != model.ErrPasswordTooLong && err != model.ErrPasswordContainsUnsuportedCharacters {
+		errorsmap["password"] = "Something went worng while hashing your password, please try again later. "
+	}
+	if len(errorsmap) > 0 {
+		data.Errors = errorsmap
+		data.ErrorsExist = true
+		return c.Render(http.StatusOK, "change_password", data)
+	}
+	err = database.SaveUser(user)
+	if err != nil {
+		errorsmap["other"] = "Something went wrong while saving your user, please try again later. "
+		data.Errors = errorsmap
+		data.ErrorsExist = true
+		return c.Render(http.StatusOK, "change_password", data)
+	}
+	data.Message = "Password changed successfully."
+	return c.Render(http.StatusOK, "success", data)
+}
+
+func DeleteUser(c echo.Context) error {
+	sess, err := session.Get("session", c)
+	if err != nil {
+		return c.Render(http.StatusInternalServerError, "error", nil)
+	}
+	userID := sess.Values["user_id"].(uint64)
+	user, err := database.GetUserByID(userID)
+	if err != nil {
+		return c.Render(http.StatusInternalServerError, "error", nil)
+	}
+	err = database.DeleteUser(user)
+	if err != nil {
+		return c.Render(http.StatusInternalServerError, "error", nil)
+	}
+	return c.Render(http.StatusOK, "success", nil)
 }

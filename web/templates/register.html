@@ -1,6 +1,6 @@
 <div class="container" id="main-app">
     <div class="row justify-content-center mt-3">
-        <form id="registrationForm" class="w-25" hx-post="/register" hx-target="#main-app" hx-swap="outerHTML">
+        <form id="registrationForm" class="w-25" hx-post="/register" hx-target="#main-app" hx-swap="innerHTML">
             <h3 class="text-center">Register</h3>
             <div class="input-group has-validation">
             {{if .Errors.other}}
@@ -14,15 +14,9 @@
                         {{end}}
                     </div>
                     <div class="input-group has-validation">
-                        <input class="form-control rounded  mb-1 {{if .Errors.firstName}} is-invalid {{end}}" placeholder="First Name" type="text" id="firstName" name="firstName" value="{{.FormValues.firstName}}">
+                        <input class="form-control rounded  mb-1 {{if .Errors.fullname}} is-invalid {{end}}" placeholder="Full Name" type="text" id="fullname" name="fullname" value="{{.FormValues.fullname}}">
                         {{if .Errors.firstName}}
-                            <div class="invalid-feedback">{{.Errors.firstName}}</div>
-                        {{end}}
-                    </div>
-                    <div class="input-group has-validation">
-                        <input class="form-control rounded  mb-1 {{if .Errors.lastName}} is-invalid {{end}}" placeholder="Last Name" type="text" id="lastName" name="lastName" value="{{.FormValues.lastName}}">
-                        {{if .Errors.lastName}}
-                            <div class="invalid-feedback">{{.Errors.lastName}}</div>
+                            <div class="invalid-feedback">{{.Errors.fullname}}</div>
                         {{end}}
                     </div>
                     <div class="input-group has-validation">

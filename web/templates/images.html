@@ -4,16 +4,27 @@
         <div class="col-md-12">
             <div class="row">
                 {{range .}}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>{{.title}}</h3>
-                        </div>
-                        <div class="card-body">
-                            <img src="{{.url}}" alt="{{.title}} by {{.author}}" class="img-fluid">
+                <div class="col-md-2"></div>
+                <div class="col-md-8 mt-3">
+                    <div class="border border-dark rounded">
+                        <div class="row">
+                            {{if not (eq .footer "")}}
+                            <div class="col-md-9">
+                                <img src="{{.url}}" alt="{{.footer}} by {{.author}}" class="img-fluid">
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mt-3">{{.footer}}</p>
+                            </div>
+                            {{else}}
+                            <div class="col-md-12">
+                                <img src="{{.url}}" alt="{{.footer}} by {{.author}}" class="img-fluid">
+                            </div>
+                            {{end}}
                         </div>
                     </div>
                 </div>
+                <div class="col-md-2 mt-3">{{if .isAuthor}}<button hx-delete="/images/{{.id}}" hx-swap="delete"
+                    class="btn btn-danger">Remove</button>{{end}}</div>
                 {{end}}
             </div>
         </div>

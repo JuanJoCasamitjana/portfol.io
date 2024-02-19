@@ -2,14 +2,6 @@
 <div class="container">
     <form class="mt-1" hx-post="/images" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
         <div class="input-group has-validation">
-            <label for="title" class="sr-only">Title</label>
-            <input class="form-control mb-1 rounded {{if .Errors.title}} is-invalid {{end}}" placeholder="Main title"
-                type="text" name="title" id="title" value="{{ .FormValues.title}}">
-            {{if .Errors.title}}
-            <div class="invalid-feedback">{{.Errors.title}}</div>
-            {{end}}
-        </div>
-        <div class="input-group has-validation">
             <label for="image" class="sr-only">Image</label>
             <input class="form-control mb-1 rounded {{if .Errors.image}} is-invalid {{end}}" placeholder="URL"
                 type="file" name="image" id="image" accept="image/png, image/jpeg">

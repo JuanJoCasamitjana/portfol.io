@@ -1,0 +1,17 @@
+{{define "change_title_of_collection"}}
+<form class="form-inline w-100" hx-post="/images/collection/{{.id}}/edit-title" hx-swap="outerHTML" id="form-title"
+style="min-width: 100%;">
+        <div class="input-group has-validation" style="min-width: 60%;">
+            <label for="title" class="sr-only">Title</label>
+            <input class="form-control m-1 rounded {{if .error_title}} is-invalid {{end}}" placeholder="Main title"
+                type="text" name="title" id="title" value="{{ .value_title}}"
+                hx-post="/images/collection/{{.id}}/edit-title" hx-swap="outerHTML" hx-target="#form-title"
+                hx-trigger="keyup changed delay:5s" style="min-width: 60%;">
+            {{if .error_title}}
+            <div class="invalid-feedback">{{.error_title}}</div>
+            {{end}}
+        </div>
+        <button class="btn btn-warning m-1" type="submit">Change</button>
+        <button class="btn btn-danger" hx-delete="/images/collection/{{.id}}">Delete collection</button>
+</form>
+{{end}}

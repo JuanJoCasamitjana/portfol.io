@@ -34,30 +34,13 @@ func GetIndex(c echo.Context) error {
 			return c.Render(c.Response().Status, "navbar.html", data)
 		}
 		userInfo["username"] = user.Username
-		if user.Firstname != nil && user.Lastname != nil {
-			userInfo["fullname"] = *user.Firstname + " " + *user.Lastname
+		if user.FullName != "" {
+			userInfo["fullname"] = user.FullName
 		}
 	}
 	data.UserInfo = userInfo
 	index_data := make(map[string]interface{})
 	index_data["navbar"] = data
-	articles, err := database.GetPaginatedArticles(1, 10)
-	if err != nil {
-		return c.Render(c.Response().Status, "index.html", data)
-	}
-	main_app_dat := make(map[string]interface{})
-	articles_dat := make([]map[string]interface{}, len(articles))
-	for i, article := range articles {
-		articles_dat[i] = make(map[string]interface{})
-		articles_dat[i]["id"] = article.ID
-		articles_dat[i]["title"] = article.Title
-		articles_dat[i]["author"] = article.Author
-		articles_dat[i]["createdAt"] = article.CreatedAt.Format("02/01/2006 15:04:05")
-	}
-	main_app_dat["articles"] = articles_dat
-	main_app_dat["more"] = len(articles) == 10
-	main_app_dat["next"] = 2
-	index_data["main_app"] = main_app_dat
 	return c.Render(c.Response().Status, "index.html", index_data)
 }
 
@@ -84,8 +67,8 @@ func GetNavbar(c echo.Context) error {
 			return c.Render(c.Response().Status, "navbar.html", data)
 		}
 		userInfo["username"] = user.Username
-		if user.Firstname != nil && user.Lastname != nil {
-			userInfo["fullname"] = *user.Firstname + " " + *user.Lastname
+		if user.FullName != "" {
+			userInfo["fullname"] = user.FullName
 		}
 	}
 	data.UserInfo = userInfo

@@ -21,9 +21,9 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Username  string `gorm:"unique"`
-	Firstname *string
-	Lastname  *string
+	FullName  string
 	AuthID    uint64   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Auth      Auth     `gorm:"foreignKey:AuthID;references:ID"`
 	Password  Password `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 

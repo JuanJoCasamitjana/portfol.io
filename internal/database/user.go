@@ -63,3 +63,12 @@ func UpdateUserById(id uint64, upadatedFields map[string]interface{}) error {
 		return nil
 	})
 }
+
+func DeleteUser(user *model.User) error {
+	return GormConn.Transaction(func(tx *gorm.DB) error {
+		if result := tx.Delete(user); result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
+}

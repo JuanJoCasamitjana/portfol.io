@@ -1,6 +1,6 @@
-{{define "create_article"}}
+{{define "edit_article"}}
 <div class="container">
-    <form class="mt-1" hx-post="/articles" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
+    <form class="mt-1" hx-post="/articles/edit/{{.Others.id}}" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
         <div class="input-group has-validation">
             <label for="title" class="sr-only">Main title</label>
             <input class="form-control mb-1 {{if .Errors.title}} is-invalid {{end}}" placeholder="Main title"

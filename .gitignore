@@ -28,3 +28,6 @@ go.work
 
 # Static files and directories
 /web/static/images/*
+
+# .env file
+.env

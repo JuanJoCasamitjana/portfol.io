@@ -15,6 +15,7 @@ import (
 )
 
 func SetupAndRun() {
+
 	//Setup Database connection
 	database.SetUpDB()
 

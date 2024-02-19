@@ -26,7 +26,6 @@ type Article struct {
 
 type Image struct {
 	BasePost
-	Title    string `gorm:"not null"`
 	FilePath string `gorm:"not null"`
 	Footer   string
 	Post     Post `gorm:"polymorphic:Owner;"`
@@ -40,8 +39,9 @@ type ArticleCollection struct {
 
 type ImageCollection struct {
 	BasePost
-	Title  string
-	Images []Image `gorm:"many2many:sesion_images"`
+	Title     string
+	Images    []Image `gorm:"many2many:sesion_images"`
+	Published bool    `gorm:"default:false"`
 }
 
 type Post struct {
@@ -62,56 +62,38 @@ func (i Image) GetBasePost() *BasePost {
 	return &i.BasePost
 }
 
-func (a *Article) AfterSave(tx *gorm.DB) error {
+func (ic ImageCollection) GetBasePost() *BasePost {
+	return &ic.BasePost
+}
+
+func (a *Article) AfterCreate(tx *gorm.DB) error {
 	var p Post
 	p.OwnerType = "articles"
 	p.OwnerID = a.ID
+	p.Author = a.Author
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Save(&p).Error
 	})
 }
 
-func (i *Image) AfterSave(tx *gorm.DB) error {
+func (ic *ImageCollection) AfterCreate(tx *gorm.DB) error {
 	var p Post
-	p.OwnerType = "images"
-	p.OwnerID = i.ID
+	p.OwnerType = "image_collections"
+	p.OwnerID = ic.ID
+	p.Author = ic.Author
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Save(&p).Error
 	})
 }
 
 func (a *Article) AfterDelete(tx *gorm.DB) error {
-	var p Post
-	p.OwnerType = "images"
-	p.OwnerID = a.ID
 	return tx.Transaction(func(tx *gorm.DB) error {
-		return tx.Delete(&p).Error
+		return tx.Where("owner_id = ?", a.ID).Delete(&Post{}).Error
 	})
 }
 
-func (i *Image) AfterDelete(tx *gorm.DB) error {
-	var p Post
-	p.OwnerType = "images"
-	p.OwnerID = i.ID
+func (ic *ImageCollection) AfterDelete(tx *gorm.DB) error {
 	return tx.Transaction(func(tx *gorm.DB) error {
-		return tx.Delete(&p).Error
-	})
-}
-
-func (a *Article) AfterUpdate(tx *gorm.DB) error {
-	var p Post
-	p.OwnerType = "images"
-	p.OwnerID = a.ID
-	return tx.Transaction(func(tx *gorm.DB) error {
-		return tx.Save(&p).Error
-	})
-}
-
-func (i *Image) AfterUpdate(tx *gorm.DB) error {
-	var p Post
-	p.OwnerType = "images"
-	p.OwnerID = i.ID
-	return tx.Transaction(func(tx *gorm.DB) error {
-		return tx.Save(&p).Error
+		return tx.Where("owner_id = ?", ic.ID).Delete(&Post{}).Error
 	})
 }

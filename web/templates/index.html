@@ -13,7 +13,7 @@
 <body>
     {{template "navbar" .navbar}}
     <div id="main-app">
-        {{template "main-app" .main_app}}
+        <div hx-get="/posts?page=1" hx-trigger="load" hx-swap="outerHTML"></div>
     </div>
 </body>
 </html>
