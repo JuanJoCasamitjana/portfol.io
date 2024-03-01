@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"button_edit",
+        "Default":"Editar"
+    },
+    {
+        "Key":"button_delete",
+        "Default":"Borrar"
+    }
+]

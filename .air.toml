@@ -2,9 +2,9 @@
 root = "."
 tmp_dir = "tmp"
 [build]
-  pre_cmd = ["go env -w CGO_ENABLED=1"]
+#  pre_cmd = ["go env -w CGO_ENABLED=1"]
   cmd = "go build -o ./tmp/main ./cmd/main.go"
-  post_cmd = ["go env -w CGO_ENABLED=0"]
+#  post_cmd = ["go env -w CGO_ENABLED=0"]
   bin = "./tmp/main/main.exe"
   delay = 1000 # ms
   exclude_dir = ["assets", "tmp", "vendor", "web/static"]

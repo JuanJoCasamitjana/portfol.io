@@ -1,0 +1,23 @@
+{{define "create_image"}}
+<div class="container">
+    <form class="mt-1" hx-post="/images" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
+        <div class="input-group has-validation">
+            <label for="image" class="sr-only">Image</label>
+            <input class="form-control mb-1 rounded {{if .Errors.image}} is-invalid {{end}}" placeholder="URL"
+                type="file" name="image" id="image" accept="image/png, image/jpeg">
+            {{if .Errors.image}}
+            <div class="invalid-feedback">{{.Errors.image}}</div>
+            {{end}}
+        </div>
+        <div class="input-group has-validation">
+            <label for="footer" class="sr-only">Footer</label>
+            <textarea class="form-control mb-1 rounded {{if .Errors.footer}} is-invalid {{end}}" placeholder="Write your footer here..."
+                type="text" name="footer" id="footer" value="{{ .FormValues.footer}}"></textarea>
+            {{if .Errors.footer}}
+            <div class="invalid-feedback">{{.Errors.footer}}</div>
+            {{end}}
+        </div>
+        <button class="btn btn-primary" type="submit">Post</button>
+    </form>
+</div>
+{{end}}

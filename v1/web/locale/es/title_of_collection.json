@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"label_for_change_title",
+        "Default":"Título"
+    },
+    {
+        "Key":"button_edit_title",
+        "Default":"Editar"
+    }
+]

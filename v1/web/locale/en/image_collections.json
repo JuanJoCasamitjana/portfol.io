@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"badge_published",
+        "Default":"Published"
+    },
+    {
+        "Key":"badge_draft",
+        "Default":"Draft"
+    }
+]

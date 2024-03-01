@@ -1,0 +1,38 @@
+[
+    {
+        "Key":"navbar_my_profile",
+        "Default":"Mi perfil"
+    },
+    {
+        "Key":"navbar_my_space",
+        "Default":"Mi espacio"
+    },
+    {
+        "Key":"navbar_my_space_write_article",
+        "Default":"Escribir un artículo"
+    },
+    {
+        "Key":"navbar_my_space_my_articles",
+        "Default":"Mis artículos"
+    },
+    {
+        "Key":"navbar_my_space_create_collection",
+        "Default":"Crear una colección"
+    },
+    {
+        "Key":"navbar_my_space_my_collections",
+        "Default":"Mis colecciones"
+    },
+    {
+        "Key":"navbar_logout",
+        "Default":"Cerrar sesión"
+    },
+    {
+        "Key":"navbar_login",
+        "Default":"Iniciar sesión"
+    },
+    {
+        "Key":"navbar_register",
+        "Default":"Registrarse"
+    }
+]

@@ -1,0 +1,49 @@
+{{define "navbar"}}
+<nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="background-color: #99ff99;" hx-get="/navbar"
+    hx-trigger="session-changed from:body" hx-swap="outerHTML">
+    <a href="#" class="navbar-brand" hx-get="/posts?page=1" hx-target="#main-app" hx-swap="innerHTML">Portfol.io</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse ml-5" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto" id="mobile-menu">
+            {{if .IsAuthenticated}}
+            <li class="nav-item">
+                <a href="#" hx-get="/user/profile" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                    class="nav-link">My profile</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    My space
+                </a>
+                <div class="dropdown-menu">
+                    <a href="#" hx-get="/articles/create" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                        class="dropdown-item">Write Article</a>
+                    <a href="#" hx-get="/articles/mine" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                        class="dropdown-item">My articles</a>
+                    <a href="#" hx-get="/images/collection/create" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                        class="dropdown-item">Create collection</a>
+                    <a href="#" hx-get="/images/collection/mine" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                        class="dropdown-item">My collections</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" hx-get="/logout" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML"
+                    class="nav-link">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item">
+                <a hx-get="/register" hx-trigger="click" hx-target="#main-app" hx-swap="outerHTML" href="#"
+                    class="nav-link">Register</a>
+            </li>
+            <li class="nav-item">
+                <a hx-get="/login" hx-trigger="click" hx-target="#main-app" hx-swap="outerHTML" href="#"
+                    class="nav-link">Login</a>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</nav>
+{{end}}

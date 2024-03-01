@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"label_for_image_upload",
+        "Default":"Imagen"
+    },
+    {
+        "Key":"label_for_footer",
+        "Default":"Pie de foto"
+    }
+]

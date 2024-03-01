@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"label_for_username",
+        "Default":"Username"
+    },
+    {
+        "Key":"label_for_fullname",
+        "Default":"Full Name"
+    },
+    {
+        "Key":"button_for_change_password",
+        "Default":"Change Password"
+    }
+]

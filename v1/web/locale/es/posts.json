@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"badge_article",
+        "Default":"Artículo"
+    },
+    {
+        "Key":"badge_image_collection",
+        "Default":"Colección de imágenes"
+    }
+]

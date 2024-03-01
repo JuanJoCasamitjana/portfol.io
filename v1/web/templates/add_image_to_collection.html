@@ -1,0 +1,25 @@
+{{ define "add_image_to_collection" }}
+<form hx-post="/images/collection/{{.id}}/add"
+    hx-swap="outerHTML"
+    enctype="multipart/form-data">
+    <div class="input-group has-validation">
+        <label for="image" class="sr-only">{{Translate .locale "label_image"}}</label>
+        <input class="form-control mb-1 rounded {{if .error_image}} is-invalid {{end}}" placeholder="URL"
+            type="file" name="image" id="image" accept="image/png, image/jpeg">
+        {{if .error_image}}
+        <div class="invalid-feedback">{{.error_image}}</div>
+        {{end}}
+    </div>
+    <div class="input-group has-validation">
+        <label for="footer" class="sr-only">Footer</label>
+        <textarea class="form-control mb-1 rounded {{if .error_footer}} is-invalid {{end}}" placeholder="Write your footer here..."
+            type="text" name="footer" id="footer" {{if .value_footer}} value="{{ .value_footer}}" {{end}}></textarea>
+        {{if .error_footer}}
+        <div class="invalid-feedback">{{.error_footer}}</div>
+        {{end}}
+    </div>
+    <button class="btn btn-primary" type="submit">Post</button>
+    <button class="btn btn-info" hx-post="/images/collection/{{.id}}/publish" hx-target="#main-app" 
+    hx-swap="innerHTML" hx-sync="closest form:abort">Publish</button>
+</form>
+{{end}}

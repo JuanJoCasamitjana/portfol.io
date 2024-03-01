@@ -1,8 +1,0 @@
-{{define "title_of_collection"}}
-<form class="form-inline w-100" hx-get="/images/collection/{{.id}}/edit-title" hx-swap="outerHTML">
-    <label for="title" class="sr-only">Title</label>
-    <h2 class="border rounded border-dark px-1">{{.value_title}}</h2>
-    <button class="btn btn-primary m-1" type="submit">Edit</button>
-    <button class="btn btn-danger" hx-delete="/images/collection/{{.id}}">Delete collection</button>
-</form>
-{{end}}

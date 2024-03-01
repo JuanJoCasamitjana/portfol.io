@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"title_register_form",
+        "Default":"Registrarse"
+    },
+    {
+        "Key":"button_register_form",
+        "Default":"Registrarse"
+    }
+]

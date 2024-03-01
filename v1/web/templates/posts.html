@@ -1,0 +1,54 @@
+{{define "posts"}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                {{range .posts}}
+                {{if eq .post_type "article"}}
+                <div class="col-md-4 mt-3">
+                    <div id="post-{{.id}}-{{.post_type}}" class="border border-secondary rounded" style="min-height: 100%; cursor: pointer;"
+                    hx-get="/articles/{{.id}}" hx-target="#main-app">
+                        <div class="m-3">
+                            <h3>{{.title}}</h3>
+                            <p hx-get="/user/profile/{{.author}}"
+                            hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
+                            hx-sync="#post-{{.id}}-{{.post_type}}:drop"
+                            class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
+                            >by <strong>@{{.author}}</strong></p>
+                            <span class="badge badge-secondary">Article</span>
+                        </div>
+                    </div>
+                </div>
+                {{else if eq .post_type "image_collections"}}
+                <div class="col-md-4 mt-3">
+                    <div id="post-{{.id}}-{{.post_type}}" class="card border-primary" style="min-height: 100%; cursor: pointer;"
+                    hx-get="/images/collection/{{.id}}/show" hx-target="#main-app">
+                        <div class="card-header">
+                            <h3>{{.title}}</h3>
+                            <p hx-get="/user/profile/{{.author}}"
+                            hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
+                            hx-sync="#post-{{.id}}-{{.post_type}}:drop"
+                            class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
+                            >by <strong>@{{.author}}</strong></p>
+                            <span class="badge badge-primary">Image collection</span>
+                        </div>
+                        <div class="card-body">
+                            <div style=" display: flex; justify-content: center; width: 100%;">
+                                <img src="{{.url}}" alt="{{.title}} by {{.author}}" class="img-fluid" style="max-height: 7rem;">
+                                <div class="bg-primary text-center text-light" style="font-size: 2rem;"><p class="mx-3"></p>{{.amount}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{if and .more .username}}
+<div class="mb-3" hx-trigger="revealed" hx-swap="outerHTML" hx-get="/posts/{{.username}}?page={{.next}}"></div>
+{{else if .more}}
+<div class="mb-3" hx-trigger="revealed" hx-swap="outerHTML" hx-get="/posts?page={{.next}}"></div>
+{{end}}
+{{end}}

@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"authorship_article",
+        "Default":"por"
+    },
+    {
+        "Key":"publication_date_prefix",
+        "Default":"Publicado el"
+    }
+]
