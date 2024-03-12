@@ -1,0 +1,20 @@
+{{define "gallery_title_form"}}
+<form class="form-inline w-100" hx-post="/gallery/{{.id}}/title" hx-swap="outerHTML" id="form-title"
+style="min-width: 100%;">
+<label for="title" class="sr-only">{{Translate .locale "gallery_title_form_title_label"}}</label>
+        <div class="input-group has-validation" style="min-width: 60%;">
+            <input class="form-control m-1 rounded {{if .error_title}} is-invalid {{end}}" 
+            placeholder="{{Translate .locale "gallery_title_form_title_placeholder"}}"
+                type="text" name="title" id="title" value="{{ .value_title}}"
+                hx-post="/gallery/{{.id}}/title" hx-swap="outerHTML" hx-target="#form-title"
+                hx-trigger="keyup changed delay:5s" style="min-width: 60%;">
+            {{if .error_title}}
+            <div class="invalid-feedback">{{.error_title}}</div>
+            {{end}}
+        </div>
+        <button class="btn btn-warning m-1" type="submit"
+        >{{Translate .locale "gallery_title_form_change_button"}}</button>
+        <button class="btn btn-danger" hx-delete="/images/collection/{{.id}}"
+        >{{Translate .locale "gallery_title_form_delete_button"}}</button>
+</form>
+{{end}}

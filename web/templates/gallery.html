@@ -1,0 +1,11 @@
+{{define "gallery"}}
+<div class="container">
+    <div id="details" class="mt-3 mx-3 rounded" style="background: #bdffe8">
+        <h1 class="ml-3">{{.title}}</h1>
+        <p class="ml-3 p-2 rounded" style="cursor: pointer; width: fit-content; background:#49fb91;" 
+        hx-get="/user/profile/{{.author}}" hx-target="#main-app" hx-swap="innerHTML" 
+        hx-trigger="click">{{Translate $.locale "by_preposition"}} <strong>@{{.author}}</strong></p>
+    </div>
+</div>
+{{template "images" .}}
+{{end}}

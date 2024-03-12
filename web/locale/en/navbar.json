@@ -1,0 +1,38 @@
+[
+    {
+        "Key":"navbar_my_profile",
+        "Default": "My Profile"
+    },
+    {
+        "Key":"navbar_my_space",
+        "Default": "My Space"
+    },
+    {
+        "Key":"navbar_my_space_write_article",
+        "Default": "Write Article"
+    },
+    {
+        "Key":"navbar_my_space_my_articles",
+        "Default": "My articles"
+    },
+    {
+        "Key":"navbar_my_space_create_gallery",
+        "Default": "Create a Gallery"
+    },
+    {
+        "Key":"navbar_my_space_my_galleries",
+        "Default": "My Galleries"
+    },
+    {
+        "Key":"navbar_logout",
+        "Default": "Logout"
+    },
+    {
+        "Key":"navbar_login",
+        "Default": "Login"
+    },
+    {
+        "Key":"navbar_register",
+        "Default": "Register"
+    }
+]

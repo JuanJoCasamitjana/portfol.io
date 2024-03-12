@@ -1,0 +1,49 @@
+{{define "article_form"}}
+<div class="container">
+    <form class="mt-1" hx-post="{{if .id}}/article/edit/{{.id}}{{else}}/article/create{{end}}" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
+        <label for="title" class="sr-only">{{Translate .locale "article_form_main_title_label"}}</label>
+        <div class="input-group has-validation">
+            <input class="form-control mb-1 {{if .errors.title}} is-invalid {{end}}" 
+            placeholder="{{Translate .locale "article_form_main_title_placeholder"}}"
+                type="text" name="title" id="title" value="{{ .formValues.title}}">
+            {{if .errors.username}}
+            <div class="invalid-feedback">{{.errors.title}}</div>
+            {{end}}
+        </div>
+        <textarea class="form-control mb-1 mw-100" placeholder="{{Translate .locale "article_form_text_placeholder"}}" hidden name="text" id="text"
+            cols="30" rows="20"></textarea>
+        <div id="summernote"></div>
+        <script>
+            var placeholder = document.getElementById('text').getAttribute('placeholder');
+            var configuracionInicial = {
+                placeholder: placeholder,
+                tabsize: 2,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'italic', 'clear']],
+                    ['fontname', ['Charter', 'Helvetica', 'Freight text', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['undo', 'redo', 'help']],
+                ],
+            };
+            var htmlContent = '{{.formValues.text}}';
+            $(document).ready(function () {
+                $('#summernote').summernote(configuracionInicial);
+                $('#summernote').summernote('code', htmlContent);
+            });
+            $('#summernote').on('summernote.change', function () {
+                var htmlContent = $('#summernote').summernote('code');
+                $('#text').val(htmlContent);
+            });
+        </script>
+        <button class="btn btn-info mt-2" type="submit">{{Translate .locale "article_form_submit_button"}}</button>
+        {{if not .id}}
+        <button class="btn btn-info mt-2" type="submit" hx-post="/article/publish"
+            hx-target="#main-app" hx-swap="innerHTML" hx-sync="closest form:drop"
+        >{{Translate .locale "article_form_publish_button"}}</button>
+        {{end}}
+    </form>
+</div>
+{{end}}

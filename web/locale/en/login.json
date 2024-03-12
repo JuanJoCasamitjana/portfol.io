@@ -1,0 +1,38 @@
+[
+    {
+        "Key":"login_form_title",
+        "Default":"Login"
+    },
+    {
+        "Key":"login_username_label",
+        "Default":"Username"
+    },
+    {
+        "Key":"login_username_placeholder",
+        "Default":"Username"
+    },
+    {
+        "Key":"login_password_label",
+        "Default":"Password"
+    },
+    {
+        "Key":"login_password_placeholder",
+        "Default":"Password"
+    },
+    {
+        "Key":"login_submit_button",
+        "Default":"Login"
+    },
+    {
+        "Key":"login_username_not_found_error",
+        "Default":"No user found with that username"
+    },
+    {
+        "Key":"login_password_mismatch_error",
+        "Default":"Password does not match"
+    },
+    {
+        "Key":"login_session_error",
+        "Default":"Error creating session"
+    }    
+]

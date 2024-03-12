@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"gallery_list_badge_published",
+        "Default":"Publicado"
+    },
+    {
+        "Key":"gallery_list_badge_draft",
+        "Default":"Borrador"
+    }
+]

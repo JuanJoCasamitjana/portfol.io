@@ -1,0 +1,22 @@
+[
+    {
+        "Key":"upload_image_title",
+        "Default":"Subir imagen"
+    },
+    {
+        "Key":"upload_image_footer_label",
+        "Default":"Pie de foto"
+    },
+    {
+        "Key":"upload_image_footer_placeholder",
+        "Default":"Escribe un pie de foto..."
+    },
+    {
+        "Key":"upload_image_post_button",
+        "Default":"Subir imagen"
+    },
+    {
+        "Key":"publish_gallery_button",
+        "Default":"Publicar galería"
+    }
+]

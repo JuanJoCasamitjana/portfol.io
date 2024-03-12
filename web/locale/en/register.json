@@ -1,0 +1,58 @@
+[
+    {
+        "Key":"title_register_form",
+        "Default":"Register"
+    },
+    {
+        "Key":"register_form_username_input_placeholder",
+        "Default":"Username"
+    },
+    {
+        "Key":"register_form_username_input_label",
+        "Default":"Username: "
+    },
+    {
+        "Key":"register_form_fullname_input_placeholder",
+        "Default":"Full name"
+    },
+    {
+        "Key":"register_form_fullname_input_label",
+        "Default":"Full name: "
+    },
+    {
+        "Key":"register_form_password_input_placeholder",
+        "Default":"Password"
+    },
+    {
+        "Key":"register_form_password_input_label",
+        "Default":"Password: "
+    },
+    {
+        "Key":"register_form_confirm_password_input_placeholder",
+        "Default":"Confirm password"
+    },
+    {
+        "Key":"register_form_confirm_password_input_label",
+        "Default":"Confirm password: "
+    },
+    {
+        "Key":"register_form_register_submit_button",
+        "Default":"Register"
+    },
+    {
+        "Key":"register_password_mismatch_error",
+        "Default":"Passwords do not match"
+    },
+    {
+        "Key":"register_username_invalid_error",
+        "Default":"Usernames must have between 5 to 20 characters and can only contain letters, numbers, and underscores"
+    },
+    {
+        "Key":"register_password_invalid_error",
+        "Default":"Passwords must have btween 12 to 72 characters and can only contain letters, numbers and the following special characters: !#$%&()*+,-.:;<=>?@[]_{}"
+    },
+    {
+        "Key":"register_username_taken_error",
+        "Default":"The username is already taken"
+    }
+]

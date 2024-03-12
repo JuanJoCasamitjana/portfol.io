@@ -1,0 +1,30 @@
+{{define "login"}}
+<div class="row justify-content-center  mt-3">
+    <form class="w-25" hx-post="/login" hx-target="#main-app" hx-swap="innerHTML" class="form">
+        <h3 class="text-center">{{Translate .locale "login_form_title"}}</h3>
+        <div class="input-group has-validation">
+            {{if .errors.other}}
+                <div class="invalid-feedback">{{.errors.other}}</div>
+            {{end}}
+            <label for="username" class="">{{Translate .locale "login_username_label"}}</label>
+                <div class="input-group has-validation">
+                    <input class="form-control rounded mb-1 {{if .errors.username}} is-invalid {{end}}" 
+                    placeholder="{{Translate .locale "login_username_placeholder"}}" type="text" id="username" name="username" 
+                    required value="{{.formValues.username}}">
+                    {{if .errors.username}}
+                        <div class="invalid-feedback">{{.errors.username}}</div>
+                    {{end}}
+                </div>
+                <label for="password" class="">{{Translate .locale "login_password_label"}}</label>
+                <div class="input-group has-validation">
+                    <input class="form-control rounded {{if .errors.password}} is-invalid {{end}}" 
+                    placeholder="{{Translate .locale "login_password_placeholder"}}" type="password" id="password" name="password" required>
+                    {{if .errors.password}}
+                        <div class="invalid-feedback">{{.errors.password}}</div>
+                    {{end}}
+                </div>
+            <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">{{Translate .locale "login_submit_button"}}</button>
+        </div>
+    </form>
+</div>
+{{end}}

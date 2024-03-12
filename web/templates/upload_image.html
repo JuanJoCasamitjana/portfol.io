@@ -1,0 +1,26 @@
+{{define "upload_image"}}
+<div class="container">
+    <form class="mt-1" hx-post="/gallery/{{.id}}/images" hx-target="#upload-form" hx-swap="innerHTML" enctype="multipart/form-data">
+        <label for="image" class="sr-only">{{Translate .locale "upload_image_title"}}</label>
+        <div class="input-group has-validation">
+            <input class="form-control mb-1 rounded {{if .errors.image}} is-invalid {{end}}"
+                type="file" name="image" id="image" accept="image/png, image/jpeg">
+            {{if .errors.image}}
+            <div class="invalid-feedback">{{.errors.image}}</div>
+            {{end}}
+        </div>
+        <label for="footer" class="sr-only">{{Translate .locale "upload_image_footer_label"}}</label>
+        <div class="input-group has-validation">
+            <textarea class="form-control mb-1 rounded {{if .errors.footer}} is-invalid {{end}}" 
+            placeholder="{{Translate .locale "upload_image_footer_placeholder"}}"
+            type="text" name="footer" id="footer" value="{{.formValues.footer}}"></textarea>
+            {{if .errors.footer}}
+            <div class="invalid-feedback">{{.errors.footer}}</div>
+            {{end}}
+        </div>
+        <button class="btn btn-primary" type="submit">{{Translate .locale "upload_image_post_button"}}</button>
+        <button class="btn btn-info" hx-post="/galery/{{.id}}/publish" hx-target="#main-app" 
+        hx-swap="innerHTML" hx-sync="closest form:abort">{{Translate .locale "publish_gallery_button"}}</button>
+    </form>
+</div>
+{{end}}

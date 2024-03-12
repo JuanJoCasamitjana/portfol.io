@@ -1,0 +1,10 @@
+{{define "tag_form"}}
+<div class="container">
+    <form class="form-inline w-100">
+        <input type="text" id="query" name="query" hx-trigger="keyup changed delay:500ms" 
+        hx-post="/tags" hx-target="#results" hx-swap="innerHTML">
+        <button class="btn btn-warning">Create Tag</button>
+        <div id="results"></div>
+    </form>
+</div>
+{{end}}

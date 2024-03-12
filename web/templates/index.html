@@ -1,0 +1,21 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <script src="/static/jquery-3.7.1.min.js"></script>
+    <script src="/static/bootstrap.bundle.min.js"></script>
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/summernote-bs4.min.js"></script>
+    <link rel="stylesheet" href="/static/summernote-bs4.min.css">
+    <title>{{.title}}</title>
+</head>
+<body>
+    {{template "navbar" .}}
+    <div id="main-app" class="container">
+    </div>
+</body>
+</html>
+{{end}}

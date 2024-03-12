@@ -1,0 +1,10 @@
+{{define "gallery_form"}}
+<div class="container w-75 mt-3">
+
+    {{template "gallery_title_form" .}}
+    
+    <div id="upload-form">{{template "upload_image" .}}</div>
+
+    <div class="container" hx-get="/gallery/{{.id}}/images" hx-trigger="load, gallery-reload from:body"></div>
+</div>
+{{end}}

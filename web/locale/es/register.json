@@ -1,0 +1,58 @@
+[
+    {
+        "Key":"title_register_form",
+        "Default":"Formulario de registro"
+    },
+    {
+        "Key":"register_form_username_input_placeholder",
+        "Default":"Nombre de usuario"
+    },
+    {
+        "Key":"register_form_username_input_label",
+        "Default":"Nombre de usuario: "
+    },
+    {
+        "Key":"register_form_fullname_input_placeholder",
+        "Default":"Nombre completo"
+    },
+    {
+        "Key":"register_form_fullname_input_label",
+        "Default":"Nombre completo: "
+    },
+    {
+        "Key":"register_form_password_input_placeholder",
+        "Default":"Contraseña"
+    },
+    {
+        "Key":"register_form_password_input_label",
+        "Default":"Contraseña: "
+    },
+    {
+        "Key":"register_form_confirm_password_input_placeholder",
+        "Default":"Confirmar contraseña"
+    },
+    {
+        "Key":"register_form_confirm_password_input_label",
+        "Default":"Confirmar contraseña: "
+    },
+    {
+        "Key":"register_form_register_submit_button",
+        "Default":"Registrarse"
+    },
+    {
+        "Key":"register_password_mismatch_error",
+        "Default":"Las contraseñas no coinciden"
+    },
+    {
+        "Key":"register_username_invalid_error",
+        "Default":"Los nombres de usuario deben tener entre 5 y 20 caracteres y solo pueden contener letras, números y barras bajas"
+    },
+    {
+        "Key":"register_password_invalid_error",
+        "Default":"Las constraseñas deben contener entre 12 y 72 caracteres y pueden tener letras, números y los siguientes caracteres especiales: : !#$%&()*+,-.:;<=>?@[]_{}"
+    },
+    {
+        "Key":"register_username_taken_error",
+        "Default":"El nombre de usuario ya está en uso"
+    }
+]

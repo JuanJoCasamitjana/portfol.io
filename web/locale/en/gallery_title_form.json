@@ -1,0 +1,22 @@
+[
+    {
+        "Key":"gallery_title_form_title_label",
+        "Default":"Title"
+    },
+    {
+        "Key":"gallery_title_form_title_placeholder",
+        "Default":"Title"
+    },
+    {
+        "Key":"gallery_title_form_change_button",
+        "Default":"Change"
+    },
+    {
+        "Key":"gallery_title_form_delete_button",
+        "Default":"Delete gallery"
+    },
+    {
+        "Key":"gallery_title_form_edit_button",
+        "Default":"Edit title"
+    }
+]

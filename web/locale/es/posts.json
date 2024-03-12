@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"by_preposition",
+        "Default":"por"
+    },
+    {
+        "Key":"card_badge_article",
+        "Default":"Artículo"
+    },
+    {
+        "Key":"card_badge_gallery",
+        "Default":"Galería"
+    }
+]

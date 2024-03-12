@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"article_author_edit_button",
+        "Default":"Edit"
+    },
+    {
+        "Key":"article_author_publish_button",
+        "Default":"Publish"
+    },
+    {
+        "Key":"article_author_delete_button",
+        "Default":"Delete"
+    }
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "Key":"login_form_title",
+        "Default":"Iniciar sesión"
+    },
+    {
+        "Key":"login_username_label",
+        "Default":"Nombre de usuario"
+    },
+    {
+        "Key":"login_username_placeholder",
+        "Default":"Nombre de usuario"
+    },
+    {
+        "Key":"login_password_label",
+        "Default":"Contraseña"
+    },
+    {
+        "Key":"login_password_placeholder",
+        "Default":"Contraseña"
+    },
+    {
+        "Key":"login_submit_button",
+        "Default":"Iniciar sesión"
+    },
+    {
+        "Key":"login_username_not_found_error",
+        "Default":"No se encontró el usuario"
+    },
+    {
+        "Key":"login_password_mismatch_error",
+        "Default":"La contraseña no coincide"
+    },
+    {
+        "Key":"login_session_error",
+        "Default":"No se pudo iniciar sesión"
+    }    
+]

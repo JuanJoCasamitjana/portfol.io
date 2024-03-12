@@ -1,0 +1,22 @@
+[
+    {
+        "Key":"upload_image_title",
+        "Default":"Upload image"
+    },
+    {
+        "Key":"upload_image_footer_label",
+        "Default":"Footer"
+    },
+    {
+        "Key":"upload_image_footer_placeholder",
+        "Default":"Write footer here..."
+    },
+    {
+        "Key":"upload_image_post_button",
+        "Default":"Upload image"
+    },
+    {
+        "Key":"publish_gallery_button",
+        "Default":"Publish gallery"
+    }
+]

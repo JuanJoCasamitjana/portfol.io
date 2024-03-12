@@ -1,0 +1,22 @@
+[
+    {
+        "Key":"article_form_main_title_label",
+        "Default":"Título principal"
+    },
+    {
+        "Key":"article_form_main_title_placeholder",
+        "Default":"Título principal"
+    },
+    {
+        "Key":"article_form_text_placeholder",
+        "Default":"Escibe tu artículo aquí..." 
+    },
+    {
+        "Key":"article_form_submit_button",
+        "Default":"Enviar" 
+    },
+    {
+        "Key":"article_form_publish_button",
+        "Default":"Publicar" 
+    }
+]
