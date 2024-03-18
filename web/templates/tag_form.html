@@ -1,10 +1,13 @@
 {{define "tag_form"}}
-<div class="container">
-    <form class="form-inline w-100">
-        <input type="text" id="query" name="query" hx-trigger="keyup changed delay:500ms" 
-        hx-post="/tags" hx-target="#results" hx-swap="innerHTML">
-        <button class="btn btn-warning">Create Tag</button>
-        <div id="results"></div>
+<div class="container" id="tag-search">
+    <h1>{{Translate .locale "tag_form_title"}}</h1>
+    <form class="form-inline mt-3" hx-post="/tag/create?post-type={{.postType}}&post-id={{.postID}}" hx-swap="outerHTML" hx-target="#tag-search">
+        <input type="text" id="query" name="query" hx-trigger="keyup changed delay:500ms, load" 
+        hx-get="/tag/find?post-type={{.postType}}&post-id={{.postID}}" hx-target="#results" hx-swap="innerHTML" 
+        placeholder="{{Translate .locale "tag_form_input_placeholder"}}">
+        <button class="btn btn-warning mt-3" >{{Translate .locale "tag_form_create_button"}}</button>
+        <h2>{{Translate .locale "search_reults_tag_form"}}</h2>
+        <div id="results" class="border border-dark rounded" style="max-width: 100%;"></div>
     </form>
 </div>
 {{end}}

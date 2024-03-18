@@ -7,10 +7,10 @@
                 {{if eq .post_type "article"}}
                 <div class="col-md-4 mt-3">
                     <div id="post-{{.id}}-{{.post_type}}" class="border border-secondary rounded" style="min-height: 100%; cursor: pointer;"
-                    hx-get="/article/{{.id}}" hx-target="#main-app">
+                    hx-get="/article/{{.id}}" hx-push-url="true" hx-target="#main-app">
                         <div class="m-3">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/user/profile/{{.author}}"
+                            <p hx-get="/user/profile/{{.author}}" hx-push-url="true"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
@@ -22,10 +22,10 @@
                 {{else if eq .post_type "gallery"}}
                 <div class="col-md-4 mt-3">
                     <div id="post-{{.id}}-{{.post_type}}" class="card border-primary" style="min-height: 100%; cursor: pointer;"
-                    hx-get="/gallery/{{.id}}" hx-target="#main-app">
+                    hx-get="/gallery/{{.id}}" hx-target="#main-app" hx-push-url="true">
                         <div class="card-header">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/user/profile/{{.author}}"
+                            <p hx-get="/user/profile/{{.author}}" hx-push-url="true"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"

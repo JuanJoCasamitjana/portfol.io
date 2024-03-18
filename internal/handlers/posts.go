@@ -329,6 +329,10 @@ func DeleteArticle(c echo.Context) error {
 	if article.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
+	err = database.RemoveTagsFromArticle(article.Tags, &article)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
 	err = database.DeleteArticle(&article)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
@@ -361,6 +365,34 @@ func AddTagToArticle(c echo.Context) error {
 	}
 	c.Response().Header().Set("HX-Trigger", "tags-reload")
 	return c.String(200, "Tag added successfully!")
+}
+
+func GetTagsOfArticle(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	id_str := c.Param("id")
+	article_id, err := strconv.ParseUint(id_str, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	article, err := database.FindArticleByID(article_id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	postType := "article"
+	tags := make([]map[string]any, len(article.Tags))
+	for i := range article.Tags {
+		tags[i] = map[string]any{
+			"name":      article.Tags[i].Name,
+			"post_id":   article.ID,
+			"bgColor":   article.Tags[i].ColorOfTag(),
+			"post_type": postType,
+		}
+	}
+	data := map[string]any{
+		"tags":   tags,
+		"locale": locale,
+	}
+	return c.Render(200, "tags", data)
 }
 
 //Mostly about galleries and images
@@ -679,31 +711,94 @@ func convertGalleriesToDataMap(galleries_db []model.Gallery, showBadge bool) []m
 	return galleries
 }
 
+func GetTagsOfGallery(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	idstr := c.Param("id")
+	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindGalleryByID(gallery_id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	postType := "gallery"
+	tags := make([]map[string]any, len(gallery.Tags))
+	for i := range gallery.Tags {
+		tags[i] = map[string]any{
+			"post_id":   gallery.ID,
+			"post_type": postType,
+			"name":      gallery.Tags[i].Name,
+			"bgColor":   gallery.Tags[i].ColorOfTag(),
+		}
+	}
+	data := map[string]any{
+		"tags":   tags,
+		"locale": locale,
+	}
+	return c.Render(200, "tags", data)
+}
+
+func AddTagToGallery(c echo.Context) error {
+	_, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	idstr := c.Param("id")
+	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	tag_str := c.Param("tag")
+	tag, err := database.FindTagByName(tag_str)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	gallery, err := database.FindGalleryByID(gallery_id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	err = database.AddTagToGallery(&gallery, &tag)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	c.Response().Header().Set("HX-Trigger", "tags-reload")
+	return c.String(200, "Tag added successfully!")
+}
+
 // Tags are used in articles, projects and galleries
 func CreateTagForm(c echo.Context) error {
+	postType := c.QueryParam("post-type")
+	postIDstr := c.QueryParam("post-id")
 	_, err := GetUserOfSession(c)
 	if err != nil {
 		return c.String(401, "Unauthorized")
 	}
 	data := map[string]any{
-		"locale": utils.GetLocale(c),
+		"locale":   utils.GetLocale(c),
+		"postType": postType,
+		"postID":   postIDstr,
 	}
 	return c.Render(200, "tag_form", data)
 }
 
 func CreateTag(c echo.Context) error {
 	locale := utils.GetLocale(c)
+	postType := c.QueryParam("post-type")
+	postIDstr := c.QueryParam("post-id")
 	_, err := GetUserOfSession(c)
 	if err != nil {
 		return c.String(401, "Unauthorized")
 	}
-	name := c.FormValue("name")
+	name := c.FormValue("query")
 	_, err = database.FindTagByName(name)
 	if err == nil {
 
 		data := map[string]any{
-			"locale": locale,
-			"error":  utils.Translate("tag_already_exists", locale),
+			"locale":   locale,
+			"error":    utils.Translate("tag_already_exists", locale),
+			"postType": postType,
+			"postID":   postIDstr,
 		}
 		return c.Render(200, "tag_form", data)
 	}
@@ -712,7 +807,12 @@ func CreateTag(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
-	return c.Render(200, "success", nil)
+	data := map[string]any{
+		"locale":   locale,
+		"postType": postType,
+		"postID":   postIDstr,
+	}
+	return c.Render(200, "tag_form", data)
 }
 
 func FindTags(c echo.Context) error {
@@ -721,15 +821,34 @@ func FindTags(c echo.Context) error {
 	if err != nil {
 		return c.String(401, "Unauthorized")
 	}
-	query := c.FormValue("query")
-	tags_db, err := database.FindTagLikeName(query)
+	query := c.QueryParam("query")
+	postType := c.QueryParam("post-type")
+	postIDstr := c.QueryParam("post-id")
+	isAdd := false
+	if postType != "" {
+		isAdd = true
+	}
+	tags_db, err := database.FindTagLikeName(query, 25)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
-	tags := make([]map[string]any, len(tags_db))
-	for i := range tags_db {
+	postID, err := strconv.ParseUint(postIDstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	postable, err := database.FindPostableByTypeAndID(postType, postID)
+	res := tags_db
+	if err == nil {
+		res = filterTags(tags_db, postable.GetTags())
+	}
+	tags := make([]map[string]any, len(res))
+	for i := range res {
 		tags[i] = map[string]any{
-			"name": tags_db[i].Name,
+			"name":      res[i].Name,
+			"add":       isAdd,
+			"post_type": postType,
+			"post_id":   postID,
+			"bgColor":   res[i].ColorOfTag(),
 		}
 	}
 	data := map[string]any{
@@ -737,4 +856,51 @@ func FindTags(c echo.Context) error {
 		"locale": locale,
 	}
 	return c.Render(200, "tags", data)
+}
+
+func filterTags(toBeFiltered, filter []model.Tag) []model.Tag {
+	var filtered []model.Tag
+	for i := range toBeFiltered {
+		add := true
+		for j := range filter {
+			if toBeFiltered[i].Name == filter[j].Name {
+				add = false
+				break
+			}
+		}
+		if add {
+			filtered = append(filtered, toBeFiltered[i])
+		}
+	}
+	return filtered
+}
+
+func ArticlesByTagPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	tagName := c.Param("name")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	articles_db, err := database.FindAllArticlesByTagPaginated(tagName, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	articles := convertArticlesToDataMap(articles_db)
+	next_page := page + 1
+	more := len(articles_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf(`<div hx-get="/article/tag/%s?page=%d" hx=swap="outerHTML"
+		hx-trigger="revealed" class="mb-3 p-3"></div>`, tagName, next_page)
+	}
+	data := map[string]any{
+		"articles":  articles,
+		"locale":    locale,
+		"more":      more,
+		"next_page": template.HTML(next_page_loader),
+		"tag":       tagName,
+	}
+	return c.Render(200, "article_list", data)
 }

@@ -7,5 +7,17 @@
         hx-trigger="click">{{Translate $.locale "by_preposition"}} <strong>@{{.author}}</strong></p>
     </div>
 </div>
-{{template "images" .}}
+<div class="container">
+    <div hx-get="/gallery/{{.id}}/tags" hx-trigger="load, tags-reload from:body" hx-swap="innerHTML"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-9">{{template "images" .}}</div>
+                <div class="col-md-3">
+                    <div hx-get="/tag/create?post-type=gallery&post-id={{.id}}" hx-swap="innerHTML" hx-trigger="load"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {{end}}

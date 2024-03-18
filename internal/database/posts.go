@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
 	"gorm.io/gorm"
 )
@@ -17,19 +19,19 @@ func FindPostsPaginated(page, page_size int) ([]model.Post, error) {
 
 func FindArticleByID(id uint64) (model.Article, error) {
 	var article model.Article
-	err := DB.First(&article, id).Error
+	err := DB.Preload("Tags").First(&article, id).Error
 	return article, err
 }
 
 func FindProjectByID(id uint64) (model.Project, error) {
 	var project model.Project
-	err := DB.First(&project, id).Error
+	err := DB.Preload("Tags").First(&project, id).Error
 	return project, err
 }
 
 func FindGalleryByID(id uint64) (model.Gallery, error) {
 	var gallery model.Gallery
-	err := DB.Preload("Images").First(&gallery, id).Error
+	err := DB.Preload("Images").Preload("Tags").First(&gallery, id).Error
 	return gallery, err
 }
 
@@ -126,14 +128,51 @@ func RemoveTagFromArticle(article *model.Article, tag *model.Tag) error {
 	})
 }
 
-func FindTagLikeName(name string) ([]model.Tag, error) {
+func FindTagLikeName(name string, limit int) ([]model.Tag, error) {
 	var tags []model.Tag
-	err := DB.Where("name LIKE ?", "%"+name+"%").Find(&tags).Error
+	err := DB.Where("name LIKE ?", "%"+name+"%").Limit(limit).Find(&tags).Error
 	return tags, err
 }
 
 func DeleteGallery(gallery *model.Gallery) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(gallery).Delete(gallery).Error
+	})
+}
+
+func FindPostableByTypeAndID(postableType string, id uint64) (model.Postable, error) {
+	switch postableType {
+	case "article":
+		return FindArticleByID(id)
+	case "project":
+		return FindProjectByID(id)
+	case "gallery":
+		return FindGalleryByID(id)
+	default:
+		return nil, errors.New("invalid postable type")
+	}
+}
+
+func FindAllArticlesByTagPaginated(tag string, page, size int) ([]model.Article, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var articles []model.Article
+	err := DB.Model(&model.Article{}).Joins("JOIN article_tags ON articles.id = article_tags.article_id").
+		Joins("JOIN tags ON article_tags.tag_id = tags.id").Where("tags.name = ?", tag).Offset(offset).Limit(size).
+		Find(&articles).Error
+	return articles, err
+}
+
+func RemoveTagsFromArticle(tags []model.Tag, article *model.Article) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(article).Association("Tags").Delete(tags)
+	})
+}
+
+func AddTagToGallery(gallery *model.Gallery, tag *model.Tag) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(gallery).Association("Tags").Append(tag)
 	})
 }

@@ -2,7 +2,7 @@
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="background-color: #99ff99;" hx-get="/navbar"
     hx-trigger="session-changed from:body" hx-swap="outerHTML">
     <a href="#" class="navbar-brand" hx-get="/posts?page=1" hx-target="#main-app" hx-swap="innerHTML"
-    hx-replace-url="/posts">Portfol.io</a>
+    hx-push-url="/posts">Portfol.io</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -22,11 +22,11 @@
                     <a href="#" class="dropdown-item" hx-get="/article/create" hx-target="#main-app"
                     hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_space_write_article"}}</a>
                     <a href="#" class="dropdown-item" hx-get="/article/mine?page=1" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true" hx-replace-url="/article/mine">{{Translate .locale "navbar_my_space_my_articles"}}</a>
+                    hx-swap="innerHTML" hx-push-url="/article/mine">{{Translate .locale "navbar_my_space_my_articles"}}</a>
                     <a href="#" class="dropdown-item" hx-get="/gallery/create" hx-target="#main-app"
                     hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_space_create_gallery"}}</a>
                     <a href="#" class="dropdown-item" hx-get="/gallery/mine?page=1" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true" hx-replace-url="/gallery/mine">{{Translate .locale "navbar_my_space_my_galleries"}}</a>
+                    hx-swap="innerHTML" hx-push-url="/gallery/mine">{{Translate .locale "navbar_my_space_my_galleries"}}</a>
                 </div>
             </li>
             <li class="nav-item">

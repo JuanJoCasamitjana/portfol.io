@@ -1,0 +1,25 @@
+{{define "tags"}}
+<div class="container-fluid d-flex flex-wrap">
+    {{range .tags}}
+    <p class="mt-1 mr-2" id="tag-{{.name}}" style="font-size: 1.25rem; color: white;">
+        <span class="badge badge-pill"
+        style="cursor: pointer; background-color: {{.bgColor}};"
+        {{if and (and .post_type .post_id) .add}}
+        hx-post="/{{.post_type}}/{{.post_id}}/tags/{{.name}}"
+        hx-trigger="click"
+        hx-swap="delete"
+        hx-target="#tag-{{.name}}"
+        data-toggle="tooltip"
+        title="{{Translate $.locale "tag_add_to"}}"
+        {{else if and .post_type .post_id}}
+        hx-get="/{{.post_type}}/tag/{{.name}}?page=1"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="#main-app"
+        hx-push-url="/{{.post_type}}/tag/{{.name}}"
+        {{end}}
+        >{{.name}}</span>
+    </p>
+    {{end}}
+</div>
+{{end}}

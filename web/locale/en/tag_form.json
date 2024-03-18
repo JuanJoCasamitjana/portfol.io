@@ -1,0 +1,18 @@
+[
+    {
+        "Key":"search_reults_tag_form",
+        "Default":"Search results:"
+    },
+    {
+        "Key":"tag_form_create_button",
+        "Default":"Create tag"
+    },
+    {
+        "Key":"tag_form_input_placeholder",
+        "Default":"Search..."
+    },
+    {
+        "Key":"tag_form_title",
+        "Default":"Tag article"
+    }
+]

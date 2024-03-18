@@ -17,8 +17,20 @@
         <button hx-delete="/article/delete/{{.id}}" class="btn btn-danger">{{Translate .locale "article_author_delete_button"}}</button>
     </div>
     {{end}}
-    <div class="border border-dark mt-3 rounded mx-auto">
-        <div class="m-3">{{.content}}</div>
+    <div hx-get="/article/{{.id}}/tags" hx-trigger="load, tags-reload from:body" hx-swap="innerHTML"></div>
+    <div class="container row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="border border-dark mt-3 rounded mx-auto">
+                        <div class="m-3">{{.content}}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div hx-get="/tag/create?post-type=article&post-id={{.id}}" hx-swap="innerHTML" hx-trigger="load"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {{end}}

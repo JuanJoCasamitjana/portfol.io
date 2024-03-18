@@ -67,6 +67,7 @@ type Postable interface {
 	GetAuthor() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
+	GetTags() []Tag
 }
 
 func (p BasePost) GetID() uint64 {
@@ -87,6 +88,22 @@ func (p BasePost) GetCreatedAt() time.Time {
 
 func (p BasePost) GetUpdatedAt() time.Time {
 	return p.UpdatedAt
+}
+
+func (a Article) GetTags() []Tag {
+	return a.Tags
+}
+
+func (p Project) GetTags() []Tag {
+	return p.Tags
+}
+
+func (g Gallery) GetTags() []Tag {
+	return g.Tags
+}
+
+func (p Post) GetTags() []Tag {
+	return p.Tags
 }
 
 // AfterCreate is a hook that creates a post after creating an article
@@ -191,4 +208,13 @@ func (g *Gallery) BeforeDelete(tx *gorm.DB) error {
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Delete(&post).Error
 	})
+}
+
+func (t *Tag) ColorOfTag() string {
+	colors := []string{"#C84630", "#FFB627", "#219797", "#6113CD", "#1A5E63"}
+	sum := 0
+	for i := range t.Name {
+		sum += int(t.Name[i])
+	}
+	return colors[sum%5]
 }
