@@ -1,0 +1,26 @@
+[
+    {
+        "Key":"section_new_form_name_label",
+        "Default":"Name of the section"
+    },
+    {
+        "Key":"section_new_form_name_placeholder",
+        "Default":"Enter the name of the section"
+    },
+    {
+        "Key":"section_new_form_submit",
+        "Default":"Create"
+    },
+    {
+        "Key":"section_new_name_short_error",
+        "Default":"The section name must be at least 5 characters long"
+    },
+    {
+        "Key":"section_new_name_invalid_error",
+        "Default":"The section name cannot be your username"
+    },
+    {
+        "Key":"section_new_name_taken_error",
+        "Default":"You already have a section with that name"
+    }
+]

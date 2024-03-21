@@ -190,6 +190,10 @@ func (a *Article) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", a.ID, "article").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&post).Association("Tags").Clear()
+		if err != nil {
+			return err
+		}
 		return tx.Delete(&post).Error
 	})
 }
@@ -198,6 +202,10 @@ func (p *Project) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", p.ID, "project").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&post).Association("Tags").Clear()
+		if err != nil {
+			return err
+		}
 		return tx.Delete(&post).Error
 	})
 }
@@ -206,6 +214,10 @@ func (g *Gallery) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", g.ID, "gallery").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&post).Association("Tags").Clear()
+		if err != nil {
+			return err
+		}
 		return tx.Delete(&post).Error
 	})
 }

@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"section_list_title",
+        "Default":"Sections"
+    },
+    {
+        "Key":"section_list_edit_button",
+        "Default":"Edit section"
+    },
+    {
+        "Key":"section_list_delete_button",
+        "Default":"Delete section"
+    }
+]

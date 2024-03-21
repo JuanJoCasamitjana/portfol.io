@@ -12,8 +12,10 @@
     <div class="mx-auto mt-3">
         <button class="btn btn-info" hx-get="/article/edit/{{.id}}"
         hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "article_author_edit_button"}}</button>
+        {{if not .published}}
         <button class="btn btn-warning" hx-post="/article/publish/{{.id}}"
         hx-target="#main-app" hx-swap="innerHTML">{{Translate .locale "article_author_publish_button"}}</button>
+        {{end}}
         <button hx-delete="/article/delete/{{.id}}" class="btn btn-danger">{{Translate .locale "article_author_delete_button"}}</button>
     </div>
     {{end}}

@@ -27,8 +27,7 @@ func GetPostsPaginated(c echo.Context) error {
 	more := len(posts) == 12
 	next_page_loader := ""
 	if more {
-		next_page_loader = fmt.Sprintf(`<div hx-get="/posts?page=%d" hx=swap="outerHTML"
-		hx-trigger="revealed" hx-replace-url="/posts" class="mb-3 p-3"></div>`, next_page)
+		next_page_loader = fmt.Sprintf("/posts?page=%d", next_page)
 	}
 	data := map[string]any{
 		"posts":     posts_content,
@@ -55,6 +54,8 @@ func convertPostsToDataMap(posts []model.Post) []map[string]interface{} {
 				"createdAt": article.CreatedAt,
 				"updatedAt": article.UpdatedAt,
 				"post_type": "article",
+				"post_id":   posts[i].ID,
+				"published": article.Published,
 			}
 		case "project":
 			project, err := database.FindProjectByID(posts[i].OwnerID)
@@ -68,6 +69,8 @@ func convertPostsToDataMap(posts []model.Post) []map[string]interface{} {
 				"createdAt": project.CreatedAt,
 				"updatedAt": project.UpdatedAt,
 				"post_type": "project",
+				"post_id":   posts[i].ID,
+				"published": project.Published,
 			}
 		case "gallery":
 			gallery, err := database.FindGalleryByID(posts[i].OwnerID)
@@ -88,6 +91,8 @@ func convertPostsToDataMap(posts []model.Post) []map[string]interface{} {
 				"post_type": "gallery",
 				"url":       url,
 				"amount":    num_images,
+				"post_id":   posts[i].ID,
+				"published": gallery.Published,
 			}
 		}
 	}
@@ -175,8 +180,7 @@ func GetMyArticles(c echo.Context) error {
 	more := len(articles_db) == 12
 	next_page_loader := ""
 	if more {
-		next_page_loader = fmt.Sprintf(`<div hx-get="/my_articles?page=%d" hx=swap="outerHTML"
-		hx-trigger="revealed" class="mb-3 p-3"></div>`, next_page)
+		next_page_loader = fmt.Sprintf("/article/mine?page=%d", next_page)
 	}
 	data := map[string]any{
 		"articles":  articles,
@@ -204,7 +208,6 @@ func convertArticlesToDataMap(articles []model.Article) []map[string]interface{}
 
 func GetArticleByID(c echo.Context) error {
 	locale := utils.GetLocale(c)
-	user, _ := GetUserOfSession(c)
 	id_str := c.Param("id")
 	id, err := strconv.ParseUint(id_str, 10, 64)
 	if err != nil {
@@ -214,6 +217,10 @@ func GetArticleByID(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	user, err := GetUserOfSession(c)
+	if !article.Published && (err != nil || user.Username != article.Author) {
+		return c.String(401, "Unauthorized")
+	}
 	isAuthor := user.Username == article.Author
 	data := map[string]any{
 		"id":        article.ID,
@@ -222,6 +229,7 @@ func GetArticleByID(c echo.Context) error {
 		"createdAt": article.CreatedAt.Format("2006-01-02 15:04:05"),
 		"updatedAt": article.UpdatedAt.Format("2006-01-02 15:04:05"),
 		"content":   template.HTML(article.Content),
+		"published": article.Published,
 		"locale":    locale,
 		"isAuthor":  isAuthor,
 	}
@@ -619,6 +627,11 @@ func GetGalleryByID(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	user, err := GetUserOfSession(c)
+	if !gallery.Published && (err != nil || user.Username != gallery.Author) {
+		return c.String(401, "Unauthorized")
+	}
+	isAuthor := user.Username == gallery.Author
 	images := convertImagesToDataMap(gallery.Images)
 	data := map[string]any{
 		"id":        gallery.ID,
@@ -626,8 +639,10 @@ func GetGalleryByID(c echo.Context) error {
 		"author":    gallery.Author,
 		"createdAt": gallery.CreatedAt,
 		"updatedAt": gallery.UpdatedAt,
+		"published": gallery.Published,
 		"images":    images,
 		"locale":    locale,
+		"isAuthor":  isAuthor,
 	}
 	return c.Render(200, "gallery", data)
 }
@@ -652,8 +667,7 @@ func GetMyGalleries(c echo.Context) error {
 	more := len(galleries_db) == 12
 	next_page_loader := ""
 	if more {
-		next_page_loader = fmt.Sprintf(`<div hx-get="/gallery/mine?page=%d" hx=swap="outerHTML"
-		hx-trigger="revealed" class="mb-3 p-3"></div>`, next_page)
+		next_page_loader = fmt.Sprintf("/gallery/mine?page=%d", next_page)
 	}
 	data := map[string]any{
 		"locale":    locale,
@@ -680,6 +694,10 @@ func DeleteGallery(c echo.Context) error {
 	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
+	}
+	err = database.RemoveTagsFromGallery(gallery.Tags, &gallery)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
 	}
 	err = database.DeleteGallery(&gallery)
 	if err != nil {
@@ -709,6 +727,55 @@ func convertGalleriesToDataMap(galleries_db []model.Gallery, showBadge bool) []m
 		}
 	}
 	return galleries
+}
+
+func EditGalleryForm(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	id_str := c.Param("id")
+	id, err := strconv.ParseUint(id_str, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindGalleryByID(id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	data := map[string]any{
+		"id":          gallery.ID,
+		"locale":      locale,
+		"value_title": gallery.Title,
+	}
+	return c.Render(200, "gallery_form", data)
+}
+
+func EditGallery(c echo.Context) error {
+	id_str := c.Param("id")
+	id, err := strconv.ParseUint(id_str, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	title := c.FormValue("title")
+	data := map[string]any{
+		"title":  title,
+		"locale": utils.GetLocale(c),
+	}
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.Render(200, "gallery_form", data)
+	}
+	gallery, err := database.FindGalleryByID(id)
+	if err != nil {
+		return c.Render(200, "gallery_form", data)
+	}
+	if gallery.Author != user.Username {
+		return c.String(401, "Unauthorized")
+	}
+	gallery.Title = title
+	err = database.UpdateGallery(&gallery)
+	if err != nil {
+		return c.Render(200, "gallery_form", data)
+	}
+	return c.Render(200, "success", nil)
 }
 
 func GetTagsOfGallery(c echo.Context) error {
@@ -764,6 +831,35 @@ func AddTagToGallery(c echo.Context) error {
 	}
 	c.Response().Header().Set("HX-Trigger", "tags-reload")
 	return c.String(200, "Tag added successfully!")
+}
+
+func GalleriesByTagPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	tagName := c.Param("name")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	galleries_db, err := database.FindAllGalleriesByTagPaginated(tagName, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	galleries := convertGalleriesToDataMap(galleries_db, false)
+	next_page := page + 1
+	more := len(galleries_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf("/gallery/tag/%s?page=%d", tagName, next_page)
+	}
+	data := map[string]any{
+		"galleries": galleries,
+		"locale":    locale,
+		"more":      more,
+		"next_page": template.HTML(next_page_loader),
+		"tag":       tagName,
+	}
+	return c.Render(200, "gallery_list", data)
 }
 
 // Tags are used in articles, projects and galleries
@@ -892,8 +988,7 @@ func ArticlesByTagPaginated(c echo.Context) error {
 	more := len(articles_db) == 12
 	next_page_loader := ""
 	if more {
-		next_page_loader = fmt.Sprintf(`<div hx-get="/article/tag/%s?page=%d" hx=swap="outerHTML"
-		hx-trigger="revealed" class="mb-3 p-3"></div>`, tagName, next_page)
+		next_page_loader = fmt.Sprintf("/article/tag/%s?page=%d", tagName, next_page)
 	}
 	data := map[string]any{
 		"articles":  articles,

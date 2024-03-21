@@ -1,0 +1,26 @@
+[
+    {
+        "Key":"section_new_form_name_label",
+        "Default":"Nombre de la sección"
+    },
+    {
+        "Key":"section_new_form_name_placeholder",
+        "Default":"Escribe el nombre de la sección"
+    },
+    {
+        "Key":"section_new_form_submit",
+        "Default":"Crear"
+    },
+    {
+        "Key":"section_new_name_short_error",
+        "Default":"El nombre de la sección debe tener al menos 5 caracteres"
+    },
+    {
+        "Key":"section_new_name_invalid_error",
+        "Default":"El nombre de sección no puede ser tu nombre de usuario"
+    },
+    {
+        "Key":"section_new_name_taken_error",
+        "Default":"Ya tienes una sección con ese nombre"
+    }
+]

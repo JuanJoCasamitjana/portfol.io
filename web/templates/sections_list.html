@@ -1,0 +1,22 @@
+{{define "sections_list"}}
+<div class="container">
+    <h1>{{Translate .locale "section_list_title"}}</h1>
+    {{range .sections}}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <div class="m-1 border">
+            <h2>{{.}}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-danger m-1" hx-delete="/profile/{{$.username}}/sections/{{.}}" hx-target="#main-app"
+            hx-swap="innerHTML">{{Translate $.locale "section_list_delete_button"}}</button>
+            <button class="btn btn-warning m-1" hx-get="/profile/{{$.username}}/edit/sections/{{.}}" hx-target="#main-app"
+            >{{Translate $.locale "section_list_edit_button"}}</button>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    {{end}}
+</div>
+{{end}}

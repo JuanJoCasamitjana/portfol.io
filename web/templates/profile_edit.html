@@ -1,0 +1,45 @@
+{{define "profile_edit"}}
+<div class="container">
+    <form hx-post="/profile/mine/edit" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
+        <h2>@{{.username}}</h2>
+        <label for="fullname">{{Translate .locale "profile_edit_fullname_label"}}</label>
+        <div class="input-group has-validation">
+            <input type="text" class="form-control {{if .errors.fullname}} is-invalid {{end}} rounded mb-1" 
+            id="fullname" name="fullname" value="{{.fullname}}"
+            placeholder="{{Translate .locale "profile_edit_fullname_placeholder"}}">
+            {{if .errors.fullname}}
+            <div class="invalid-feedback">{{.errors.fullname}}</div>
+            {{end}}
+        </div>
+        <label for="email">{{Translate .locale "profile_edit_email_label"}}</label>
+        <div class="input-group has-validation">
+            <input type="email" class="form-control {{if .errors.email}} is-invalid {{end}} rounded mb-1" 
+            id="email" name="email" value="{{.email}}"
+            placeholder="{{Translate .locale "profile_edit_email_placeholder"}}">
+            {{if .errors.email}}
+            <div class="invalid-feedback">{{.errors.email}}</div>
+            {{end}}
+        </div>
+        <label for="bio">{{Translate .locale "profile_edit_bio_label"}}</label>
+        <div class="input-group has-validation">
+            <textarea class="form-control {{if .errors.bio}} is-invalid {{end}} rounded mb-1" id="bio" name="bio"
+            placeholder="{{Translate .locale "profile_edit_bio_placeholder"}}">{{.bio}}</textarea>
+            {{if .errors.bio}}
+            <div class="invalid-feedback">{{.errors.bio}}</div>
+            {{end}}
+        </div>
+        <label for="avatar">{{Translate .locale "profile_edit_avatar_label"}}</label>
+        {{if not (eq .avatar "")}}
+        <img src="{{.avatar}}" alt="{{Translate .locale "profile_edit_current_avatar"}}">
+        {{end}}
+        <div class="input-group has-validation">
+            <input class="form-control {{if .errors.avatar}} is-invalid {{end}} rounded mb-1" 
+            type="file" accept="image/png, image/jpeg" id="avatar" name="avatar">
+            {{if .errors.avatar}}
+            <div class="invalid-feedback">{{.errors.avatar}}</div>
+            {{end}}
+        </div>
+        <button class="btn btn-primary mt-3">{{Translate .locale "profile_edit_submit"}}</button>
+    </form>
+</div>
+{{end}}

@@ -1,0 +1,46 @@
+[
+    {
+        "Key":"profile_edit_fullname_label",
+        "Default":"Nombre completo"
+    },
+    {
+        "Key":"profile_edit_fullname_placeholder",
+        "Default":"Tu nombre completo"
+    },
+    {
+        "Key":"profile_edit_email_label",
+        "Default":"Email"
+    },
+    {
+        "Key":"profile_edit_email_placeholder",
+        "Default":"tuemail@example.com"
+    },
+    {
+        "Key":"profile_edit_bio_label",
+        "Default":"Bio"
+    },
+    {
+        "Key":"profile_edit_bio_placeholder",
+        "Default":"Escribe algo sobre ti"
+    },
+    {
+        "Key":"profile_edit_avatar_label",
+        "Default":"Avatar"
+    },
+    {
+        "Key":"profile_edit_current_avatar",
+        "Default":"Tu avatar actual"
+    },
+    {
+        "Key":"profile_edit_submit",
+        "Default":"Enviar"
+    },
+    {
+        "Key":"profile_edit_email_invalid_error",
+        "Default":"El email no es válido o ya está en uso"
+    },
+    {
+        "Key":"profile_edit_avatar_server_error",
+        "Default":"Hubo un error al subir el avatar"
+    }
+]

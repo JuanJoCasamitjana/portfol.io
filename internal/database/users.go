@@ -23,3 +23,122 @@ func FindUserByUsername(username string) (model.User, error) {
 	result := DB.Where("username = ?", username).First(&user)
 	return user, result.Error
 }
+
+func UpdateUser(user *model.User) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		result := tx.Save(user)
+		return result.Error
+	})
+}
+
+func FindUserByEmail(email string) (model.User, error) {
+	var user model.User
+	result := DB.Where("email = ?", email).First(&user)
+	return user, result.Error
+}
+
+func FindSectionsByUser(username string) ([]model.Section, error) {
+	var sections []model.Section
+	result := DB.Where("owner = ?", username).Find(&sections)
+	return sections, result.Error
+}
+
+func FindPostsByUserPaginated(username string, page, page_size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * page_size
+	var posts []model.Post
+	result := DB.Where("author = ? AND published = ?", username, true).Order("updated_at desc").Offset(offset).
+		Limit(page_size).Find(&posts).Error
+	return posts, result
+}
+
+func FindSectionByUsernameAndName(username, name string) (model.Section, error) {
+	var section model.Section
+	result := DB.Where("owner = ? AND name = ?", username, name).Preload("Posts").First(&section)
+	return section, result.Error
+}
+
+func FindPostsByUserAndSectionPaginated(username, section string, page, page_size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * page_size
+	var posts []model.Post
+	//Section has a many to many relationship with posts and posts has no foreign key to section
+	//So we need to do a subquery to get the posts
+	result := DB.Where("author = ? AND published = true AND id IN (SELECT post_id FROM section_posts WHERE section_id = (SELECT id FROM sections WHERE owner = ? AND name = ?))", username, username, section).
+		Order("updated_at desc").Offset(offset).Limit(page_size).Find(&posts).Error
+	return posts, result
+}
+
+func CreateSection(section *model.Section) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		result := tx.Create(section)
+		return result.Error
+	})
+}
+
+func AddPostToSection(section *model.Section, post *model.Post) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(section).Association("Posts").Append(post)
+	})
+}
+
+func RemovePostFromSection(section *model.Section, post *model.Post) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(section).Association("Posts").Delete(post)
+	})
+}
+
+func FindPostsByUserNotInSectionPaginated(username, section string, page, page_size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * page_size
+	var posts []model.Post
+	//Section has a many to many relationship with posts and posts has no foreign key to section
+	//So we need to do a subquery to get the posts
+	result := DB.Where("author = ? AND published = true AND id NOT IN (SELECT post_id FROM section_posts WHERE section_id = (SELECT id FROM sections WHERE owner = ? AND name = ?))", username, username, section).
+		Order("updated_at desc").Offset(offset).Limit(page_size).Find(&posts).Error
+	return posts, result
+}
+
+func DeleteSectionByUsernameAndName(username, name string) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		result := tx.Where("owner = ? AND name = ?", username, name).Delete(&model.Section{})
+		return result.Error
+	})
+}
+
+func DeleteUser(user *model.User) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Where("author = ?", user.Username).Delete(&model.Post{}).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("owner = ?", user.Username).Delete(&model.Section{}).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("author = ?", user.Username).Delete(&model.Article{}).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("author = ?", user.Username).Delete(&model.Gallery{}).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("owner = ?", user.Username).Delete(&model.Image{}).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("author = ?", user.Username).Delete(&model.Project{}).Error
+		if err != nil {
+			return err
+		}
+		return tx.Delete(user).Error
+
+	})
+}

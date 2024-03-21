@@ -1,0 +1,26 @@
+[
+    {
+        "Key":"profile_owner_button_edit",
+        "Default":"Editar Perfil"
+    },
+    {
+        "Key":"profile_owner_button_change_password",
+        "Default":"Cambiar Contraseña"
+    },
+    {
+        "Key":"profile_owner_button_delete_profile",
+        "Default":"Eliminar Perfil"
+    },
+    {
+        "Key":"profile_visitor_button_follow",
+        "Default":"Seguir"
+    },
+    {
+        "Key":"profile_owner_button_create_new_section",
+        "Default":"Crear nueva sección"
+    },
+    {
+        "Key":"profile_owner_button_edit_my_sections",
+        "Default":"Editar mis secciones"
+    }
+]

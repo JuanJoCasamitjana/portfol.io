@@ -35,6 +35,14 @@ type Profile struct {
 	PfPDeleteUrl string
 }
 
+type Section struct {
+	ID    uint64
+	Name  string
+	Owner string
+	User  User   `gorm:"foreignKey:Owner;references:Username"`
+	Posts []Post `gorm:"many2many:section_posts;"`
+}
+
 func (p *Password) SetPasswordAsHash(password string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {

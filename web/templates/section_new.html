@@ -1,0 +1,18 @@
+{{define "section_new"}}
+<div class="container">
+    <form hx-post="/profile/{{.username}}/create/section" hx-target="#main-app" hx-swap="innerHTML" 
+    enctype="application/x-www-form-urlencoded">
+    <label for="name">{{Translate .locale "section_new_form_name_label"}}</label>
+    <div class="input-group has-validation">
+        <input type="text" name="name" id="name" 
+        class="form-control {{if .errors.name}} is-invalid {{end}} rounded mb-1"
+        placeholder="{{Translate .locale "section_new_form_name_placeholder"}}"
+        value="{{.name}}">
+        {{if .errors.name}}
+        <div class="invalid-feedback">{{.errors.name}}</div>
+        {{end}}
+    </div>
+    <button type="submit" class="btn btn-primary">{{Translate .locale "section_new_form_submit"}}</button>
+    </form>
+</div>
+{{end}}

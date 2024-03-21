@@ -10,7 +10,7 @@
                     hx-get="/article/{{.id}}" hx-push-url="true" hx-target="#main-app">
                         <div class="m-3">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/user/profile/{{.author}}" hx-push-url="true"
+                            <p hx-get="/profile/{{.author}}" hx-push-url="true"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
@@ -25,7 +25,7 @@
                     hx-get="/gallery/{{.id}}" hx-target="#main-app" hx-push-url="true">
                         <div class="card-header">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/user/profile/{{.author}}" hx-push-url="true"
+                            <p hx-get="/profile/{{.author}}" hx-push-url="true"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
@@ -47,6 +47,6 @@
     </div>
 </div>
 {{if .more}}
-{{.nextPage}}
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3"></div>
 {{end}}
 {{end}}

@@ -1,0 +1,32 @@
+{{define "section_edit"}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{.name}}</h1>
+            <button class="btn btn-danger">{{Translate .locale "section_edit_button_delete"}}</button>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>{{Translate .locale "section_edit_added_posts"}}</h2>
+                </div>
+                <div class="col-md-12" hx-get="/profile/{{.username}}/posts/in/{{.name}}" hx-trigger="load, section-changed from:body" 
+                hx-swap="innerHTML"
+                ></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>{{Translate .locale "section_edit_not_added_posts"}}</h2>
+                </div>
+                <div class="col-md-12" hx-get="/profile/{{.username}}/posts/not-in/{{.name}}" hx-trigger="load, section-changed from:body" 
+                hx-swap="innerHTML"
+                ></div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

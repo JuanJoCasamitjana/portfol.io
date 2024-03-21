@@ -11,6 +11,6 @@
 </div>
 {{end}}
 {{if .more}}
-{{.nextPage}}
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3"></div>
 {{end}}
 {{end}}

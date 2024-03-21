@@ -1,0 +1,46 @@
+[
+    {
+        "Key":"profile_edit_fullname_label",
+        "Default":"Full Name"
+    },
+    {
+        "Key":"profile_edit_fullname_placeholder",
+        "Default":"Full Name"
+    },
+    {
+        "Key":"profile_edit_email_label",
+        "Default":"Email"
+    },
+    {
+        "Key":"profile_edit_email_placeholder",
+        "Default":"youremail@example.com"
+    },
+    {
+        "Key":"profile_edit_bio_label",
+        "Default":"Bio"
+    },
+    {
+        "Key":"profile_edit_bio_placeholder",
+        "Default":"Write something about yourself"
+    },
+    {
+        "Key":"profile_edit_avatar_label",
+        "Default":"Avatar"
+    },
+    {
+        "Key":"profile_edit_current_avatar",
+        "Default":"Your current avatar"
+    },
+    {
+        "Key":"profile_edit_submit",
+        "Default":"Send"
+    },
+    {
+        "Key":"profile_edit_email_invalid_error",
+        "Default":"The email is invalid or already in use"
+    },
+    {
+        "Key":"profile_edit_avatar_server_error",
+        "Default":"There was an error uploading the avatar"
+    }
+]

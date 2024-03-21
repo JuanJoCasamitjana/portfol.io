@@ -13,7 +13,7 @@ func FindPostsPaginated(page, page_size int) ([]model.Post, error) {
 	}
 	offset := (page - 1) * page_size
 	var posts []model.Post
-	err := DB.Where("published = ?", true).Offset(offset).Limit(page_size).Find(&posts).Error
+	err := DB.Where("published = ?", true).Order("updated_at desc").Offset(offset).Limit(page_size).Find(&posts).Error
 	return posts, err
 }
 
@@ -47,7 +47,7 @@ func FindAllArticlesByAuthorPaginated(author string, page, size int) ([]model.Ar
 	}
 	offset := (page - 1) * size
 	var articles []model.Article
-	err := DB.Where("author = ?", author).Offset(offset).Limit(size).Find(&articles).Error
+	err := DB.Where("author = ?", author).Order("updated_at desc").Offset(offset).Limit(size).Find(&articles).Error
 	return articles, err
 }
 
@@ -99,7 +99,7 @@ func FindAllGalleriesByAuthorPaginated(author string, page, size int) ([]model.G
 	}
 	offset := (page - 1) * size
 	var galleries []model.Gallery
-	err := DB.Model(&model.Gallery{}).Where("author = ?", author).Offset(offset).Limit(size).Preload("Images").
+	err := DB.Model(&model.Gallery{}).Where("author = ?", author).Order("updated_at desc").Offset(offset).Limit(size).Preload("Images").
 		Find(&galleries).Error
 	return galleries, err
 }
@@ -160,8 +160,8 @@ func FindAllArticlesByTagPaginated(tag string, page, size int) ([]model.Article,
 	offset := (page - 1) * size
 	var articles []model.Article
 	err := DB.Model(&model.Article{}).Joins("JOIN article_tags ON articles.id = article_tags.article_id").
-		Joins("JOIN tags ON article_tags.tag_id = tags.id").Where("tags.name = ?", tag).Offset(offset).Limit(size).
-		Find(&articles).Error
+		Joins("JOIN tags ON article_tags.tag_id = tags.id").Where("tags.name = ?", tag).Order("updated_at desc").
+		Offset(offset).Limit(size).Find(&articles).Error
 	return articles, err
 }
 
@@ -175,4 +175,28 @@ func AddTagToGallery(gallery *model.Gallery, tag *model.Tag) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(gallery).Association("Tags").Append(tag)
 	})
+}
+
+func RemoveTagsFromGallery(tags []model.Tag, gallery *model.Gallery) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(gallery).Association("Tags").Delete(tags)
+	})
+}
+
+func FindAllGalleriesByTagPaginated(tag string, page, size int) ([]model.Gallery, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var galleries []model.Gallery
+	err := DB.Model(&model.Gallery{}).Preload("Images").Joins("JOIN gallery_tags ON galleries.id = gallery_tags.gallery_id").
+		Joins("JOIN tags ON gallery_tags.tag_id = tags.id").Where("tags.name = ?", tag).Order("updated_at desc").
+		Offset(offset).Limit(size).Find(&galleries).Error
+	return galleries, err
+}
+
+func FindPostById(id uint64) (model.Post, error) {
+	var post model.Post
+	err := DB.First(&post, id).Error
+	return post, err
 }

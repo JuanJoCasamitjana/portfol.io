@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"section_edit_button_delete",
+        "Default":"Eliminar sección"
+    },
+    {
+        "Key":"section_edit_added_posts",
+        "Default":"Publicaciones que has añadido a la sección"
+    },
+    {
+        "Key":"section_edit_not_added_posts",
+        "Default":"Publicaciones que puedes añadir a la sección"
+    }
+]

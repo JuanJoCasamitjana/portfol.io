@@ -1,0 +1,31 @@
+{{define "profile"}}
+<div class="container" id="user-profile">
+    <div class="media border p-3 mt-3">
+        <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+        <div class="media-body">
+            <h4>@{{.username}}</h4>
+            <p>{{.fullname}}</p>
+            <p>{{.email}}</p>
+            <p class="rounded p-2" style="background-color: lightgray;">{{.bio}}</p>
+    </div>
+    {{if .is_current_user}}
+    <div class="container">
+        <button class="btn btn-info mb-1 mr-2" hx-get="/profile/{{.username}}/create/section" hx-target="#main-app" 
+        hx-swap="innerHTML">{{Translate .locale "profile_owner_button_create_new_section"}}</button>
+        <button class="btn btn-dark mb-1 mr-2" hx-get="/profile/{{.username}}/edit/sections" hx-target="#main-app" 
+        hx-swap="innerHTML">{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
+        <button class="btn btn-primary mb-1 mr-2" hx-get="/profile/mine/edit" hx-target="#main-app"
+        hx-swap="innerHTML">{{Translate .locale "profile_owner_button_edit"}}</button>
+        <button class="btn btn-warning mb-1 mr-2" hx-get="/profile/mine/edit/password" hx-target="#main-app"
+        hx-swap="innerHTML">{{Translate .locale "profile_owner_button_change_password"}}</button>
+        <button class="btn btn-danger" hx-delete="/profile/mine" hx-confirm="Are you sure?" hx-target="#main-app"
+        hx-swap="innerHTML">{{Translate .locale "profile_owner_button_delete_profile"}}</button>
+    </div>
+    {{else}}
+    <button class="btn btn-primary">{{Translate .locale "profile_visitor_button_follow"}}</button>
+    {{end}}
+</div>
+<div class="container mt-3" id="user-sections" hx-get="/profile/{{.username}}/sections" 
+hx-swap="innerHTML" hx-trigger="load"></div>
+
+{{end}}

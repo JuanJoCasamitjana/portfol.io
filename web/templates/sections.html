@@ -1,0 +1,28 @@
+{{define "sections"}}
+<div class="container" id="sections">
+    <ul class="nav nav-pills">
+        {{range .sections}}
+        {{if eq . $.section}}
+        <li class="nav-item">
+            <a class="nav-link active" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}">{{.}}</a>
+        </li>
+        {{else}}
+        <li class="nav-item">
+            <a class="nav-link" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}">{{.}}</a>
+        </li>
+        {{end}}
+        {{end}}
+    </ul>
+    <div class="tab-content">
+        {{range .sections}}
+        {{if eq . $.section}}
+        <div class="tab-pane active" id="{{.}}" hx-get="/profile/{{$.username}}/sections/{{.}}?page=1" hx-trigger="revealed">
+        </div>
+        {{else}}
+        <div class="tab-pane" id="{{.}}" hx-get="/profile/{{$.username}}/sections/{{.}}?page=1" hx-trigger="click once from:#{{$.username}}-{{.}}">
+        </div>
+        {{end}}
+        {{end}}
+    </div>
+</div>
+{{end}}

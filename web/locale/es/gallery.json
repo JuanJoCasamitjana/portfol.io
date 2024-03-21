@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"gallery_author_edit_button",
+        "Default":"Editar"
+    },
+    {
+        "Key":"gallery_author_publish_button",
+        "Default":"Publicar"
+    },
+    {
+        "Key":"gallery_author_delete_button",
+        "Default":"Eliminar"
+    }
+]

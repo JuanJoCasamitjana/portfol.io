@@ -32,6 +32,10 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.GET("/gallery/mine", handlers.GetMyGalleries)
 	e.GET("gallery/:id/tags", handlers.GetTagsOfGallery)
 	e.POST("/gallery/:id/tags/:tag", handlers.AddTagToGallery)
+	e.GET("/gallery/tag/:name", handlers.GalleriesByTagPaginated)
+	e.DELETE("/gallery/delete/:id", handlers.DeleteGallery)
+	e.GET("/gallery/edit/:id", handlers.EditGalleryForm)
+	e.POST("/gallery/edit/:id", handlers.EditGallery)
 	//Tags
 	e.POST("/tag/create", handlers.CreateTag)
 	e.GET("/tag/create", handlers.CreateTagForm)

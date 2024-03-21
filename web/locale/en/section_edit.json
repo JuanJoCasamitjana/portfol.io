@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"section_edit_button_delete",
+        "Default":"Delete section"
+    },
+    {
+        "Key":"section_edit_added_posts",
+        "Default":"Posts that you have added to section"
+    },
+    {
+        "Key":"section_edit_not_added_posts",
+        "Default":"Posts that you can add to section"
+    }
+]

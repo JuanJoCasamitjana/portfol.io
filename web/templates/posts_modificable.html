@@ -1,0 +1,32 @@
+{{define "posts_modificable"}}
+<div class="container">
+    {{range .posts}}
+    <div class="row mt-1">
+        <div class="col-md-12">
+            <div class="border {{if not $.add}} border-success {{else}} border-warning {{end}} rounded"
+            {{if $.add}} hx-put="/profile/{{$.username}}/sections/{{$.section}}/edit/{{.post_id}}" 
+            {{else}} hx-delete="/profile/{{$.username}}/sections/{{$.section}}/edit/{{.post_id}}" {{end}}
+            hx-swap="none" style="cursor: pointer;">
+                <div class="m-3">
+                    {{if eq .post_type "article"}}
+                    <div>
+                        <h3>{{.title}}</h3>
+                        <span class="badge badge-secondary">{{Translate $.locale "card_badge_article"}}</span>
+                    </div>
+                    {{else if eq .post_type "gallery"}}
+                    <h3>{{.title}}</h3>
+                    <div>
+                        <span class="badge badge-primary">{{Translate $.locale "card_badge_gallery"}}</span>
+                        <div style=" display: flex; justify-content: center; width: 100%;">
+                            <img src="{{.url}}" alt="{{.title}} {{Translate $.locale "by_preposition"}} {{.author}}" class="img-fluid" style="max-height: 7rem;">
+                            <div class="bg-primary text-center text-light" style="font-size: 2rem;"><p class="mx-3"></p>{{.amount}}</div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{end}}
