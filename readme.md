@@ -19,17 +19,17 @@ Portfol\.io is an example project that aims to provide decent complexity for a h
 
 The idea of the project is to develop a service that allows you to post different kinds of media, such as:
 * Articles and other enriched text posts.
-* Collections of images with small descriptions for each image.
+* Galleries of images with small descriptions for each image.
+* The user's profile can be organized into sections.
+* Users may tag different kinds of posts.
 * Projects, which are links to git repositories. (Work in Progress)
 
-Users have an account where they can post their content and (in the future) organize it into sections:
+Users have an account where they can post their content and organize it into sections:
 * Profiles have some required information and some optional information.
 * Other features have not yet been implemented.
 
 What features are planned for the near future?
 
-* The profile organized into sections.
-* Users may tag different kinds of posts.
 * Users may subscribe to other users. (Email may be required for this)
 * Users can use tags and queries to filter and look for content.
 * Users may upload audio files.
