@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/mail"
 	"strconv"
 
@@ -30,6 +29,22 @@ func GetUserOfSession(c echo.Context) (model.User, error) {
 	return user, nil
 }
 
+func IsAdmin(c echo.Context) bool {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return false
+	}
+	return user.Authority.Level >= model.AUTH_ADMIN.Level
+}
+
+func IsModerator(c echo.Context) bool {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return false
+	}
+	return user.Authority.Level >= model.AUTH_MODERATOR.Level
+}
+
 // Registration process, linked only to register.html template and locale/*/register.json
 func GetRegisterForm(c echo.Context) error {
 	locale := utils.GetLocale(c)
@@ -41,7 +56,7 @@ func GetRegisterForm(c echo.Context) error {
 
 func Register(c echo.Context) error {
 	locale := utils.GetLocale(c)
-	var user model.User
+	user := model.NewUser()
 	username, fullname := c.FormValue("username"), c.FormValue("fullname")
 	password, password2 := c.FormValue("password"), c.FormValue("password2")
 	form_errors := make(map[string]string)
@@ -85,7 +100,6 @@ func Register(c echo.Context) error {
 	}
 	err = login_user_session(user, c)
 	if err != nil {
-		log.Println(err)
 		return c.Render(200, "success", nil)
 	}
 	//Notify HTMX that the session has changed
@@ -246,6 +260,7 @@ func GetMyProfile(c echo.Context) error {
 		"bio":             user.Profile.Bio,
 		"avatar":          user.Profile.PfPUrl,
 		"email":           user.Email,
+		"isActive":        user.Active,
 		"is_current_user": true,
 	}
 	return c.Render(200, "profile", data)
@@ -353,13 +368,26 @@ func GetUserProfile(c echo.Context) error {
 	if err != nil {
 		return c.Render(404, "error", nil)
 	}
+	session_user, _ := GetUserOfSession(c)
+	is_current_user := session_user.Username == user.Username
+	user_follow_list, err := database.FindFollowListByUsername(session_user.Username)
+	if err != nil {
+		user_follow_list = model.FollowList{Owner: session_user.Username}
+		err = database.CreateFollowList(&user_follow_list)
+		if err != nil {
+			return c.String(500, "Internal server error")
+		}
+	}
+	is_following := isFollowing(user_follow_list, user)
 	data := map[string]any{
 		"username":        user.Username,
 		"fullname":        user.FullName,
 		"locale":          utils.GetLocale(c),
 		"bio":             user.Profile.Bio,
 		"avatar":          user.Profile.PfPUrl,
-		"is_current_user": false,
+		"is_current_user": is_current_user,
+		"is_following":    is_following,
+		"isActive":        user.Active,
 	}
 	return c.Render(200, "profile", data)
 }
@@ -438,7 +466,7 @@ func GetUserSectionPaginated(c echo.Context) error {
 func CreateNewSectionForm(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	data := map[string]any{
@@ -451,7 +479,7 @@ func CreateNewSectionForm(c echo.Context) error {
 func CreateNewSection(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	section_name := c.FormValue("name")
@@ -496,7 +524,7 @@ func CreateNewSection(c echo.Context) error {
 
 func AddPostToSection(c echo.Context) error {
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	section_name := c.Param("section")
@@ -523,7 +551,7 @@ func AddPostToSection(c echo.Context) error {
 
 func RemovePostFromSection(c echo.Context) error {
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	section_name := c.Param("section")
@@ -663,6 +691,7 @@ func GetMySectionsList(c echo.Context) error {
 		"locale":   locale,
 		"username": user.Username,
 		"sections": sections_lists,
+		"isActive": user.Active,
 	}
 	return c.Render(200, "sections_list", data)
 }
@@ -670,7 +699,7 @@ func GetMySectionsList(c echo.Context) error {
 func GetSectionEdit(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	section_name := c.Param("section")
@@ -684,4 +713,293 @@ func GetSectionEdit(c echo.Context) error {
 		"name":     section.Name,
 	}
 	return c.Render(200, "section_edit", data)
+}
+
+func FollowUser(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	username := c.Param("username")
+	if user.Username == username {
+		return c.String(400, "Bad request")
+	}
+	user_to_be_followed, err := database.FindUserByUsername(username)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	user_follow_list, err := database.FindFollowListByUsername(user.Username)
+	if err != nil {
+		user_follow_list = model.FollowList{Owner: user.Username}
+		err = database.CreateFollowList(&user_follow_list)
+		if err != nil {
+			return c.String(500, "Internal server error")
+		}
+	}
+	err = database.FollowUser(&user_follow_list, &user_to_be_followed)
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	data := map[string]any{
+		"username":     user_to_be_followed.Username,
+		"locale":       locale,
+		"is_following": true,
+	}
+	return c.Render(200, "follow_button", data)
+}
+
+func UnfollowUser(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	username := c.Param("username")
+	if user.Username == username {
+		return c.String(400, "Bad request")
+	}
+	user_to_be_unfollowed, err := database.FindUserByUsername(username)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	user_follow_list, err := database.FindFollowListByUsername(user.Username)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	err = database.UnfollowUser(&user_follow_list, &user_to_be_unfollowed)
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	data := map[string]any{
+		"username":     user_to_be_unfollowed.Username,
+		"locale":       locale,
+		"is_following": false,
+	}
+	return c.Render(200, "follow_button", data)
+}
+
+func isFollowing(follower_follow_list model.FollowList, followed model.User) bool {
+	for _, user := range follower_follow_list.Following {
+		if user.Username == followed.Username {
+			return true
+		}
+	}
+	return false
+}
+
+func FollowingPostsPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	postsDB, err := database.FindFollowingPostsPaginated(user, page, 12)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	posts := convertPostsToDataMap(postsDB)
+	more := len(posts) == 12
+	nextPageLoader := ""
+	if more {
+		nextPageLoader = fmt.Sprintf("/following?page=%d", page+1)
+	}
+	data := map[string]any{
+		"locale":   locale,
+		"username": user.Username,
+		"posts":    posts,
+		"more":     more,
+		"nextPage": nextPageLoader,
+	}
+	return c.Render(200, "posts", data)
+}
+
+func ListWhoIFollow(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	user_follow_list, err := database.FindFollowListByUsername(user.Username)
+	if err != nil {
+		user_follow_list = model.FollowList{Owner: user.Username}
+		err = database.CreateFollowList(&user_follow_list)
+		if err != nil {
+			return c.String(500, "Internal server error")
+		}
+	}
+	users := make([]map[string]any, len(user_follow_list.Following))
+	for i, user := range user_follow_list.Following {
+		users[i] = map[string]any{
+			"username": user.Username,
+			"fullname": user.FullName,
+		}
+	}
+	data := map[string]any{
+		"locale":    locale,
+		"username":  user.Username,
+		"following": users,
+	}
+	return c.Render(200, "following", data)
+}
+
+func GetModDashBoard(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level || !user.Active {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale":   locale,
+		"username": user.Username,
+		"auth":     user.Authority.AuthName,
+	}
+	return c.Render(200, "dashboard", data)
+}
+
+func GetAdminDashBoard(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	//An admin cannot be banned because it is the highest authority
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale":   locale,
+		"username": user.Username,
+		"auth":     user.Authority.AuthName,
+	}
+	return c.Render(200, "dashboard", data)
+}
+
+func GetUsersListPaginated(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	usersDB, err := database.FindUsersPaginated(page, 12)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	users := convertUsersToDataMap(usersDB, user.Authority.Level, locale)
+	more := len(users) == 12
+	nextPageLoader := ""
+	if more {
+		nextPageLoader = fmt.Sprintf("/moderation/users?page=%d", page+1)
+	}
+	data := map[string]any{
+		"locale":   locale,
+		"users":    users,
+		"more":     more,
+		"nextPage": nextPageLoader,
+	}
+	return c.Render(200, "users_list", data)
+
+}
+
+func convertUsersToDataMap(users []model.User, requester_level uint8, locale string) []map[string]any {
+	users_list := make([]map[string]any, len(users))
+	for i, user := range users {
+		isActionaAvailable := requester_level > user.Authority.Level
+		users_list[i] = map[string]any{
+			"username": user.Username,
+			"fullname": user.FullName,
+			"email":    user.Email,
+			"active":   user.Active,
+			"auth":     user.Authority.AuthName,
+			"avatar":   user.Profile.PfPUrl,
+			"bio":      user.Profile.Bio,
+			"locale":   locale,
+			"action":   isActionaAvailable,
+		}
+	}
+	return users_list
+}
+
+func BanUser(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level || !user.Active {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	username := c.Param("username")
+	user_to_be_banned, err := database.FindUserByUsername(username)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	user_to_be_banned.Active = false
+	err = database.UpdateUser(&user_to_be_banned)
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	data := map[string]any{
+		"username": user_to_be_banned.Username,
+		"fullname": user_to_be_banned.FullName,
+		"email":    user_to_be_banned.Email,
+		"active":   user_to_be_banned.Active,
+		"auth":     user_to_be_banned.Authority.AuthName,
+		"avatar":   user_to_be_banned.Profile.PfPUrl,
+		"bio":      user_to_be_banned.Profile.Bio,
+		"locale":   locale,
+		"action":   true,
+	}
+	return c.Render(200, "user_item", data)
+}
+
+func UnbanUser(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level || !user.Active {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	username := c.Param("username")
+	user_to_be_banned, err := database.FindUserByUsername(username)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	user_to_be_banned.Active = true
+	err = database.UpdateUser(&user_to_be_banned)
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	data := map[string]any{
+		"username": user_to_be_banned.Username,
+		"fullname": user_to_be_banned.FullName,
+		"email":    user_to_be_banned.Email,
+		"active":   user_to_be_banned.Active,
+		"auth":     user_to_be_banned.Authority.AuthName,
+		"avatar":   user_to_be_banned.Profile.PfPUrl,
+		"bio":      user_to_be_banned.Profile.Bio,
+		"locale":   locale,
+		"action":   true,
+	}
+	return c.Render(200, "user_item", data)
+}
+
+func GetConfigChangeForm(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale":                     locale,
+		"imgbb_api_key":              IMGBB_API_KEY,
+		"corporative_email":          utils.FromEmail,
+		"corporative_email_password": utils.FromEmailPassword,
+		"smtp_server":                utils.SmtpHost,
+		"smtp_port":                  utils.SmtpPort,
+	}
+	return c.Render(200, "config_change", data)
 }

@@ -1,0 +1,14 @@
+{{define "dashboard"}} 
+<div class="conatiner mt-3">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" href="#users" data-toggle="tab">
+                {{Translate .locale "dashboard_users_tab"}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" hx-get="/moderation/users" hx-trigger="load" id="users"></div>
+    </div>
+</div>
+{{end}}

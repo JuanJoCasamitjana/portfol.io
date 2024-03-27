@@ -142,3 +142,50 @@ func DeleteUser(user *model.User) error {
 
 	})
 }
+
+func FollowUser(follower_follow_list *model.FollowList, followed *model.User) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(follower_follow_list).Where("owner = ?", follower_follow_list.Owner).
+			Association("Following").Append(followed)
+	})
+}
+
+func UnfollowUser(follower_follow_list *model.FollowList, followed *model.User) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(follower_follow_list).Association("Following").Delete(followed)
+	})
+}
+
+func FindFollowingPostsPaginated(user model.User, page, pageSize int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var posts []model.Post
+	result := DB.Where("author IN (SELECT username FROM follows WHERE owner = ?) AND published = true", user.Username).
+		Order("updated_at desc").Offset(offset).Limit(pageSize).Find(&posts).Error
+	return posts, result
+}
+
+func FindFollowListByUsername(username string) (model.FollowList, error) {
+	var followList model.FollowList
+	result := DB.Where("owner = ?", username).Preload("Following").First(&followList)
+	return followList, result.Error
+}
+
+func CreateFollowList(followList *model.FollowList) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		result := tx.Create(followList)
+		return result.Error
+	})
+}
+
+func FindUsersPaginated(page, pageSize int) ([]model.User, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var users []model.User
+	result := DB.Offset(offset).Limit(pageSize).Find(&users)
+	return users, result.Error
+}

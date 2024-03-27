@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"ban_notice_message_for_user",
+        "Default":"Tu cuenta ha sido restringida, las acciones que puedes realizar son limitadas."
+    },
+    {
+        "Key":"ban_notice_message_for_other",
+        "Default":"Este usuario ha sido restringido"
+    }
+]

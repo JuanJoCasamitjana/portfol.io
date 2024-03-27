@@ -1,8 +1,12 @@
 package model
 
 import (
+	"bytes"
+	"fmt"
+	"text/template"
 	"time"
 
+	"github.com/JuanJoCasamitjana/portfol.io/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -186,6 +190,24 @@ func (g *Gallery) AfterSave(tx *gorm.DB) error {
 	})
 }
 
+func (p *Post) AfterCreate(tx *gorm.DB) error {
+	owner := p.User
+	var users_to_notify []User
+	tx.Model(&User{}).Where("username IN (SELECT username FROM follows WHERE owner = ?)", owner.Username).
+		Find(&users_to_notify)
+	var emails []string
+	for _, user := range users_to_notify {
+		emails = append(emails, user.Email)
+	}
+	data := map[string]any{
+		"title":  p.Title,
+		"author": p.Author,
+		"type":   p.OwnerType,
+	}
+	go sendNotification(emails, data)
+	return nil
+}
+
 func (a *Article) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", a.ID, "article").First(&post)
@@ -229,4 +251,14 @@ func (t *Tag) ColorOfTag() string {
 		sum += int(t.Name[i])
 	}
 	return colors[sum%5]
+}
+
+func sendNotification(emails []string, data map[string]any) {
+	var body bytes.Buffer
+	headers := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	subject := fmt.Sprintf("Subject: New %s by %s\n%s\n\n", data["type"], data["author"], headers)
+	body.WriteString(subject)
+	t := template.Must(template.ParseFiles("web/templates/email_notification.html"))
+	t.Execute(&body, data)
+	utils.SendEmailNotification(emails, body.Bytes())
 }

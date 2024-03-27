@@ -12,8 +12,12 @@
         "Default":"Eliminar Perfil"
     },
     {
-        "Key":"profile_visitor_button_follow",
+        "Key":"profile_button_follow",
         "Default":"Seguir"
+    },
+    {
+        "Key":"profile_button_unfollow",
+        "Default":"Dejar de seguir"
     },
     {
         "Key":"profile_owner_button_create_new_section",
@@ -22,5 +26,9 @@
     {
         "Key":"profile_owner_button_edit_my_sections",
         "Default":"Editar mis secciones"
+    },
+    {
+        "Key":"profile_owner_button_following",
+        "Default":"Gente a la que sigo"
     }
 ]

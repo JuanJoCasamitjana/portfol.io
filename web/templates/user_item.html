@@ -1,0 +1,28 @@
+{{define "user_item"}}
+<div class="row" id="{{.username}}">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+    <div class="media border p-3 m-1" 
+    {{if not .active}} style="background-color: #defb7b;" {{else}} style="background-color: #7bfb8c;" {{end}}>
+        <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+        <div class="media-body">
+            <h4>@{{.username}}</h4>
+            <h5><i>{{.fullname}}</i></h5>
+            <p>{{.bio}}</p>
+            <div class="container">
+                {{if and .active .action}}
+                <button class="btn btn-danger" hx-post="/moderation/deactivate/{{.username}}" hx-swap="outerHTML" 
+                hx-target="#{{.username}}" hx-confirm="Are you sure?"
+                >{{Translate .locale "users_list_button_dectivate"}}</button>
+                {{else if and (not .active) .action}}
+                <button class="btn btn-dark" hx-post="/moderation/activate/{{.username}}" hx-swap="outerHTML"
+                hx-target="#{{.username}}" hx-confirm="Are you sure?"
+                >{{Translate .locale "users_list_button_activate"}}</button>
+                {{end}}
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+{{end}}

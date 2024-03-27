@@ -1,0 +1,9 @@
+{{define "ban_notice"}}
+<div class="alert alert-danger">
+    {{if .is_current_user}}
+    <strong>{{Translate .locale "ban_notice_message_for_user"}}</strong>
+    {{else}}
+    <strong>{{Translate .locale "ban_notice_message_for_other"}}</strong>
+    {{end}}
+</div>
+{{end}}

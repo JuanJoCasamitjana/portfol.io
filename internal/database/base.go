@@ -40,7 +40,40 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = DB.AutoMigrate(model.User{}, model.Article{}, model.Project{}, model.Image{}, model.Gallery{}, model.Post{}, model.Section{})
+	err = DB.AutoMigrate(model.User{}, model.Article{}, model.Project{}, model.Image{}, model.Gallery{}, model.Post{}, model.Section{}, &model.FollowList{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	godotenv.Load()
+	ADMIN_USERNAME := os.Getenv("ADMIN_USERNAME")
+	ADMIN_PASSWORD := os.Getenv("ADMIN_PASSWORD")
+	ADMIN_FULLNAME := os.Getenv("ADMIN_FULLNAME")
+	if ADMIN_USERNAME == "" || ADMIN_PASSWORD == "" {
+		log.Println("Admin username or password not set, you may use the aplication without admin privileges")
+		return
+	}
+	admin := model.User{
+		Username:  ADMIN_USERNAME,
+		Authority: model.AUTH_ADMIN,
+		FullName:  ADMIN_FULLNAME,
+	}
+	err = admin.Password.SetPasswordAsHash(ADMIN_PASSWORD)
+	if err != nil {
+		log.Fatal(err)
+	}
+	admin_db := model.User{}
+	err = DB.Model(admin_db).Where("username = ?", ADMIN_USERNAME).First(&admin_db).Error
+	if err == nil {
+		log.Println("Admin user already exists")
+		return
+	}
+	if err != gorm.ErrRecordNotFound {
+		log.Fatal(err)
+	}
+	err = DB.Transaction(func(tx *gorm.DB) error {
+		tx.Create(&admin)
+		return nil
+	})
 	if err != nil {
 		log.Fatal(err)
 	}

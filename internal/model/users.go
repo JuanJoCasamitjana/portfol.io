@@ -9,21 +9,34 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrPasswordTooLong = errors.New("password too long")
-var ErrPasswordContainsUnsuportedCharacters = errors.New("password contains unsuported characters")
-var ErrInvalidUsername = errors.New("invalid username")
+var (
+	ErrPasswordTooLong                      = errors.New("password too long")
+	ErrPasswordContainsUnsuportedCharacters = errors.New("password contains unsuported characters")
+	ErrInvalidUsername                      = errors.New("invalid username")
+	AUTH_BASE_USER                          = Authority{AuthName: "User", Level: 0}
+	AUTH_MODERATOR                          = Authority{AuthName: "Moderator", Level: 1}
+	AUTH_ADMIN                              = Authority{AuthName: "Admin", Level: 255}
+)
 
 type User struct {
-	ID        uint64
-	Username  string   `gorm:"unique"`
-	Password  Password `gorm:"embedded"`
-	Profile   Profile  `gorm:"embedded"`
-	Email     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	FullName  string
+	ID         uint64
+	Username   string   `gorm:"unique"`
+	Password   Password `gorm:"embedded"`
+	Profile    Profile  `gorm:"embedded"`
+	Email      string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	FullName   string
+	FollowList FollowList `gorm:"foreignKey:Owner;references:Username"`
+	Active     bool       `gorm:"default:true"`
+	Authority
 }
 
+type FollowList struct {
+	ID        uint64
+	Owner     string `gorm:"unique"`
+	Following []User `gorm:"many2many:follows;foreignKey:Owner;joinForeignKey:Owner;joinReferences:Username;references:Username"`
+}
 type Password struct {
 	HashedPassword string
 	UpdatedAt      time.Time
@@ -41,6 +54,18 @@ type Section struct {
 	Owner string
 	User  User   `gorm:"foreignKey:Owner;references:Username"`
 	Posts []Post `gorm:"many2many:section_posts;"`
+}
+
+type Authority struct {
+	AuthName string
+	Level    uint8
+}
+
+func NewUser() User {
+	return User{
+		Authority: AUTH_BASE_USER,
+		Active:    true,
+	}
 }
 
 func (p *Password) SetPasswordAsHash(password string) error {

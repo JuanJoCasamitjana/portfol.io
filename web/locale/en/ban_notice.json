@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"ban_notice_message_for_user",
+        "Default":"You have been banned, the actions you can perform are now limited."
+    },
+    {
+        "Key":"ban_notice_message_for_other",
+        "Default":"This is user is banned"
+    }
+]

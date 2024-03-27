@@ -116,7 +116,7 @@ func CreateArticle(c echo.Context) error {
 		"text":   text,
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.Render(200, "article_form", data)
 	}
 	processedHTML, err := processHTML(text)
@@ -142,7 +142,7 @@ func CreateAndPublishArticle(c echo.Context) error {
 		"text":   text,
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.Render(200, "article_form", data)
 	}
 	processedHTML, err := processHTML(text)
@@ -232,6 +232,7 @@ func GetArticleByID(c echo.Context) error {
 		"published": article.Published,
 		"locale":    locale,
 		"isAuthor":  isAuthor,
+		"isActive":  user.Active,
 	}
 	return c.Render(200, "article", data)
 }
@@ -275,6 +276,9 @@ func EditArticle(c echo.Context) error {
 	if err != nil {
 		return c.Render(200, "article_form", data)
 	}
+	if !user.Active {
+		return c.String(401, "Unauthorized")
+	}
 	processedHTML, err := processHTML(text)
 	if err != nil {
 		return c.Render(200, "article_form", data)
@@ -302,7 +306,7 @@ func PublishArticle(c echo.Context) error {
 		return c.String(400, "Bad Request")
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	article, err := database.FindArticleByID(id)
@@ -349,10 +353,6 @@ func DeleteArticle(c echo.Context) error {
 }
 
 func AddTagToArticle(c echo.Context) error {
-	_, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
 	id_str := c.Param("id")
 	article_id, err := strconv.ParseUint(id_str, 10, 64)
 	if err != nil {
@@ -409,7 +409,7 @@ func GetTagsOfArticle(c echo.Context) error {
 func CreateGallery(c echo.Context) error {
 	var gallery model.Gallery
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	gallery.Author = user.Username
@@ -431,7 +431,7 @@ func AddImageToGallery(c echo.Context) error {
 		return c.Render(500, "error", nil)
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
@@ -473,6 +473,10 @@ func AddImageToGallery(c echo.Context) error {
 }
 
 func GetChangeTitleOfGallery(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || !user.Active {
+		return c.String(401, "Unauthorized")
+	}
 	idstr := c.Param("id")
 	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
 	if err != nil {
@@ -497,7 +501,7 @@ func ChangeTitleOfGallery(c echo.Context) error {
 		return c.String(400, "Bad Request")
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
@@ -528,7 +532,7 @@ func PublishGallery(c echo.Context) error {
 		return c.String(400, "Bad Request")
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.String(401, "Unauthorized")
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
@@ -643,6 +647,7 @@ func GetGalleryByID(c echo.Context) error {
 		"images":    images,
 		"locale":    locale,
 		"isAuthor":  isAuthor,
+		"isActive":  user.Active,
 	}
 	return c.Render(200, "gallery", data)
 }
@@ -760,7 +765,7 @@ func EditGallery(c echo.Context) error {
 		"locale": utils.GetLocale(c),
 	}
 	user, err := GetUserOfSession(c)
-	if err != nil {
+	if err != nil || !user.Active {
 		return c.Render(200, "gallery_form", data)
 	}
 	gallery, err := database.FindGalleryByID(id)
@@ -807,10 +812,6 @@ func GetTagsOfGallery(c echo.Context) error {
 }
 
 func AddTagToGallery(c echo.Context) error {
-	_, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
 	idstr := c.Param("id")
 	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
 	if err != nil {
@@ -866,10 +867,6 @@ func GalleriesByTagPaginated(c echo.Context) error {
 func CreateTagForm(c echo.Context) error {
 	postType := c.QueryParam("post-type")
 	postIDstr := c.QueryParam("post-id")
-	_, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
 	data := map[string]any{
 		"locale":   utils.GetLocale(c),
 		"postType": postType,
@@ -882,12 +879,8 @@ func CreateTag(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	postType := c.QueryParam("post-type")
 	postIDstr := c.QueryParam("post-id")
-	_, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
 	name := c.FormValue("query")
-	_, err = database.FindTagByName(name)
+	_, err := database.FindTagByName(name)
 	if err == nil {
 
 		data := map[string]any{
@@ -913,10 +906,6 @@ func CreateTag(c echo.Context) error {
 
 func FindTags(c echo.Context) error {
 	locale := utils.GetLocale(c)
-	_, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
 	query := c.QueryParam("query")
 	postType := c.QueryParam("post-type")
 	postIDstr := c.QueryParam("post-id")

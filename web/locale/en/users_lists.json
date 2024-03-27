@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"users_list_button_dectivate",
+        "Default":"Ban"
+    },
+    {
+        "Key":"users_list_button_activate",
+        "Default":"Unban"
+    }
+]

@@ -4,6 +4,10 @@
         "Default": "Mi Perfil"
     },
     {
+        "Key":"navbar_following",
+        "Default": "Siguiendo"
+    },
+    {
         "Key":"navbar_my_space",
         "Default": "Mi espacio"
     },
@@ -34,5 +38,9 @@
     {
         "Key":"navbar_register",
         "Default": "Registrarse"
+    },
+    {
+        "Key":"navbar_dashboard",
+        "Default": "Panel de control"
     }
 ]

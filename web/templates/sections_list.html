@@ -12,8 +12,10 @@
         <div class="col-md-4">
             <button class="btn btn-danger m-1" hx-delete="/profile/{{$.username}}/sections/{{.}}" hx-target="#main-app"
             hx-swap="innerHTML">{{Translate $.locale "section_list_delete_button"}}</button>
+            {{if $.isActive}}
             <button class="btn btn-warning m-1" hx-get="/profile/{{$.username}}/edit/sections/{{.}}" hx-target="#main-app"
             >{{Translate $.locale "section_list_edit_button"}}</button>
+            {{end}}
         </div>
         <div class="col-md-2"></div>
     </div>

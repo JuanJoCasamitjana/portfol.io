@@ -42,7 +42,7 @@ func SetUpAndRunServer() {
 	}
 	defer logFile.Close()
 
-	mw := io.MultiWriter(os.Stdout, logFile)
+	mw := io.MultiWriter(os.Stdout)
 	log.SetOutput(mw)
 
 	e.Use(middleware.LoggerWithConfig(

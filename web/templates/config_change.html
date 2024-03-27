@@ -1,0 +1,50 @@
+{{define "config_change"}}
+<form action="">
+    <label for="imgbb_api_key">{{Translate .locale "config_change_imgbb_api_key_label"}}</label>
+    <div class="input-group has-validation">
+        <input id="imgbb_api_key" name="imgbb_api_key" type="text"  
+        class="form-control rounded  mb-1 {{if .errors.imgbb_api_key}} is-invalid {{end}}"
+        value="{{.imgbb_api_key}}">
+        {{if .errors.imgbb_api_key}}
+            <div class="invalid-feedback">{{.errors.imgbb_api_key}}</div>
+        {{end}}
+    </div>
+    <label for="imgbb_api_key">{{Translate .locale "config_change_corporative_email_label"}}</label>
+    <div class="input-group has-validation">
+        <input type="email" name="corporative_email" id="corporative_email" 
+        class="form-control rounded mb-1 {{if .errors.corporative_email}} is-invalid {{end}}"
+        value="{{.corporative_email}}">
+        {{if .errors.corporative_email}}
+            <div class="invalid-feedback">{{.errors.corporative_email}}</div>
+        {{end}}
+    </div>
+    <label for="imgbb_api_key">{{Translate .locale "config_change_corporative_email_password_label"}}</label>
+    <div class="input-group has-validation">
+        <input type="password" name="corporative_email_password" id="corporative_email_password" 
+        class="form-control rounded mb-1 {{if .errors.corporative_email_password}} is-invalid {{end}}"
+        value="{{.corporative_email_password}}">
+        {{if .errors.corporative_email_password}}
+            <div class="invalid-feedback">{{.errors.corporative_email_password}}</div>
+        {{end}}
+    </div>
+    <label for="imgbb_api_key">{{Translate .locale "config_change_smtp_server_label"}}</label>
+    <div class="input-group has-validation">
+        <input type="text" name="smtp_server" id="smtp_server" 
+        class="form-control rounded mb-1 {{if .errors.smtp_server}} is-invalid {{end}}"
+        value="{{.smtp_server}}">
+        {{if .errors.smtp_server}}
+            <div class="invalid-feedback">{{.errors.smtp_server}}</div>
+        {{end}}
+    </div>
+    <label for="imgbb_api_key">{{Translate .locale "config_change_smtp_port_label"}}</label>
+    <div class="input-group has-validation">
+        <input type="text" name="smtp_port" id="smtp_port" 
+        class="form-control rounded mb-1 {{if .errors.smtp_port}} is-invalid {{end}}"
+        value="{{.smtp_port}}">
+        {{if .errors.smtp_port}}
+            <div class="invalid-feedback">{{.errors.smtp_port}}</div>
+        {{end}}
+    </div>
+    <button type="submit" class="btn btn-dark">{{Translate .locale "config_change_submit_button"}}</button>
+</form>
+{{end}}

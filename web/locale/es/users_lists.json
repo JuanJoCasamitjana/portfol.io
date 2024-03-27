@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"users_list_button_dectivate",
+        "Default":"Desactivar"
+    },
+    {
+        "Key":"users_list_button_activate",
+        "Default":"Restaurar"
+    }
+]
