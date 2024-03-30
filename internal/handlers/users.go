@@ -857,7 +857,7 @@ func GetModDashBoard(c echo.Context) error {
 	data := map[string]any{
 		"locale":   locale,
 		"username": user.Username,
-		"auth":     user.Authority.AuthName,
+		"isAdmin":  user.Authority.Level == model.AUTH_ADMIN.Level,
 	}
 	return c.Render(200, "dashboard", data)
 }
@@ -872,7 +872,7 @@ func GetAdminDashBoard(c echo.Context) error {
 	data := map[string]any{
 		"locale":   locale,
 		"username": user.Username,
-		"auth":     user.Authority.AuthName,
+		"isAdmin":  user.Authority.Level == model.AUTH_ADMIN.Level,
 	}
 	return c.Render(200, "dashboard", data)
 }
@@ -997,9 +997,127 @@ func GetConfigChangeForm(c echo.Context) error {
 		"locale":                     locale,
 		"imgbb_api_key":              IMGBB_API_KEY,
 		"corporative_email":          utils.FromEmail,
-		"corporative_email_password": utils.FromEmailPassword,
+		"corporative_email_password": string(utils.FromEmailPassword),
 		"smtp_server":                utils.SmtpHost,
 		"smtp_port":                  utils.SmtpPort,
 	}
 	return c.Render(200, "config_change", data)
+}
+
+func ChangeConfig(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	imgbb_api_key := c.FormValue("imgbb_api_key")
+	corporative_email := c.FormValue("corporative_email")
+	corporative_email_password := c.FormValue("corporative_email_password")
+	smtp_server := c.FormValue("smtp_server")
+	smtp_port := c.FormValue("smtp_port")
+	form_errors := make(map[string]string)
+	if imgbb_api_key == "" {
+		form_errors["imgbb_api_key"] = utils.Translate(locale, "config_change_imgbb_api_key_error")
+	}
+	if corporative_email == "" {
+		form_errors["corporative_email"] = utils.Translate(locale, "config_change_corporative_email_error")
+	}
+	if !isValidEmail(corporative_email, user) {
+		form_errors["corporative_email"] = utils.Translate(locale, "config_change_corporative_email_invalid_error")
+	}
+	if corporative_email_password == "" {
+		form_errors["corporative_email_password"] = utils.Translate(locale, "config_change_corporative_email_password_error")
+	}
+	if smtp_server == "" {
+		form_errors["smtp_server"] = utils.Translate(locale, "config_change_smtp_server_error")
+	}
+	if smtp_port == "" {
+		form_errors["smtp_port"] = utils.Translate(locale, "config_change_smtp_port_error")
+	}
+	if len(form_errors) > 0 {
+		data := map[string]any{
+			"locale":                     locale,
+			"errors":                     form_errors,
+			"imgbb_api_key":              imgbb_api_key,
+			"corporative_email":          corporative_email,
+			"corporative_email_password": corporative_email_password,
+			"smtp_server":                smtp_server,
+			"smtp_port":                  smtp_port,
+		}
+		return c.Render(200, "config_change", data)
+	}
+	IMGBB_API_KEY = imgbb_api_key
+	utils.FromEmail = corporative_email
+	utils.FromEmailPassword = []byte(corporative_email_password)
+	utils.SmtpHost = smtp_server
+	utils.SmtpPort = smtp_port
+	data := map[string]any{
+		"locale":  locale,
+		"message": utils.Translate(locale, "config_change_success"),
+	}
+	return c.Render(200, "config_change", data)
+}
+
+func CreateNewModeratorForm(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "moderator_new", data)
+}
+
+func CreateNewModerator(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	password2 := c.FormValue("password_2")
+	form_errors := make(map[string]string)
+	_, err = database.FindUserByUsername(username)
+	if err == nil {
+		form_errors["username"] = utils.Translate(locale, "moderator_new_username_taken_error")
+	}
+	new_mod := model.NewUser()
+	err = new_mod.ValidateAndSetUsername(username)
+	if err != nil {
+		form_errors["username"] = utils.Translate(locale, "moderator_new_username_invalid_error")
+	}
+	err = new_mod.Password.ValidateAndSetPassword(password)
+	if err != nil {
+		form_errors["password"] = utils.Translate(locale, "moderator_new_password_invalid_error")
+	}
+	if password != password2 {
+		form_errors["password_2"] = utils.Translate(locale, "moderator_new_password_mismatch_error")
+	}
+	if len(form_errors) > 0 {
+		data := map[string]any{
+			"locale":   locale,
+			"errors":   form_errors,
+			"username": username,
+		}
+		return c.Render(200, "moderator_new", data)
+	}
+	new_mod.Authority = model.AUTH_MODERATOR
+	err = database.CreateUser(&new_mod)
+	if err != nil {
+		form_errors["other"] = utils.Translate(locale, "moderator_new_error")
+		data := map[string]any{
+			"locale":   locale,
+			"errors":   form_errors,
+			"username": username,
+		}
+		return c.Render(200, "moderator_new", data)
+	}
+	data := map[string]any{
+		"locale":  locale,
+		"message": utils.Translate(locale, "moderator_new_success"),
+	}
+	return c.Render(200, "moderator_new", data)
 }

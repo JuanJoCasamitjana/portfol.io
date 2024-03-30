@@ -1,10 +1,13 @@
 {{define "config_change"}}
-<form action="">
+<form hx-post="/admin/tools/config" hx-target="#config" hx-swap="innerHTML">
+    {{if .message}}
+    {{template "notice_success" .message}}
+    {{end}}
     <label for="imgbb_api_key">{{Translate .locale "config_change_imgbb_api_key_label"}}</label>
     <div class="input-group has-validation">
         <input id="imgbb_api_key" name="imgbb_api_key" type="text"  
         class="form-control rounded  mb-1 {{if .errors.imgbb_api_key}} is-invalid {{end}}"
-        value="{{.imgbb_api_key}}">
+        value="{{.imgbb_api_key}}" required>
         {{if .errors.imgbb_api_key}}
             <div class="invalid-feedback">{{.errors.imgbb_api_key}}</div>
         {{end}}
@@ -13,7 +16,7 @@
     <div class="input-group has-validation">
         <input type="email" name="corporative_email" id="corporative_email" 
         class="form-control rounded mb-1 {{if .errors.corporative_email}} is-invalid {{end}}"
-        value="{{.corporative_email}}">
+        value="{{.corporative_email}}" required>
         {{if .errors.corporative_email}}
             <div class="invalid-feedback">{{.errors.corporative_email}}</div>
         {{end}}
@@ -22,7 +25,7 @@
     <div class="input-group has-validation">
         <input type="password" name="corporative_email_password" id="corporative_email_password" 
         class="form-control rounded mb-1 {{if .errors.corporative_email_password}} is-invalid {{end}}"
-        value="{{.corporative_email_password}}">
+        value="{{.corporative_email_password}}" required>
         {{if .errors.corporative_email_password}}
             <div class="invalid-feedback">{{.errors.corporative_email_password}}</div>
         {{end}}
@@ -31,7 +34,7 @@
     <div class="input-group has-validation">
         <input type="text" name="smtp_server" id="smtp_server" 
         class="form-control rounded mb-1 {{if .errors.smtp_server}} is-invalid {{end}}"
-        value="{{.smtp_server}}">
+        value="{{.smtp_server}}" required>
         {{if .errors.smtp_server}}
             <div class="invalid-feedback">{{.errors.smtp_server}}</div>
         {{end}}
@@ -40,7 +43,7 @@
     <div class="input-group has-validation">
         <input type="text" name="smtp_port" id="smtp_port" 
         class="form-control rounded mb-1 {{if .errors.smtp_port}} is-invalid {{end}}"
-        value="{{.smtp_port}}">
+        value="{{.smtp_port}}" required>
         {{if .errors.smtp_port}}
             <div class="invalid-feedback">{{.errors.smtp_port}}</div>
         {{end}}

@@ -2,5 +2,13 @@
     {
         "Key":"dashboard_users_tab",
         "Default":"Usuarios"
+    },
+    {
+        "Key":"dashboard_config_tab",
+        "Default":"Configuración"
+    },
+    {
+        "Key":"dashboard_moderator_tab",
+        "Default":"Creatr Moderador"
     }
 ]

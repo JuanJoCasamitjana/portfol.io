@@ -1,0 +1,54 @@
+[
+    {
+        "Key":"config_change_imgbb_api_key_label",
+        "Default":"Clave API de ImgBB"
+    },
+    {
+        "Key":"config_change_submit_button",
+        "Default":"Cambiar"
+    },
+    {
+        "Key":"config_change_corporative_email_label",
+        "Default":"Email corporativo"
+    },
+    {
+        "Key":"config_change_corporative_email_password_label",
+        "Default":"Contraseña del email corporativo"
+    },
+    {
+        "Key":"config_change_smtp_server_label",
+        "Default":"Servidor SMTP"
+    },
+    {
+        "Key":"config_change_smtp_port_label",
+        "Default":"Puerto del servidor SMTP"
+    },
+    {
+        "Key":"config_change_imgbb_api_key_error",
+        "Default":"La clave API de ImgBB es requerida"
+    },
+    {
+        "Key":"config_change_corporative_email_error",
+        "Default":"El email corporativo es requerido"
+    },
+    {
+        "Key":"config_change_corporative_email_invalid_error",
+        "Default":"El email corporativo no es válido"
+    },
+    {
+        "Key":"config_change_corporative_email_password_error",
+        "Default":"La contraseña del email corporativo es requerida"
+    },
+    {
+        "Key":"config_change_smtp_server_error",
+        "Default":"La dirección del servidor SMTP es requerido"
+    },
+    {
+        "Key":"config_change_smtp_port_error",
+        "Default":"El puerto del servidor SMTP es requerido"
+    },
+    {
+        "Key":"config_change_success",
+        "Default":"La configuración ha sido cambiada con éxito"
+    }
+]

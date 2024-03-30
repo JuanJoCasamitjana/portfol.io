@@ -1,0 +1,35 @@
+{{define "moderator_new"}}
+<form hx-post="/admin/tools/create/moderator" hx-target="#moderator" hx-swap="innerHTML">
+    {{if .message}}
+    {{template "notice_success" .message}}
+    {{end}}
+    <label for="username">{{Translate .locale "moderator_new_username_label"}}</label>
+    <div class="input-group has-validation">
+        <input id="username" name="username" type="text"  
+        class="form-control rounded  mb-1 {{if .errors.username}} is-invalid {{end}}"
+        value="{{.username}}" required>
+        {{if .errors.username}}
+            <div class="invalid-feedback">{{.errors.username}}</div>
+        {{end}}
+    </div>
+    <label for="password">{{Translate .locale "moderator_new_password_label"}}</label>
+    <div class="input-group has-validation">
+        <input id="password" name="password" type="password"  
+        class="form-control rounded  mb-1 {{if .errors.password}} is-invalid {{end}}"
+        value="{{.password}}" required>
+        {{if .errors.password}}
+            <div class="invalid-feedback">{{.errors.password}}</div>
+        {{end}}
+    </div>
+    <label for="password_2">{{Translate .locale "moderator_new_password_2_label"}}</label>
+    <div class="input-group has-validation">
+        <input id="password_2" name="password_2" type="password"  
+        class="form-control rounded  mb-1 {{if .errors.password_2}} is-invalid {{end}}"
+        value="{{.password_2}}" required>
+        {{if .errors.password_2}}
+            <div class="invalid-feedback">{{.errors.password_2}}</div>
+        {{end}}
+    </div>
+    <button type="submit" class="btn btn-dark">{{Translate .locale "moderator_new_submit_button"}}</button>
+</form>
+{{end}}

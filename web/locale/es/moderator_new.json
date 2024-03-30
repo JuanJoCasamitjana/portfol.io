@@ -1,0 +1,38 @@
+[
+    {
+        "Key":"moderator_new_username_label",
+        "Default":"Nombre de Usuario del Moderador"
+    },
+    {
+        "Key":"moderator_new_password_label",
+        "Default":"Contraseña"
+    },
+    {
+        "Key":"moderator_new_password_2_label",
+        "Default":"Confirmar Contraseña"
+    },
+    {
+        "Key":"moderator_new_submit_button",
+        "Default":"Crear Moderador"
+    },
+    {
+        "Key":"moderator_new_username_invalid_error",
+        "Default":"Los nombres de usuario deben tener entre 5 y 20 caracteres y solo pueden contener letras, números y barras bajas"
+    },
+    {
+        "Key":"moderator_new_username_taken_error",
+        "Default":"El nombre de usuario ya está en uso"
+    },
+    {
+        "Key":"moderator_new_password_invalid_error",
+        "Default":"Las constraseñas deben contener entre 12 y 72 caracteres y pueden tener letras, números y los siguientes caracteres especiales: : !#$%&()*+,-.:;<=>?@[]_{}"
+    },
+    {
+        "Key":"moderator_new_password_mismatch_error",
+        "Default":"Las contraseñas no coinciden"
+    },
+    {
+        "Key":"moderator_new_success",
+        "Default":"El moderador se ha creado con éxito"
+    }
+]

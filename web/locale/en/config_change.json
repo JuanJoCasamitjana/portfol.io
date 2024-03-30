@@ -1,0 +1,54 @@
+[
+    {
+        "Key":"config_change_imgbb_api_key_label",
+        "Default":"ImgBB API Key"
+    },
+    {
+        "Key":"config_change_submit_button",
+        "Default":"Change"
+    },
+    {
+        "Key":"config_change_corporative_email_label",
+        "Default":"Corporative Email"
+    },
+    {
+        "Key":"config_change_corporative_email_password_label",
+        "Default":"Corporative Email Password"
+    },
+    {
+        "Key":"config_change_smtp_server_label",
+        "Default":"SMTP Server"
+    },
+    {
+        "Key":"config_change_smtp_port_label",
+        "Default":"Port of the SMTP Server"
+    },
+    {
+        "Key":"config_change_imgbb_api_key_error",
+        "Default":"The api key is required"
+    },
+    {
+        "Key":"config_change_corporative_email_error",
+        "Default":"The corporative email is required"
+    },
+    {
+        "Key":"config_change_corporative_email_invalid_error",
+        "Default":"The corporative email is not a valid email address"
+    },
+    {
+        "Key":"config_change_corporative_email_password_error",
+        "Default":"The password of the corporative email is required"
+    },
+    {
+        "Key":"config_change_smtp_server_error",
+        "Default":"The address of the SMTP server is required"
+    },
+    {
+        "Key":"config_change_smtp_port_error",
+        "Default":"The port of the SMTP server is required"
+    },
+    {
+        "Key":"config_change_success",
+        "Default":"The configuration has been changed successfully"
+    }
+]

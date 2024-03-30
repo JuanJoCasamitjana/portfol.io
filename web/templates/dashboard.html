@@ -2,13 +2,31 @@
 <div class="conatiner mt-3">
     <ul class="nav nav-pills">
         <li class="nav-item">
-            <a class="nav-link active" href="#users" data-toggle="tab">
+            <a class="nav-link active" href="#users" data-toggle="tab" id="users-tab">
                 {{Translate .locale "dashboard_users_tab"}}
             </a>
         </li>
+        {{if .isAdmin}}
+        <li class="nav-item">
+            <a class="nav-link" href="#config" data-toggle="tab" id="config-tab">
+                {{Translate .locale "dashboard_config_tab"}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#moderator" data-toggle="tab" id="moderator-tab">
+                {{Translate .locale "dashboard_moderator_tab"}}
+            </a>
+        </li>
+        {{end}}
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" hx-get="/moderation/users" hx-trigger="load" id="users"></div>
+        {{if .isAdmin}}
+        <div class="tab-pane" hx-get="/admin/tools/config" hx-trigger="click once from:#config-tab" 
+        id="config"></div>
+        <div class="tab-pane" hx-get="/admin/tools/create/moderator" hx-trigger="click once from:#moderator-tab" 
+        id="moderator"></div>
+        {{end}}
     </div>
 </div>
 {{end}}
