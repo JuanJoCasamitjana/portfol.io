@@ -114,32 +114,66 @@ func DeleteSectionByUsernameAndName(username, name string) error {
 
 func DeleteUser(user *model.User) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Where("author = ?", user.Username).Delete(&model.Post{}).Error
+		var sections []model.Section
+		//var posts []model.Post
+		var articles []model.Article
+		var galleries []model.Gallery
+		var images []model.Image
+		var projects []model.Project
+
+		err := tx.Where("owner = ?", user.Username).Find(&sections).Error
 		if err != nil {
 			return err
 		}
-		err = tx.Where("owner = ?", user.Username).Delete(&model.Section{}).Error
+		//tx.Where("author = ?", user.Username).Find(&posts)
+		err = tx.Where("author = ?", user.Username).Find(&articles).Error
 		if err != nil {
 			return err
 		}
-		err = tx.Where("author = ?", user.Username).Delete(&model.Article{}).Error
+		err = tx.Where("author = ?", user.Username).Find(&galleries).Error
 		if err != nil {
 			return err
 		}
-		err = tx.Where("author = ?", user.Username).Delete(&model.Gallery{}).Error
+		err = tx.Where("owner = ?", user.Username).Find(&images).Error
 		if err != nil {
 			return err
 		}
-		err = tx.Where("owner = ?", user.Username).Delete(&model.Image{}).Error
+		err = tx.Where("author = ?", user.Username).Find(&projects).Error
 		if err != nil {
 			return err
 		}
-		err = tx.Where("author = ?", user.Username).Delete(&model.Project{}).Error
-		if err != nil {
-			return err
+
+		if len(sections) > 0 {
+			err = tx.Delete(&sections).Error
+			if err != nil {
+				return err
+			}
+		}
+		if len(images) > 0 {
+			err = tx.Delete(&images).Error
+			if err != nil {
+				return err
+			}
+		}
+		if len(articles) > 0 {
+			err = tx.Delete(&articles).Error
+			if err != nil {
+				return err
+			}
+		}
+		if len(galleries) > 0 {
+			err = tx.Delete(&galleries).Error
+			if err != nil {
+				return err
+			}
+		}
+		if len(projects) > 0 {
+			err = tx.Delete(&projects).Error
+			if err != nil {
+				return err
+			}
 		}
 		return tx.Delete(user).Error
-
 	})
 }
 
