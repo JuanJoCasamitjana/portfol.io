@@ -78,7 +78,7 @@ func convertFileToBytes(file *multipart.FileHeader) ([]byte, error) {
 	return fileBytes, nil
 }
 
-func deleteImageFromImgbb(delete_url string) error {
+/* func deleteImageFromImgbb(delete_url string) error {
 	req, err := http.NewRequest("DELETE", delete_url, nil)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func deleteImageFromImgbb(delete_url string) error {
 	}
 	defer resp.Body.Close()
 	return nil
-}
+} */
 
 func sanitizeHTML(htmlstr string) string {
 	p := bluemonday.NewPolicy()
