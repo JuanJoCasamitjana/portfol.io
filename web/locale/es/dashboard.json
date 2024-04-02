@@ -9,6 +9,14 @@
     },
     {
         "Key":"dashboard_moderator_tab",
-        "Default":"Creatr Moderador"
+        "Default":"Crear Moderador"
+    },
+    {
+        "Key":"dashboard_summary_tab",
+        "Default":"Resumen"
+    },
+    {
+        "Key":"dashboard_reports_tab",
+        "Default":"Reportes"
     }
 ]

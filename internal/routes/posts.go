@@ -6,7 +6,14 @@ import (
 )
 
 func setUpPostsRoutes(e *echo.Echo) {
+	e.GET("/main", handlers.GetPostsMain)
 	e.GET("/posts", handlers.GetPostsPaginated)
+	e.GET("/posts/all", handlers.GetPostsSearch)
+	e.GET("/posts/all/search", handlers.PostsSearchPaginated)
+	e.GET("/posts/articles", handlers.GetArticleSearch)
+	e.GET("/posts/articles/search", handlers.ArticleSearchPaginated)
+	e.GET("/posts/galleries", handlers.GetGallerySearch)
+	e.GET("/posts/galleries/search", handlers.GallerySearchPaginated)
 	//Articles
 	e.GET("/article/:id", handlers.GetArticleByID)
 	e.GET("/article/create", handlers.CreateArticleForm)

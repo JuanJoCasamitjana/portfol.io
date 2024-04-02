@@ -1,0 +1,24 @@
+{{define "galleries"}}
+<div class="container row">
+    {{range .galleries}}
+    <div class="col-md-4">
+        <div class="card border-dark" style="cursor: pointer; min-height: 100%;" hx-get="/gallery/{{.id}}" 
+        hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">
+            <div class="card-header">
+                <h5>{{.title}}</h5>
+                <p>{{Translate $.locale "by_preposition"}} @{{.author}}</p>
+            </div>
+            <div class="card-body">
+                <div style=" display: flex; justify-content: center; width: 100%;">
+                    <img class="img-fluid" style=" max-height: 8rem;" src="{{.url}}" alt="{{.title}} {{Translate $.locale "by_preposition"}} {{.author}}">
+                    <div class="bg-primary text-center text-light" style="font-size: 2rem;"><p class="mx-3"></p>{{.amount}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{if .more}}
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3" hx-swap="outerHTML"></div>
+{{end}}
+{{end}}

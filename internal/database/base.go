@@ -40,7 +40,8 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = DB.AutoMigrate(model.User{}, model.Article{}, model.Project{}, model.Image{}, model.Gallery{}, model.Post{}, model.Section{}, &model.FollowList{})
+	err = DB.AutoMigrate(&model.User{}, &model.Article{}, &model.Project{}, &model.Image{}, &model.Gallery{},
+		&model.Post{}, &model.Section{}, &model.FollowList{}, &model.Report{}, &model.Tag{})
 	if err != nil {
 		log.Fatal(err)
 	}

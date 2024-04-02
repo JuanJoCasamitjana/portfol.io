@@ -988,3 +988,129 @@ func ArticlesByTagPaginated(c echo.Context) error {
 	}
 	return c.Render(200, "article_list", data)
 }
+
+// Implementing  content filering
+
+func GetPostsMain(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "posts_main", data)
+}
+
+func PostsMainPage(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "posts_main", data)
+}
+
+func PostsSearchPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	query := c.QueryParam("query")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		page = 1
+	}
+	posts_db, err := database.FindPostsByQueryPaginated(query, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	posts_content := convertPostsToDataMap(posts_db)
+	next_page := page + 1
+	more := len(posts_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf("/posts/all/search?query=%s&page=%d", query, next_page)
+	}
+	data := map[string]any{
+		"posts":    posts_content,
+		"nextPage": template.HTML(next_page_loader),
+		"more":     more,
+		"locale":   locale,
+	}
+	return c.Render(200, "posts", data)
+}
+
+func GetPostsSearch(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "posts_search", data)
+}
+
+func ArticleSearchPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	query := c.QueryParam("query")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		page = 1
+	}
+	articles_db, err := database.FindArticlesByQueryPaginated(query, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	articles := convertArticlesToDataMap(articles_db)
+	next_page := page + 1
+	more := len(articles_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf("/posts/articles/search?query=%s&page=%d", query, next_page)
+	}
+	data := map[string]any{
+		"articles": articles,
+		"nextPage": template.HTML(next_page_loader),
+		"more":     more,
+		"locale":   locale,
+	}
+	return c.Render(200, "article_list", data)
+}
+
+func GetArticleSearch(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "article_search", data)
+}
+
+func GallerySearchPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	query := c.QueryParam("query")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		page = 1
+	}
+	galleries_db, err := database.FindGalleriesByQueryPaginated(query, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	galleries := convertGalleriesToDataMap(galleries_db, false)
+	next_page := page + 1
+	more := len(galleries_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf("/posts/galleries/search?query=%s&page=%d", query, next_page)
+	}
+	data := map[string]any{
+		"galleries": galleries,
+		"nextPage":  template.HTML(next_page_loader),
+		"more":      more,
+		"locale":    locale,
+	}
+	return c.Render(200, "galleries", data)
+}
+
+func GetGallerySearch(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "gallery_search", data)
+}

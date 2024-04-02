@@ -1,0 +1,32 @@
+{{define "application_summary"}}
+<div class="container" hx-get="/admin/tools/summary" hx-swap="outerHTML" hx-trigger="every 10s">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 border rounded border-primary m-3 p-3">
+            <div class="row">
+                <div class="col-md-6">{{Translate .locale "summary_user_count"}}</div>
+                <div class="col-md-6"><strong>{{.userCount}}</strong></div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 border rounded border-dark m-3 p-3">
+            <div class="row" style="border-bottom: 1px solid black;">
+                <div class="col-md-6">{{Translate .locale "summary_article_count"}}</div>
+                <div class="col-md-6"><strong>{{.articleCount}}</strong></div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid black;">
+                <div class="col-md-6">{{Translate .locale "summary_gallery_count"}}</div>
+                <div class="col-md-6"><strong>{{.galleryCount}}</strong></div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid black;">
+                <div class="col-md-6">{{Translate .locale "summary_total_post_count"}}</div>
+                <div class="col-md-6"><strong>{{.totalPostCount}}</strong></div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+{{end}}

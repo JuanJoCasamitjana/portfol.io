@@ -189,3 +189,19 @@ func FindUsersPaginated(page, pageSize int) ([]model.User, error) {
 	result := DB.Offset(offset).Limit(pageSize).Find(&users)
 	return users, result.Error
 }
+
+func CountUsers() (int64, error) {
+	var count int64
+	result := DB.Model(&model.User{}).Count(&count)
+	return count, result.Error
+}
+
+func FindUsersPaginatedBySearch(search string, page, pageSize int) ([]model.User, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var users []model.User
+	result := DB.Where("username LIKE ?", "%"+search+"%").Offset(offset).Limit(pageSize).Find(&users)
+	return users, result.Error
+}

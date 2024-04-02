@@ -1,0 +1,10 @@
+{{define "users_list_page"}}
+<div class="container">
+    {{range .users}}
+    {{template "user_item" .}}
+    {{end}}
+</div>
+{{if .more}}
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3" hx-swap="outerHTML"></div>
+{{end}}
+{{end}}

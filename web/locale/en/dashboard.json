@@ -10,5 +10,13 @@
     {
         "Key":"dashboard_moderator_tab",
         "Default":"Create Moderator"
+    },
+    {
+        "Key":"dashboard_summary_tab",
+        "Default":"Summary"
+    },
+    {
+        "Key":"dashboard_reports_tab",
+        "Default":"Reports"
     }
 ]

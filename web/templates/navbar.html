@@ -1,8 +1,8 @@
 {{define "navbar"}}
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="background-color: #99ff99;" hx-get="/navbar"
     hx-trigger="session-changed from:body" hx-swap="outerHTML">
-    <a href="#" class="navbar-brand" hx-get="/posts?page=1" hx-target="#main-app" hx-swap="innerHTML"
-    hx-push-url="/posts">Portfol.io</a>
+    <a href="#" class="navbar-brand" hx-get="/main" hx-target="#main-app" hx-swap="innerHTML"
+    hx-push-url="/">Portfol.io</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -10,6 +10,10 @@
 
     <div class="collapse navbar-collapse ml-5" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto" id="mobile-menu">
+            <li class="nav-item">
+                <a href="#" hx-get="/reports/create" hx-target="#main-app" hx-swap="innerHTML" 
+                class="nav-link">{{Translate .locale "navbar_report_create"}}</a>
+            </li>
             {{if .IsAdmin}}
             <li class="nav-item">
                 <a href="#" class="nav-link" hx-get="/admin/tools/dashboard" hx-target="#main-app"
@@ -23,14 +27,6 @@
             </li>
             {{end}}
             {{if .IsAuthenticated}}
-            <li class="nav-item">
-                <a href="#" class="nav-link" hx-get="/profile/mine" hx-target="#main-app"
-                hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_profile"}}</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" hx-get="/following" hx-target="#main-app"
-                hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_following"}}</a>
-            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                     {{Translate .locale "navbar_my_space"}}
@@ -48,6 +44,10 @@
                     {{end}}
                     <a href="#" class="dropdown-item" hx-get="/gallery/mine?page=1" hx-target="#main-app"
                     hx-swap="innerHTML" hx-push-url="/gallery/mine">{{Translate .locale "navbar_my_space_my_galleries"}}</a>
+                    <a href="#" class="dropdown-item" hx-get="/following" hx-target="#main-app"
+                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_following"}}</a>
+                    <a href="#" class="dropdown-item" hx-get="/profile/mine" hx-target="#main-app"
+                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_profile"}}</a>
                 </div>
             </li>
             <li class="nav-item">

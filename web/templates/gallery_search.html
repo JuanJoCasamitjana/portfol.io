@@ -1,0 +1,10 @@
+{{define "gallery_search"}}
+<div class="container">
+    <form class="form-inline my-3">
+        <input type="text" class="form-control my-3" name="query" id="query" hx-get="/posts/galleries/search"
+        hx-trigger="load, keyup changed delay:500ms" hx-target="#results-galleries" 
+        placeholder="{{Translate .locale "posts_search_input_placeholder"}}">
+    </form>
+    <div id="results-galleries"></div>
+</div>
+{{end}}

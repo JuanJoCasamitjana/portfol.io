@@ -1,0 +1,18 @@
+[
+    {
+        "Key":"report_create_description_label",
+        "Default":"Description"
+    },
+    {
+        "Key":"report_create_description_placeholder",
+        "Default":"Write a description for your report, be as detailed as possible."
+    },
+    {
+        "Key":"report_create_submit_button",
+        "Default":"Report"
+    },
+    {
+        "Key":"report_create_empty_field",
+        "Default":"The description field is empty, please write a description for your report."
+    }
+]

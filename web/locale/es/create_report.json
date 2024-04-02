@@ -1,0 +1,18 @@
+[
+    {
+        "Key":"report_create_description_label",
+        "Default":"Descripción"
+    },
+    {
+        "Key":"report_create_description_placeholder",
+        "Default":"Escribe una despcripción para tu reporte, se tan detallado como puedas."
+    },
+    {
+        "Key":"report_create_submit_button",
+        "Default":"Reportar"
+    },
+    {
+        "Key":"report_create_empty_field",
+        "Default":"La descripción no puede estar vacía. Por favor, escribe una descripción para tu reporte."
+    }
+]

@@ -42,5 +42,9 @@
     {
         "Key":"navbar_dashboard",
         "Default": "Dashboard"
+    },
+    {
+        "Key":"navbar_report_create",
+        "Default": "Report a Problem"
     }
 ]

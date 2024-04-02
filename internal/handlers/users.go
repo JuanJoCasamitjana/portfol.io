@@ -904,8 +904,42 @@ func GetUsersListPaginated(c echo.Context) error {
 		"more":     more,
 		"nextPage": nextPageLoader,
 	}
-	return c.Render(200, "users_list", data)
+	if page == 1 {
+		return c.Render(200, "users_list", data)
+	}
+	return c.Render(200, "users_list_page", data)
 
+}
+
+func GetUsersListSearchPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level {
+		return c.String(401, "Unauthorized")
+	}
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	search := c.QueryParam("search")
+	usersDB, err := database.FindUsersPaginatedBySearch(search, page, 12)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	users := convertUsersToDataMap(usersDB, user.Authority.Level, locale)
+	more := len(users) == 12
+	nextPageLoader := ""
+	if more {
+		nextPageLoader = fmt.Sprintf("/moderation/users/search?search=%s&page=%d", search, page+1)
+	}
+	data := map[string]any{
+		"locale":   locale,
+		"users":    users,
+		"more":     more,
+		"nextPage": nextPageLoader,
+	}
+	return c.Render(200, "users_list_page", data)
 }
 
 func convertUsersToDataMap(users []model.User, requester_level uint8, locale string) []map[string]any {
@@ -1120,4 +1154,68 @@ func CreateNewModerator(c echo.Context) error {
 		"message": utils.Translate(locale, "moderator_new_success"),
 	}
 	return c.Render(200, "moderator_new", data)
+}
+
+func ShowApplicationSummary(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_MODERATOR.Level {
+		return c.String(401, "Unauthorized")
+	}
+	userCount, err := database.CountUsers()
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	galleryCount, err := database.CountGalleries()
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	articleCount, err := database.CountArticles()
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+
+	data := map[string]any{
+		"locale":         locale,
+		"articleCount":   articleCount,
+		"galleryCount":   galleryCount,
+		"userCount":      userCount,
+		"totalPostCount": articleCount + galleryCount,
+	}
+	return c.Render(200, "application_summary", data)
+}
+
+func GetUserSearch(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "user_search", data)
+}
+
+func UserSearchPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	search := c.QueryParam("query")
+	usersDB, err := database.FindUsersPaginatedBySearch(search, page, 12)
+	if err != nil {
+		return c.String(404, "Not found")
+	}
+	users := convertUsersToDataMap(usersDB, 0, locale)
+	more := len(users) == 12
+	nextPageLoader := ""
+	if more {
+		nextPageLoader = fmt.Sprintf("/users/search?query=%s&page=%d", search, page+1)
+	}
+	data := map[string]any{
+		"locale":   locale,
+		"users":    users,
+		"more":     more,
+		"nextPage": nextPageLoader,
+	}
+	return c.Render(200, "user_list", data)
 }

@@ -11,4 +11,5 @@ func SetUpRoutes(e *echo.Echo) {
 	e.GET("/favicon.ico", handlers.SendFavicon)
 	setUpUsersRoutes(e)
 	setUpPostsRoutes(e)
+	setUpReportsRoutes(e)
 }

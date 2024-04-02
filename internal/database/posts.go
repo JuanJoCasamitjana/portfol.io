@@ -200,3 +200,48 @@ func FindPostById(id uint64) (model.Post, error) {
 	err := DB.First(&post, id).Error
 	return post, err
 }
+
+func CountGalleries() (int64, error) {
+	var count int64
+	err := DB.Model(&model.Gallery{}).Count(&count).Error
+	return count, err
+}
+
+func CountArticles() (int64, error) {
+	var count int64
+	err := DB.Model(&model.Article{}).Count(&count).Error
+	return count, err
+}
+
+func FindPostsByQueryPaginated(query string, page, size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var posts []model.Post
+	err := DB.Where("title LIKE ? AND published = true", "%"+query+"%").Order("updated_at desc").Offset(offset).
+		Limit(size).Find(&posts).Error
+	return posts, err
+}
+
+func FindArticlesByQueryPaginated(query string, page, size int) ([]model.Article, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var articles []model.Article
+	err := DB.Where("title LIKE ? AND published = true", "%"+query+"%").Order("updated_at desc").Offset(offset).
+		Limit(size).Find(&articles).Error
+	return articles, err
+}
+
+func FindGalleriesByQueryPaginated(query string, page, size int) ([]model.Gallery, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var galleries []model.Gallery
+	err := DB.Where("title LIKE ?  AND published = true", "%"+query+"%").Order("updated_at desc").Preload("Images").
+		Offset(offset).Limit(size).Find(&galleries).Error
+	return galleries, err
+}

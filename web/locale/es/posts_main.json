@@ -1,0 +1,18 @@
+[
+    {
+        "Key":"posts_main_all",
+        "Default":"Todo"
+    },
+    {
+        "Key":"posts_main_articles",
+        "Default":"Artículos"
+    },
+    {
+        "Key":"posts_main_galleries",
+        "Default":"Galerías"
+    },
+    {
+        "Key":"posts_main_users",
+        "Default":"Usuarios"
+    }
+]

@@ -1,0 +1,32 @@
+{{define "posts_main"}}
+<div class="container">
+    <ul class="nav nav-pills mt-2">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="pill" href="#all"
+            id="all-tab">{{Translate .locale "posts_main_all"}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#articles"
+            id="articles-tab">{{Translate .locale "posts_main_articles"}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#galleries"
+            id="galleries-tab">{{Translate .locale "posts_main_galleries"}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="pill" href="#users"
+            id="users-tab">{{Translate .locale "posts_main_users"}}</a>
+        </li>
+    </ul>
+    <div class="tab-content mt-2">
+        <div class="tab-pane container active" id="all" hx-get="/posts/all" 
+        hx-trigger="load, click from:#all-tab once"></div>
+        <div class="tab-pane container" id="articles" hx-get="/posts/articles" 
+        hx-trigger="click from:#articles-tab once"></div>
+        <div class="tab-pane container" id="galleries" hx-get="/posts/galleries"
+        hx-trigger="click from:#galleries-tab once"></div>
+        <div class="tab-pane container" id="users"  hx-get="/users"
+        hx-trigger="click from:#users-tab once"></div>
+    </div>
+</div>
+{{end}}

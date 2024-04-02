@@ -1,0 +1,18 @@
+{{define "create_report"}}
+<div class="container">
+    <form hx-post="/reports/create" hx-target="#main-app" hx-swap="innerHTML">
+        <label for="description">{{Translate .locale "report_create_description_label"}}</label>
+        <div class="input-group has-validation">
+            <textarea type="text" name="description" id="description" 
+            class="form-control rounded my-2 {{if .errors.description}} is-invalid {{end}}" 
+            placeholder="{{Translate .locale "report_create_description_placeholder"}}"></textarea>
+            {{if .errors.description}}
+                <div class="invalid-feedback">{{.errors.description}}</div>
+            {{end}}
+        </div>
+        <button type="submit" class="btn btn-lg btn-dark">
+            {{Translate .locale "report_create_submit_button"}}
+        </button>
+    </form>
+</div>
+{{end}}
