@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"403_title",
+        "Default":"403 Forbidden"
+    },
+    {
+        "Key":"403_message",
+        "Default":"The administrator has forbidden access to the applicaction. Please wait and try again later."
+    }
+]

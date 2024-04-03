@@ -1,0 +1,14 @@
+[
+    {
+        "Key":"restraint_access_is_restricted_button",
+        "Default":"Enable access"
+    },
+    {
+        "Key":"restraint_access_is_not_restricted_button",
+        "Default":"Disable access"
+    },
+    {
+        "Key":"restraint_access_confirm",
+        "Default":"Are you sure?"
+    }
+]

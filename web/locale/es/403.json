@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"403_title",
+        "Default":"403 Prohibido"
+    },
+    {
+        "Key":"403_message",
+        "Default":"El administrador del sitio web ha prohibido el acceso a la aplicación. Por favor espere e inténtelo de nuevo más tarde."
+    }
+]

@@ -20,6 +20,8 @@ func setUpUsersRoutes(e *echo.Echo) {
 	e.POST("/admin/tools/config", handlers.ChangeConfig)
 	e.GET("/admin/tools/create/moderator", handlers.CreateNewModeratorForm)
 	e.POST("/admin/tools/create/moderator", handlers.CreateNewModerator)
+	e.GET("/admin/tools/restrict", handlers.GetRestraintAccessForm)
+	e.POST("/admin/tools/restrict", handlers.RestrainAccess)
 	e.GET("/moderation/users", handlers.GetUsersListPaginated)
 	e.GET("/moderation/users/search", handlers.GetUsersListSearchPaginated)
 	e.POST("/moderation/deactivate/:username", handlers.BanUser)

@@ -27,6 +27,11 @@
                 {{Translate .locale "dashboard_summary_tab"}}
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#restrict" data-toggle="tab" id="restrict-tab">
+                {{Translate .locale "dashboard_restrict_tab"}}
+            </a>
+        </li>
         {{end}}
     </ul>
     <div class="tab-content">
@@ -38,8 +43,10 @@
         id="config"></div>
         <div class="tab-pane" hx-get="/admin/tools/create/moderator" hx-trigger="click once from:#moderator-tab" 
         id="moderator"></div>
-        <div class="tab-pane active" hx-get="/admin/tools/summary" hx-trigger="click once from:#summary-tab" 
+        <div class="tab-pane" hx-get="/admin/tools/summary" hx-trigger="click once from:#summary-tab" 
         id="summary"></div>
+        <div class="tab-pane" hx-get="/admin/tools/restrict" hx-trigger="click once from:#restrict-tab" 
+        id="restrict"></div>
         {{end}}
     </div>
 </div>

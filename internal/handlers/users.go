@@ -1219,3 +1219,30 @@ func UserSearchPaginated(c echo.Context) error {
 	}
 	return c.Render(200, "user_list", data)
 }
+
+func GetRestraintAccessForm(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale":             locale,
+		"isAccessRestricted": IsAccessRestricted,
+	}
+	return c.Render(200, "restraint_access", data)
+}
+
+func RestrainAccess(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	IsAccessRestricted = !IsAccessRestricted
+	data := map[string]any{
+		"locale":             locale,
+		"isAccessRestricted": IsAccessRestricted,
+	}
+	return c.Render(200, "restraint_access", data)
+}
