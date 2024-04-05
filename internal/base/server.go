@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var port string
@@ -36,13 +37,15 @@ func init() {
 func SetUpAndRunServer() {
 	e := echo.New()
 
-	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("Error opening file: %v", err)
+	file_logger := &lumberjack.Logger{
+		Filename:   "logs/portfol.io.log",
+		MaxSize:    1, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28, //days
+		Compress:   true,
+		LocalTime:  true,
 	}
-	defer logFile.Close()
-
-	mw := io.MultiWriter(os.Stdout)
+	mw := io.MultiWriter(os.Stdout, file_logger)
 	log.SetOutput(mw)
 
 	e.Use(middleware.LoggerWithConfig(

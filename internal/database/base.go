@@ -29,13 +29,14 @@ func init() {
 		logger.Config{
 			SlowThreshold:             time.Millisecond * 300, // Slow SQL threshold
 			LogLevel:                  logger.Error,           // Log level
-			IgnoreRecordNotFoundError: false,                  // Ignore ErrRecordNotFound error for logger
+			IgnoreRecordNotFoundError: true,                   // Ignore ErrRecordNotFound error for logger
 			ParameterizedQueries:      false,                  // Include params in the SQL log
 			Colorful:                  false,                  // Disable color
 		},
 	)
 	DB, err = gorm.Open(sqlite.Open(DBname), &gorm.Config{
-		Logger: newLogger,
+		Logger:                 newLogger,
+		SkipDefaultTransaction: false, //This ensures data consistency by wrapping atomic operations in transactions
 	})
 	if err != nil {
 		log.Fatal(err)
