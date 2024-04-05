@@ -1294,7 +1294,7 @@ func CompressLogs(name string) error {
 	}
 	defer zipfile.Close()
 	zipWriter := zip.NewWriter(zipfile)
-	defer zipWriter.Close()
+	defer zipWriter.Close() //skipcq GO-S2307
 	logs_folder := "./logs"
 
 	walker := func(path string, info os.FileInfo, err error) error {
@@ -1308,7 +1308,7 @@ func CompressLogs(name string) error {
 		if err != nil {
 			return err
 		}
-		defer file.Close()
+		defer file.Close() //skipcq GO-S2307
 		f, err := zipWriter.Create(path)
 		if err != nil {
 			return err

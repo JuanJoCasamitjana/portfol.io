@@ -5,3 +5,5 @@ name = "go"
 
   [analyzers.meta]
   import_root = "github.com/JuanJoCasamitjana/portfol.io"
+  dependencies_vendored = false
+  cgo_enabled = false
