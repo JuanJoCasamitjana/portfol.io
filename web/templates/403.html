@@ -1,0 +1,38 @@
+{{define "403"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+</head>
+<style>
+body {
+  font-family:Helvetica, sans-serif;
+  background-color:#017038;
+}
+
+.container {
+  width:100%;
+}
+
+.message {
+  text-align: center;
+  background-color:#110043;
+  max-width:fit-content;
+  padding:2rem;
+  border-radius:5px;
+  margin-inline:auto;
+  color:#cefbe4;
+}
+
+</style>
+<body>
+    <div class="container">
+        <div class="message">
+            <h1>{{.message}}</h1>
+        </div>
+    </div>
+</body>
+</html>
+{{end}}

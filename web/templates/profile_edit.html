@@ -30,7 +30,8 @@
         </div>
         <label for="avatar">{{Translate .locale "profile_edit_avatar_label"}}</label>
         {{if not (eq .avatar "")}}
-        <img src="{{.avatar}}" alt="{{Translate .locale "profile_edit_current_avatar"}}">
+        <img src="{{.current_avatar}}" alt="{{Translate .locale "profile_edit_current_avatar"}}">
+        <input type="hidden" name="current_avatar" value="{{.current_avatar}}">
         {{end}}
         <div class="input-group has-validation">
             <input class="form-control {{if .errors.avatar}} is-invalid {{end}} rounded mb-1" 

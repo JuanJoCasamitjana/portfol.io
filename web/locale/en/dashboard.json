@@ -18,5 +18,9 @@
     {
         "Key":"dashboard_reports_tab",
         "Default":"Reports"
+    },
+    {
+        "Key":"dashboard_restrict_tab",
+        "Default":"Restrict access"
     }
 ]

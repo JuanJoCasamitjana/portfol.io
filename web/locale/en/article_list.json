@@ -2,5 +2,13 @@
     {
         "Key":"article_list_last_updated",
         "Default":"Last updated:"
+    },
+    {
+        "Key":"article_is_published",
+        "Default":"Published"
+    },
+    {
+        "Key":"article_in_draft",
+        "Default":"Draft"
     }
 ]

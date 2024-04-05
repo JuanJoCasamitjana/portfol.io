@@ -1,7 +1,7 @@
 {{define "galleries"}}
 <div class="container row">
     {{range .galleries}}
-    <div class="col-md-4">
+    <div class="col-md-4 mt-3">
         <div class="card border-dark" style="cursor: pointer; min-height: 100%;" hx-get="/gallery/{{.id}}" 
         hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">
             <div class="card-header">

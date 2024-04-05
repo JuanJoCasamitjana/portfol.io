@@ -15,7 +15,7 @@
         <button class="btn btn-info" hx-get="/gallery/edit/{{.id}}"
         hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "gallery_author_edit_button"}}</button>
         {{if not .published}}
-        <button class="btn btn-warning" hx-post="/gallery/publish/{{.id}}"
+        <button class="btn btn-warning" hx-post="/gallery/{{.id}}/publish"
         hx-target="#main-app" hx-swap="innerHTML">{{Translate .locale "gallery_author_publish_button"}}</button>
         {{end}}
         {{end}}

@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var dbName = "dev.db"
+var DBname = "dev.db"
 var DB *gorm.DB
 
 func init() {
@@ -20,22 +20,23 @@ func init() {
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
-	newDBName := os.Getenv("DB_NAME")
-	if newDBName != "" {
-		dbName = newDBName
+	newDBname := os.Getenv("DB_NAME")
+	if newDBname != "" {
+		DBname = newDBname
 	}
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold:             time.Millisecond * 300, // Slow SQL threshold
 			LogLevel:                  logger.Error,           // Log level
-			IgnoreRecordNotFoundError: false,                  // Ignore ErrRecordNotFound error for logger
+			IgnoreRecordNotFoundError: true,                   // Ignore ErrRecordNotFound error for logger
 			ParameterizedQueries:      false,                  // Include params in the SQL log
 			Colorful:                  false,                  // Disable color
 		},
 	)
-	DB, err = gorm.Open(sqlite.Open(dbName), &gorm.Config{
-		Logger: newLogger,
+	DB, err = gorm.Open(sqlite.Open(DBname), &gorm.Config{
+		Logger:                 newLogger,
+		SkipDefaultTransaction: false, //This ensures data consistency by wrapping atomic operations in transactions
 	})
 	if err != nil {
 		log.Fatal(err)

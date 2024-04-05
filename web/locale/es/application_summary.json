@@ -14,5 +14,13 @@
     {
         "Key":"summary_total_post_count",
         "Default":"Número total de publicaciones"
+    },
+    {
+        "Key":"download_database_backup",
+        "Default":"Descargar copia de la base de datos"
+    },
+    {
+        "Key":"download_logs_backup",
+        "Default":"Descargar copia de los registros"
     }
 ]

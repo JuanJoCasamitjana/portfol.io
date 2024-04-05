@@ -183,6 +183,7 @@ func GetMyArticles(c echo.Context) error {
 		next_page_loader = fmt.Sprintf("/article/mine?page=%d", next_page)
 	}
 	data := map[string]any{
+		"isMine":    true,
 		"articles":  articles,
 		"locale":    locale,
 		"more":      more,
@@ -418,8 +419,11 @@ func CreateGallery(c echo.Context) error {
 		return c.String(500, "Internal Server Error")
 	}
 	data := map[string]any{
-		"locale": utils.GetLocale(c),
-		"id":     gallery.ID,
+		"locale":      utils.GetLocale(c),
+		"id":          gallery.ID,
+		"isZero":      true,
+		"isLimit":     false,
+		"isPublished": gallery.Published,
 	}
 	return c.Render(200, "gallery_form", data)
 }
@@ -437,6 +441,9 @@ func AddImageToGallery(c echo.Context) error {
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
+	}
+	if len(gallery.Images) >= 10 {
+		return c.String(400, "Bad Request")
 	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
@@ -464,10 +471,15 @@ func AddImageToGallery(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	amount := len(gallery.Images) + 1
+	isLimit := amount >= 10
 	c.Response().Header().Set("HX-Trigger", "gallery-reload")
 	data := map[string]any{
-		"id":     gallery.ID,
-		"locale": utils.GetLocale(c),
+		"id":          gallery.ID,
+		"locale":      utils.GetLocale(c),
+		"isLimit":     isLimit,
+		"isZero":      false,
+		"isPublished": gallery.Published,
 	}
 	return c.Render(200, "upload_image", data)
 }
@@ -576,6 +588,33 @@ func DeleteImage(c echo.Context) error {
 		"message": "Image deleted successfully!",
 	}
 	return c.JSON(200, data)
+}
+
+func GetImageUploadForm(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	idstr := c.Param("id")
+	id, err := strconv.ParseUint(idstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindGalleryByID(id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	user, err := GetUserOfSession(c)
+	if err != nil || !user.Active || gallery.Author != user.Username {
+		return c.String(401, "Unauthorized")
+	}
+	isLimit := len(gallery.Images) >= 10
+	isZero := len(gallery.Images) == 0
+	data := map[string]any{
+		"id":          gallery.ID,
+		"locale":      locale,
+		"isLimit":     isLimit,
+		"isZero":      isZero,
+		"isPublished": gallery.Published,
+	}
+	return c.Render(200, "upload_image", data)
 }
 
 func GetImagesOfGallery(c echo.Context) error {
@@ -745,10 +784,15 @@ func EditGalleryForm(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	isLimit := len(gallery.Images) >= 10
+	isZero := len(gallery.Images) == 0
 	data := map[string]any{
 		"id":          gallery.ID,
 		"locale":      locale,
 		"value_title": gallery.Title,
+		"isLimit":     isLimit,
+		"isZero":      isZero,
+		"isPublished": gallery.Published,
 	}
 	return c.Render(200, "gallery_form", data)
 }

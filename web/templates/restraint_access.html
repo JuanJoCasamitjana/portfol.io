@@ -1,0 +1,11 @@
+{{define "restraint_access"}}
+<button class="btn {{if not .isAccessRestricted}} btn-danger {{else}} btn-success {{end}}btn-lg" 
+hx-post="/admin/tools/restrict" hx-swap="outerHTML" 
+hx-confirm="{{Translate .locale "restraint_access_confirm"}}" style="margin-inline: auto;">
+    {{if .isAccessRestricted}}
+    {{Translate .locale "restraint_access_is_restricted_button"}}
+    {{else}}
+    {{Translate .locale "restraint_access_is_not_restricted_button"}}
+    {{end}}
+</button>
+{{end}}

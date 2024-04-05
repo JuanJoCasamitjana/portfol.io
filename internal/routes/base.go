@@ -6,6 +6,7 @@ import (
 )
 
 func SetUpRoutes(e *echo.Echo) {
+	e.Use(handlers.RestraintAccessMiddleware)
 	e.GET("/", handlers.RenderIndex)
 	e.GET("/navbar", handlers.RenderNavbar)
 	e.GET("/favicon.ico", handlers.SendFavicon)

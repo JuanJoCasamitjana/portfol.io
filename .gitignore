@@ -25,7 +25,8 @@ go.work
 
 # Log files
 *.log
-
+*.gz
+*.zip
 # Static files and directories
 /web/static/images/*
 

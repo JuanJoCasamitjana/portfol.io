@@ -6,6 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var IsAccessRestricted = false
+
 func RenderIndex(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	isAuthenticated := false
@@ -47,4 +49,23 @@ func RenderNavbar(c echo.Context) error {
 
 func SendFavicon(c echo.Context) error {
 	return c.File("web/static/favicon.ico")
+}
+
+func RestraintAccessMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		locale := utils.GetLocale(c)
+		data := map[string]any{
+			"locale":  locale,
+			"title":   utils.Translate(locale, "403_title"),
+			"message": utils.Translate(locale, "403_message"),
+		}
+		user, err := GetUserOfSession(c)
+		if IsAccessRestricted && err != nil {
+			return c.Render(403, "403", data)
+		}
+		if IsAccessRestricted && user.Authority.Level < model.AUTH_ADMIN.Level {
+			return c.Render(403, "403", data)
+		}
+		return next(c)
+	}
 }

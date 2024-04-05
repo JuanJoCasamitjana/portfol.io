@@ -4,6 +4,13 @@
     <div hx-get="/article/{{.id}}" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true"
         class="border  border-dark rounded-sm mx-auto w-75 mt3" style="cursor: pointer;"
         onmouseout="this.style.color='#212529'" onmouseover="this.style.color='#007bff'">
+        {{if $.isMine}}
+        {{if .published}}
+        <span class="badge badge-pill badge-success mt-1 ml-1">{{Translate $.locale "article_is_published"}}</span>
+        {{else}}
+        <span class="badge badge-pill badge-warning  mt-1 ml-1">{{Translate $.locale "article_in_draft"}}</span>
+        {{end}}
+        {{end}}
         <h2 class="border border-top-0 border-right-0 border-left-0 ml-2">{{.title}}</h2>
         <p class=" ml-2">{{Translate $.locale "by_preposition"}} <strong>{{.author}}</strong></p>
         <p class=" ml-2">{{Translate $.locale "article_list_last_updated"}} {{.createdAt}}</p>

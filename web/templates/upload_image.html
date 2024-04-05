@@ -1,6 +1,9 @@
 {{define "upload_image"}}
-<div class="container">
-    <form class="mt-1" hx-post="/gallery/{{.id}}/images" hx-target="#upload-form" hx-swap="innerHTML" enctype="multipart/form-data">
+<div class="container" hx-get="/gallery/image-upload-form/{{.id}}" hx-swap="outerHTML" 
+hx-trigger="gallery-reload from:body">
+    <form class="mt-1" hx-post="/gallery/{{.id}}/images" hx-target="#upload-form" hx-swap="innerHTML" 
+    enctype="multipart/form-data" hx-indicator="#spinner">
+        {{if not .isLimit}}
         <label for="image" class="sr-only">{{Translate .locale "upload_image_title"}}</label>
         <div class="input-group has-validation">
             <input class="form-control mb-1 rounded {{if .errors.image}} is-invalid {{end}}"
@@ -18,9 +21,15 @@
             <div class="invalid-feedback">{{.errors.footer}}</div>
             {{end}}
         </div>
-        <button class="btn btn-primary" type="submit">{{Translate .locale "upload_image_post_button"}}</button>
-        <button class="btn btn-info" hx-post="/galery/{{.id}}/publish" hx-target="#main-app" 
+        <button class="btn btn-primary" type="submit">
+        {{Translate .locale "upload_image_post_button"}}
+        <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner"></span>
+        </button>
+        {{end}}
+        {{if not (or .isPublished .isZero)}}
+        <button class="btn btn-info" hx-post="/gallery/{{.id}}/publish" hx-target="#main-app" 
         hx-swap="innerHTML" hx-sync="closest form:abort">{{Translate .locale "publish_gallery_button"}}</button>
+        {{end}}
     </form>
 </div>
 {{end}}
