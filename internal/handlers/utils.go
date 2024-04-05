@@ -50,7 +50,7 @@ func uploadImageToImgbb(img []byte) (map[string]string, error) {
 	if err != nil {
 		return res, err
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //skipcq GO-S2307
 	var imgbbResponse map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&imgbbResponse)
 	if err != nil {
