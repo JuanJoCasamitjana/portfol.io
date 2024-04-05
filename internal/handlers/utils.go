@@ -99,7 +99,11 @@ func sanitizeHTML(htmlstr string) string {
 	p.AllowElements("p", "h1", "h2", "h3", "h4", "h5", "h6", "strong",
 		"em", "u", "s", "a", "img", "ul", "ol", "li", "blockquote", "code", "pre")
 	p.AllowAttrs("src").OnElements("img")
+	p.AllowAttrs("alt").OnElements("img")
 	p.AllowAttrs("data-filename").OnElements("img")
+	p.AllowAttrs("style").OnElements("img")
+	p.RequireParseableURLs(true)
+
 	return p.Sanitize(htmlstr)
 }
 
@@ -152,6 +156,10 @@ func navigateAndUploadImages(n *xhtml.Node) (string, error) {
 					}
 					new_url := imgbbResponse["image_url"]
 					attr.Val = new_url
+					node.Attr[i] = attr
+				}
+				if attr.Key == "style" {
+					attr.Val = "max-width: 100%;"
 					node.Attr[i] = attr
 				}
 			}

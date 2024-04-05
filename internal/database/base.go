@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var dbName = "dev.db"
+var DBname = "dev.db"
 var DB *gorm.DB
 
 func init() {
@@ -20,9 +20,9 @@ func init() {
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
-	newDBName := os.Getenv("DB_NAME")
-	if newDBName != "" {
-		dbName = newDBName
+	newDBname := os.Getenv("DB_NAME")
+	if newDBname != "" {
+		DBname = newDBname
 	}
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -34,7 +34,7 @@ func init() {
 			Colorful:                  false,                  // Disable color
 		},
 	)
-	DB, err = gorm.Open(sqlite.Open(dbName), &gorm.Config{
+	DB, err = gorm.Open(sqlite.Open(DBname), &gorm.Config{
 		Logger: newLogger,
 	})
 	if err != nil {

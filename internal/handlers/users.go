@@ -276,7 +276,7 @@ func GetProfileEditForm(c echo.Context) error {
 		"fullname":        user.FullName,
 		"locale":          utils.GetLocale(c),
 		"bio":             user.Profile.Bio,
-		"avatar":          user.Profile.PfPUrl,
+		"current_avatar":  user.Profile.PfPUrl,
 		"email":           user.Email,
 		"is_current_user": true,
 	}
@@ -290,6 +290,7 @@ func EditProfile(c echo.Context) error {
 	}
 	locale := utils.GetLocale(c)
 	bio, email, fullname := c.FormValue("bio"), c.FormValue("email"), c.FormValue("fullname")
+	current_avatar := c.FormValue("current_avatar")
 	var form_errors = map[string]string{}
 	if !isValidEmail(email, user) {
 		form_errors["email"] = utils.Translate(locale, "profile_edit_email_invalid_error")
@@ -307,18 +308,26 @@ func EditProfile(c echo.Context) error {
 		}
 	}
 	if len(form_errors) > 0 {
+		avatar_url := current_avatar
+		if urls["thumb_url"] != "" {
+			avatar_url = urls["thumb_url"]
+		}
 		data := map[string]any{
-			"locale":   locale,
-			"errors":   form_errors,
-			"username": user.Username,
-			"bio":      bio,
-			"email":    email,
-			"fullname": fullname,
-			"avatar":   urls["thumb_url"],
+			"locale":         locale,
+			"errors":         form_errors,
+			"username":       user.Username,
+			"bio":            bio,
+			"email":          email,
+			"fullname":       fullname,
+			"avatar":         urls["thumb_url"],
+			"current_avatar": avatar_url,
 		}
 		return c.Render(200, "profile_edit", data)
 	}
 	user.Profile.PfPUrl = urls["thumb_url"]
+	if urls["thumb_url"] == "" {
+		user.Profile.PfPUrl = current_avatar
+	}
 	user.Profile.PfPDeleteUrl = urls["delete_url"]
 	user.Profile.Bio = bio
 	user.Email = email
@@ -345,12 +354,16 @@ func EditProfile(c echo.Context) error {
 		"avatar":          user.Profile.PfPUrl,
 		"email":           user.Email,
 		"is_current_user": true,
+		"isActive":        user.Active,
 	}
 	return c.Render(200, "profile", data)
 }
 
 func isValidEmail(email string, current_user model.User) bool {
 	//False if the email is already in use
+	if email == "" {
+		return true
+	}
 	user, err := database.FindUserByEmail(email)
 	if err != nil {
 		return true
@@ -1245,4 +1258,12 @@ func RestrainAccess(c echo.Context) error {
 		"isAccessRestricted": IsAccessRestricted,
 	}
 	return c.Render(200, "restraint_access", data)
+}
+
+func SendCopyOfDB(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	return c.File("./" + database.DBname)
 }

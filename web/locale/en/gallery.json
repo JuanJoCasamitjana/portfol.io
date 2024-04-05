@@ -9,6 +9,6 @@
     },
     {
         "Key":"gallery_author_delete_button",
-        "Default":"Delete"
+        "Default":"Delete gallery"
     }
 ]

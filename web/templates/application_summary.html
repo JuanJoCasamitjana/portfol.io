@@ -28,5 +28,13 @@
         </div>
         <div class="col-md-1"></div>
     </div>
+    <button class="btn btn-lg btn-dark" id="backup">
+        {{Translate .locale "download_database_backup"}}
+    </button>
+    <script>
+        document.getElementById("backup").onclick = function() {
+            window.location.href = "/admin/tools/database";
+        }
+    </script>
 </div>
 {{end}}

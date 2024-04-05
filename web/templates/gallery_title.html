@@ -4,7 +4,7 @@
     <h2 class="border rounded border-dark px-1">{{.value_title}}</h2>
     <button class="btn btn-primary m-1" type="submit"
     >{{Translate .locale "gallery_title_form_edit_button"}}</button>
-    <button class="btn btn-danger" hx-delete="/images/collection/{{.id}}"
+    <button class="btn btn-danger" hx-delete="/gallery/delete/{{.id}}"
     >{{Translate .locale "gallery_title_form_delete_button"}}</button>
 </form>
 {{end}}

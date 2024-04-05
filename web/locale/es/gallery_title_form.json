@@ -13,7 +13,7 @@
     },
     {
         "Key":"gallery_title_form_delete_button",
-        "Default":"Borrar galería"
+        "Default":"Eliminar galería"
     },
     {
         "Key":"gallery_title_form_edit_button",

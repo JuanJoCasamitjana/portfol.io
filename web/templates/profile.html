@@ -19,10 +19,10 @@
 <div class="container m-3 p-3">
     {{if .isActive}}
     <button class="btn btn-info mb-1 mr-2" hx-get="/profile/{{.username}}/create/section" hx-target="#main-app" 
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_create_new_section"}}</button>
+    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "profile_owner_button_create_new_section"}}</button>
     {{end}}
     <button class="btn btn-dark mb-1 mr-2" hx-get="/profile/{{.username}}/edit/sections" hx-target="#main-app" 
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
+    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
     <button class="btn btn-primary mb-1 mr-2" hx-get="/profile/mine/edit" hx-target="#main-app"
     hx-swap="innerHTML">{{Translate .locale "profile_owner_button_edit"}}</button>
     <button class="btn btn-warning mb-1 mr-2" hx-get="/profile/mine/edit/password" hx-target="#main-app"
