@@ -33,7 +33,15 @@
     </button>
     <script>
         document.getElementById("backup").onclick = function() {
-            window.location.href = "/admin/tools/database";
+            window.location.href = "/admin/tools/database.db";
+        }
+    </script>
+    <button class="btn btn-lg btn-info" id="logs">
+        {{Translate .locale "download_logs_backup"}}
+    </button>
+    <script>
+        document.getElementById("logs").onclick = function() {
+            window.location.href = "/admin/tools/logs.zip";
         }
     </script>
 </div>

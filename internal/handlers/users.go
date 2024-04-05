@@ -1,10 +1,15 @@
 package handlers
 
 import (
+	"archive/zip"
 	"errors"
 	"fmt"
+	"io"
 	"net/mail"
+	"os"
+	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
@@ -1266,4 +1271,57 @@ func SendCopyOfDB(c echo.Context) error {
 		return c.String(401, "Unauthorized")
 	}
 	return c.File("./" + database.DBname)
+}
+
+func SendCopyOfLogs(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(401, "Unauthorized")
+	}
+	momment := strconv.FormatInt(time.Now().Unix(), 10)
+	name := "logs_" + momment + ".zip"
+	err = CompressLogs(name)
+	if err != nil {
+		return c.String(500, "Internal server error")
+	}
+	return c.File("./" + name)
+}
+
+func CompressLogs(name string) error {
+	zipfile, err := os.Create(name)
+	if err != nil {
+		return err
+	}
+	defer zipfile.Close()
+	zipWriter := zip.NewWriter(zipfile)
+	defer zipWriter.Close()
+	logs_folder := "./logs"
+
+	walker := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		f, err := zipWriter.Create(path)
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	err = filepath.Walk(logs_folder, walker)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -18,5 +18,9 @@
     {
         "Key":"download_database_backup",
         "Default":"Download database backup"
+    },
+    {
+        "Key":"download_logs_backup",
+        "Default":"Download logs backup"
     }
 ]
