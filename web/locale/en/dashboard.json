@@ -22,5 +22,9 @@
     {
         "Key":"dashboard_restrict_tab",
         "Default":"Restrict access"
+    },
+    {
+        "Key":"dashboard_posts_tab",
+        "Default":"Posts"
     }
 ]

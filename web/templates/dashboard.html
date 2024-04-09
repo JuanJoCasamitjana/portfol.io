@@ -11,6 +11,11 @@
                 {{Translate .locale "dashboard_reports_tab"}}
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#posts" data-toggle="tab" id="posts-tab">
+                {{Translate .locale "dashboard_posts_tab"}}
+            </a>
+        </li>
         {{if .isAdmin}}
         <li class="nav-item">
             <a class="nav-link" href="#config" data-toggle="tab" id="config-tab">
@@ -38,6 +43,8 @@
         <div class="tab-pane active" hx-get="/moderation/users" hx-trigger="load" id="users"></div>
         <div class="tab-pane" hx-get="/reports" hx-trigger="click once from:#reports-tab"
         id="reports"></div>
+        <div class="tab-pane" hx-get="/posts/moderation/tab" hx-trigger="click once from:#posts-tab"
+        id="posts"></div>
         {{if .isAdmin}}
         <div class="tab-pane" hx-get="/admin/tools/config" hx-trigger="click once from:#config-tab" 
         id="config"></div>

@@ -1158,3 +1158,77 @@ func GetGallerySearch(c echo.Context) error {
 	}
 	return c.Render(200, "gallery_search", data)
 }
+
+func GetPostsModerationTab(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	data := map[string]any{
+		"locale": locale,
+	}
+	return c.Render(200, "posts_moderation", data)
+}
+
+func GetAllPostsForModeration(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || !user.Active || user.Authority.Level < model.AUTH_MODERATOR.Level {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	query := c.QueryParam("query")
+	postsDB, err := database.FindAllPostsByqueryPaginated(page, 12, query)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	posts := convertPostsToPostList(postsDB)
+	more := len(postsDB) == 12
+	nextPage := page + 1
+	nextPageLoader := ""
+	if more {
+		nextPageLoader = fmt.Sprintf("/posts/moderation?page=%d&query=%s", nextPage, query)
+	}
+	data := map[string]any{
+		"locale": locale,
+		"posts":  posts,
+		"more":   more,
+		"next":   template.HTML(nextPageLoader), //skipcq  GSC-G203
+	}
+	return c.Render(200, "posts_moderation_list", data)
+}
+
+func convertPostsToPostList(posts []model.Post) []map[string]any {
+	var postsContent []map[string]any
+	for i := range posts {
+		postsContent = append(postsContent, map[string]any{
+			"postID":    posts[i].ID,
+			"author":    posts[i].Author,
+			"title":     posts[i].Title,
+			"createdAt": posts[i].CreatedAt.Format("2006-01-02 15:04:05"),
+			"updatedAt": posts[i].UpdatedAt.Format("2006-01-02 15:04:05"),
+			"published": posts[i].Published,
+			"type":      posts[i].OwnerType,
+			"id":        posts[i].OwnerID,
+		})
+	}
+	return postsContent
+}
+
+func DeletePostModerators(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || !user.Active || user.Authority.Level < model.AUTH_MODERATOR.Level {
+		return c.String(401, "Unauthorized")
+	}
+	postIDstr := c.Param("id")
+	postID, err := strconv.ParseUint(postIDstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	err = database.DeletePostByID(postID)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	return c.String(200, "Post deleted successfully!")
+}

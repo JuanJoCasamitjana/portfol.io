@@ -14,6 +14,9 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.GET("/posts/articles/search", handlers.ArticleSearchPaginated)
 	e.GET("/posts/galleries", handlers.GetGallerySearch)
 	e.GET("/posts/galleries/search", handlers.GallerySearchPaginated)
+	e.GET("/posts/moderation/tab", handlers.GetPostsModerationTab)
+	e.GET("/posts/moderation", handlers.GetAllPostsForModeration)
+	e.DELETE("/posts/moderation/:id", handlers.DeletePostModerators)
 	//Articles
 	e.GET("/article/:id", handlers.GetArticleByID)
 	e.GET("/article/create", handlers.CreateArticleForm)

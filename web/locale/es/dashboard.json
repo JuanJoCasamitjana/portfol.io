@@ -22,5 +22,9 @@
     {
         "Key":"dashboard_restrict_tab",
         "Default":"Restringir acceso"
+    },
+    {
+        "Key":"dashboard_posts_tab",
+        "Default":"Publicaciones"
     }
 ]

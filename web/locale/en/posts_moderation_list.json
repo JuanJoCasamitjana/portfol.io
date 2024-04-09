@@ -1,0 +1,26 @@
+[
+    {
+        "Key":"mod_post_list_article_badge",
+        "Default":"Article"
+    },
+    {
+        "Key":"mod_post_list_published",
+        "Default":"Published"
+    },
+    {
+        "Key":"mod_post_list_not_published",
+        "Default":"Draft"
+    },
+    {
+        "Key":"mod_post_list_delete_confirm",
+        "Default":"Are you sure you want to delete this post?"
+    },
+    {
+        "Key":"mod_post_list_delete_button",
+        "Default":"Delete"
+    },
+    {
+        "Key":"mod_post_list_gallery_badge",
+        "Default":"Gallery"
+    }
+]

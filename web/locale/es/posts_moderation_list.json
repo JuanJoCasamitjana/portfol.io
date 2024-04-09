@@ -1,0 +1,26 @@
+[
+    {
+        "Key":"mod_post_list_article_badge",
+        "Default":"Artículo"
+    },
+    {
+        "Key":"mod_post_list_published",
+        "Default":"Publicado"
+    },
+    {
+        "Key":"mod_post_list_not_published",
+        "Default":"Borrador"
+    },
+    {
+        "Key":"mod_post_list_delete_confirm",
+        "Default":"¿Estás seguro de que quieres eliminar esta publicación?"
+    },
+    {
+        "Key":"mod_post_list_delete_button",
+        "Default":"Eliminar"
+    },
+    {
+        "Key":"mod_post_list_gallery_badge",
+        "Default":"Galería"
+    }
+]
