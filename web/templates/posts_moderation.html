@@ -1,0 +1,10 @@
+{{define "posts_moderation"}}
+<form action="" class="form-inline mt-3">
+    <input type="text" hx-get="/posts/moderation" name="query" id="query" 
+    hx-trigger="keyup changed delay:500ms, load" hx-swap="innerHTML" hx-target="#results-posts"
+    placeholder="{{Translate .locale "posts_search_input_placeholder"}}">
+</form>
+<div id="results-posts">
+
+</div>
+{{end}}

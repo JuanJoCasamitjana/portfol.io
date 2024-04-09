@@ -245,3 +245,50 @@ func FindGalleriesByQueryPaginated(query string, page, size int) ([]model.Galler
 		Offset(offset).Limit(size).Find(&galleries).Error
 	return galleries, err
 }
+
+func FindAllPostsPaginated(page, size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var posts []model.Post
+	err := DB.Order("updated_at desc").Offset(offset).Limit(size).Find(&posts).Error
+	return posts, err
+}
+
+func FindAllPostsByqueryPaginated(page, size int, query string) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var posts []model.Post
+	err := DB.Where("title LIKE ?", "%"+query+"%").Order("updated_at desc").Offset(offset).Limit(size).Find(&posts).Error
+	return posts, err
+}
+
+func DeletePostByID(id uint64) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		var post model.Post
+		err := tx.First(&post, id).Error
+		if err != nil {
+			return err
+		}
+		if post.OwnerType == "article" {
+			var article model.Article
+			err = tx.First(&article, post.OwnerID).Error
+			if err != nil {
+				return err
+			}
+			return tx.Model(&article).Delete(&article).Error
+		}
+		if post.OwnerType == "gallery" {
+			var gallery model.Gallery
+			err = tx.First(&gallery, post.OwnerID).Error
+			if err != nil {
+				return err
+			}
+			return tx.Model(&gallery).Delete(&gallery).Error
+		}
+		return errors.New("invalid post owner type")
+	})
+}

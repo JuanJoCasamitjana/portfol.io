@@ -1,0 +1,46 @@
+{{define "posts_moderation_list"}}
+{{range .posts}}
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        {{if eq .type "article"}}
+        <div id="article-{{.id}}" class="border rounded border-dark mt-2">
+            <div class="m-2">
+                <h3>{{.title}}</h3>
+                <p>@{{.author}}</p>
+                <span class="badge badge-dark badge-pill">{{Translate $.locale "mod_post_list_article_badge"}}</span>
+                {{if .published}}
+                <span class="badge badge-success badge-pill">{{Translate $.locale "mod_post_list_published"}}</span>
+                {{else}}
+                <span class="badge badge-warning badge-pill">{{Translate $.locale "mod_post_list_not_published"}}</span>
+                {{end}}
+                <button class="btn btn-danger m-1" hx-delete="/posts/moderation/{{.postID}}" hx-swap="delete"
+                hx-target="#article-{{.id}}" hx-confirm="{{Translate $.locale "mod_post_list_delete_confirm"}}"
+                >{{Translate $.locale "mod_post_list_delete_button"}}</button>
+            </div>
+        </div>
+        {{else if eq .type "gallery"}}
+        <div id="gallery-{{.id}}" class="border rounded border-dark mt-2">
+            <div class="m-2">
+                <h3>{{.title}}</h3>
+                <p>@{{.author}}</p>
+                <span class="badge badge-primary badge-pill">{{Translate $.locale "mod_post_list_gallery_badge"}}</span>
+                {{if .published}}
+                <span class="badge badge-success badge-pill">{{Translate $.locale "mod_post_list_published"}}</span>
+                {{else}}
+                <span class="badge badge-warning badge-pill">{{Translate $.locale "mod_post_list_not_published"}}</span>
+                {{end}}
+                <button class="btn btn-danger m-1" hx-delete="/posts/moderation/{{.postID}}" hx-swap="delete"
+                hx-target="#gallery-{{.id}}" hx-confirm="{{Translate $.locale "mod_post_list_delete_confirm"}}"
+                >{{Translate $.locale "mod_post_list_delete_button"}}</button>
+            </div>
+        </div>
+        {{end}}
+    </div>
+    <div class="col-md-1"></div>
+</div>
+{{end}}
+{{if .more}}
+<div class="m-3 p-3" hx-get="{{.next}}" hx-swap="outerHTML" hx-trigger="revealed"></div>
+{{end}}
+{{end}}
