@@ -9,7 +9,7 @@ Portfol\.io is an example project that aims to provide decent complexity for a h
 * **Bluemonday:** for HTML sanitization. [Bluemonday](https://github.com/microcosm-cc/bluemonday)
 * **Bcrypt:** for password hashing. [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
 * **Goeasyi18n:** for internazionalization. [goeasyi18n](https://github.com/eduardolat/goeasyi18n?tab=readme-ov-file)
-* **Godotenv:** just because I wanted to use a `.env` file during development. [joho/godotenv](github.com/joho/godotenv)
+* **Godotenv:** just because I wanted to use a `.env` file during development. [joho godotenv](https://github.com/joho/godotenv)
 * **Gorilla sessions:** for managing sessions and coockies. [sessions](https://github.com/gorilla/sessions)
 * **HTMX:** for frontend management. [HTMX](https://htmx.org/)
 * **Bootstrap:** for styling. [Bootstrap 4.6](https://getbootstrap.com/docs/4.6/getting-started/introduction/)
