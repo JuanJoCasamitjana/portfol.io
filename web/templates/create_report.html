@@ -1,5 +1,5 @@
 {{define "create_report"}}
-<div class="container">
+<div class="container fade-in fade-out">
     <form hx-post="/reports/create" hx-target="#main-app" hx-swap="innerHTML">
         <label for="description">{{Translate .locale "report_create_description_label"}}</label>
         <div class="input-group has-validation">

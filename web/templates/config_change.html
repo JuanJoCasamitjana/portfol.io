@@ -1,5 +1,5 @@
 {{define "config_change"}}
-<form hx-post="/admin/tools/config" hx-target="#config" hx-swap="innerHTML">
+<form hx-post="/admin/tools/config" hx-target="#config" hx-swap="innerHTML" class="fade-in fade-out">
     {{if .message}}
     {{template "notice_success" .message}}
     {{end}}

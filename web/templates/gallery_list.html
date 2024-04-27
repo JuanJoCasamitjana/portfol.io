@@ -1,13 +1,13 @@
 {{define "gallery_list"}}
-<div class="container">
+<div class="container fade-in fade-out">
     <div class="row">
         <div class="col-md-12">
             <div class="row mt-3">
                 {{range .galleries}}
                 <div class="col-md-4 mt-3">
                     <div class="card" style="cursor: pointer; min-height: 100%;"
-                    hx-get="/gallery/{{.id}}" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true">
+                    hx-get="/gallery/{{.id}}?which=part" hx-target="#main-app"
+                    hx-swap="innerHTML" hx-push-url="/gallery/{{.id}}">
                         <div class="card-header">
                             <h5>{{.title}}</h5>
                             {{if .showBadge}}

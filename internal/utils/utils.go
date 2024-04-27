@@ -14,6 +14,7 @@ var (
 	FromEmailPassword []byte
 	SmtpHost          string
 	SmtpPort          string
+	Shutdown          *chan struct{}
 )
 
 func init() {
@@ -38,4 +39,8 @@ func SendEmailNotification(to []string, body []byte) error {
 	}
 	auth := smtp.PlainAuth("", FromEmail, string(FromEmailPassword), SmtpHost)
 	return smtp.SendMail(SmtpHost+":"+SmtpPort, auth, FromEmail, to, body)
+}
+
+func ShutDownSignal() {
+	*Shutdown <- struct{}{}
 }

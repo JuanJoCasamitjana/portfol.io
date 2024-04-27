@@ -100,11 +100,35 @@ func convertPostsToDataMap(posts []model.Post) []map[string]interface{} {
 }
 
 // Mostly about articles
-func CreateArticleForm(c echo.Context) error {
+func CreateArticleFormPart(c echo.Context) error {
 	data := map[string]any{
 		"locale": utils.GetLocale(c),
 	}
 	return c.Render(200, "article_form", data)
+}
+
+func CreateArticleFormFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	data := map[string]any{
+		"locale":          utils.GetLocale(c),
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+	}
+	return c.Render(200, "article_form_full", data)
+}
+
+func CreateArticleForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return CreateArticleFormPart(c)
+	}
+	return CreateArticleFormFull(c)
 }
 
 func CreateArticle(c echo.Context) error {
@@ -161,6 +185,31 @@ func CreateAndPublishArticle(c echo.Context) error {
 }
 
 func GetMyArticles(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetMyArticlesPart(c)
+	}
+	return GetMyArticlesFull(c)
+}
+
+func GetMyArticlesFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	data := map[string]any{
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+	}
+	return c.Render(200, "article_list_full", data)
+}
+
+func GetMyArticlesPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	page_str := c.QueryParam("page")
 	page, err := strconv.Atoi(page_str)
@@ -180,7 +229,7 @@ func GetMyArticles(c echo.Context) error {
 	more := len(articles_db) == 12
 	next_page_loader := ""
 	if more {
-		next_page_loader = fmt.Sprintf("/article/mine?page=%d", next_page)
+		next_page_loader = fmt.Sprintf("/article/mine?page=%d&which=part", next_page)
 	}
 	data := map[string]any{
 		"isMine":    true,
@@ -207,7 +256,7 @@ func convertArticlesToDataMap(articles []model.Article) []map[string]interface{}
 	return articles_content
 }
 
-func GetArticleByID(c echo.Context) error {
+func GetArticleByIDPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	id_str := c.Param("id")
 	id, err := strconv.ParseUint(id_str, 10, 64)
@@ -236,6 +285,52 @@ func GetArticleByID(c echo.Context) error {
 		"isActive":  user.Active,
 	}
 	return c.Render(200, "article", data)
+}
+
+func GetArticleByIDFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	id_str := c.Param("id")
+	id, err := strconv.ParseUint(id_str, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	article, err := database.FindArticleByID(id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	user, err := GetUserOfSession(c)
+	if !article.Published && (err != nil || user.Username != article.Author) {
+		return c.String(401, "Unauthorized")
+	}
+	isAuthor := user.Username == article.Author
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	data := map[string]any{
+		"id":              article.ID,
+		"title":           article.Title,
+		"content":         template.HTML(article.Content), //skipcq  GSC-G203
+		"author":          article.Author,
+		"createdAt":       article.CreatedAt,
+		"updatedAt":       article.UpdatedAt,
+		"published":       article.Published,
+		"locale":          locale,
+		"isAuthor":        isAuthor,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+	}
+	return c.Render(200, "article_full", data)
+}
+
+func GetArticleByID(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetArticleByIDPart(c)
+	}
+	return GetArticleByIDFull(c)
 }
 
 func EditArticleForm(c echo.Context) error {
@@ -407,7 +502,7 @@ func GetTagsOfArticle(c echo.Context) error {
 //Mostly about galleries and images
 
 // Since its a collection of images it's better to create it first
-func CreateGallery(c echo.Context) error {
+func CreateGalleryPart(c echo.Context) error {
 	var gallery model.Gallery
 	user, err := GetUserOfSession(c)
 	if err != nil || !user.Active {
@@ -426,6 +521,32 @@ func CreateGallery(c echo.Context) error {
 		"isPublished": gallery.Published,
 	}
 	return c.Render(200, "gallery_form", data)
+}
+
+func CreateGalleryFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	data := map[string]any{
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+		"page_to_load":    "/gallery/create?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func CreateGallery(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return CreateGalleryPart(c)
+	}
+	return CreateGalleryFull(c)
 }
 
 func AddImageToGallery(c echo.Context) error {
@@ -659,7 +780,7 @@ func convertImagesToDataMap(images []model.Image, optional_values ...any) []map[
 	return images_content
 }
 
-func GetGalleryByID(c echo.Context) error {
+func GetGalleryByIDPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	id_str := c.Param("id")
 	id, err := strconv.ParseUint(id_str, 10, 64)
@@ -691,7 +812,81 @@ func GetGalleryByID(c echo.Context) error {
 	return c.Render(200, "gallery", data)
 }
 
+func GetGalleryByIDFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	id_str := c.Param("id")
+	id, err := strconv.ParseUint(id_str, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindGalleryByID(id)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	user, err := GetUserOfSession(c)
+	if !gallery.Published && (err != nil || user.Username != gallery.Author) {
+		return c.String(401, "Unauthorized")
+	}
+	isAuthor := user.Username == gallery.Author
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	images := convertImagesToDataMap(gallery.Images)
+	data := map[string]any{
+		"id":              gallery.ID,
+		"title":           gallery.Title,
+		"author":          gallery.Author,
+		"createdAt":       gallery.CreatedAt,
+		"updatedAt":       gallery.UpdatedAt,
+		"published":       gallery.Published,
+		"images":          images,
+		"locale":          locale,
+		"isAuthor":        isAuthor,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+	}
+	return c.Render(200, "gallery_full", data)
+}
+
+func GetGalleryByID(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetGalleryByIDPart(c)
+	}
+	return GetGalleryByIDFull(c)
+}
+
 func GetMyGalleries(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetMyGalleriesPart(c)
+	}
+	return GetMyGalleriesFull(c)
+
+}
+
+func GetMyGalleriesFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := isAuthenticated && user.Authority.Level == model.AUTH_MODERATOR.Level
+	isAdmin := isAuthenticated && user.Authority.Level == model.AUTH_ADMIN.Level
+	data := map[string]any{
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+		"page_to_load":    "/gallery/mine?page=1&which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetMyGalleriesPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	page_str := c.QueryParam("page")
 	page, err := strconv.Atoi(page_str)

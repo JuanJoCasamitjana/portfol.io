@@ -1,10 +1,15 @@
 package base
 
 import (
+	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/routes"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/utils"
@@ -59,7 +64,26 @@ func SetUpAndRunServer() {
 	e.Renderer = NewTemplates()
 	e.Static("/static", "web/static")
 	routes.SetUpRoutes(e)
-	e.Start("0.0.0.0:" + port)
+	shutdown := make(chan struct{})
+	sysSignals := make(chan os.Signal, 1)
+	signal.Notify(sysSignals, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	go func() {
+		e.Start("0.0.0.0:" + port)
+	}()
+	utils.Shutdown = &shutdown
+	go func() {
+		<-sysSignals
+		utils.ShutDownSignal()
+	}()
+	<-shutdown
+	defer cancel()
+	err := e.Shutdown(ctx)
+	if err != nil {
+		fmt.Println("Error shutting down server", err)
+	}
+	fmt.Println("Server is shutting down")
+	defer os.Exit(0)
 }
 
 // Templates is a custom renderer for echo

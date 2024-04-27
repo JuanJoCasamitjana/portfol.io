@@ -10,5 +10,9 @@
     {
         "Key":"restraint_access_confirm",
         "Default":"¿Estás seguro?"
+    },
+    {
+        "Key":"restraint_access_shut_down_button",
+        "Default":"Apagar el servidor"
     }
 ]

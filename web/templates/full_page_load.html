@@ -1,4 +1,4 @@
-{{define "index"}}
+{{define "full_page_load"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +11,7 @@
     <script src="/static/htmx.min.js"></script>
     <script src="/static/summernote-bs4.min.js"></script>
     <link rel="stylesheet" href="/static/summernote-bs4.min.css">
-    <title>{{.app_title}}</title>
+    <title>{{.title}}</title>
 </head>
 <style>
     .word-wrap {
@@ -36,9 +36,8 @@
 <body class="word-wrap">
     {{template "navbar" .}}
     <div id="main-app" class="container fade-in">
-        {{template "posts_main" .}}
+        <div hx-get="{{.page_to_load}}" hx-swap="outerHTML" hx-trigger="load"></div>
     </div>
 </body>
-
 </html>
 {{end}}

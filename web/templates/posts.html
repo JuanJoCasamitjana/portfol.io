@@ -1,5 +1,5 @@
 {{define "posts"}}
-<div class="container">
+<div class="container fade-in fade-out">
     <div class="row">
         <div class="col-md-12">
             <div class="row">
@@ -7,10 +7,10 @@
                 {{if eq .post_type "article"}}
                 <div class="col-md-4 mt-3">
                     <div id="post-{{.id}}-{{.post_type}}" class="border border-secondary rounded" style="min-height: 100%; cursor: pointer;"
-                    hx-get="/article/{{.id}}" hx-push-url="true" hx-target="#main-app">
+                    hx-get="/article/{{.id}}?which=part" hx-push-url="/article/{{.id}}" hx-target="#main-app">
                         <div class="m-3">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/profile/{{.author}}" hx-push-url="true"
+                            <p hx-get="/profile/{{.author}}?which=part" hx-push-url="/profile/{{.author}}"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
@@ -22,10 +22,10 @@
                 {{else if eq .post_type "gallery"}}
                 <div class="col-md-4 mt-3">
                     <div id="post-{{.id}}-{{.post_type}}" class="card border-primary" style="min-height: 100%; cursor: pointer;"
-                    hx-get="/gallery/{{.id}}" hx-target="#main-app" hx-push-url="true">
+                    hx-get="/gallery/{{.id}}?which=part" hx-target="#main-app" hx-push-url="/gallery/{{.id}}">
                         <div class="card-header">
                             <h3>{{.title}}</h3>
-                            <p hx-get="/profile/{{.author}}" hx-push-url="true"
+                            <p hx-get="/profile/{{.author}}?which=part" hx-push-url="/profile/{{.author}}"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
                             class="ml-1 p-2 rounded" style="background:  #cfe5d8;"
@@ -47,6 +47,6 @@
     </div>
 </div>
 {{if .more}}
-<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3" hx-swap="outerHTML"></div>
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3 fade-in fade-out" hx-swap="outerHTML"></div>
 {{end}}
 {{end}}

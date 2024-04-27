@@ -15,6 +15,11 @@ import (
 var DBname = "dev.db"
 var DB *gorm.DB
 
+func Remigrate() {
+	DB.AutoMigrate(&model.User{}, &model.Article{}, &model.Project{}, &model.Image{}, &model.Gallery{},
+		&model.Post{}, &model.Section{}, &model.FollowList{}, &model.Report{}, &model.Tag{})
+}
+
 func init() {
 	err := godotenv.Load()
 	if err != nil {
