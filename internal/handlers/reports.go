@@ -11,6 +11,32 @@ import (
 )
 
 func GetCreateReport(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetCreateReportPart(c)
+	}
+	return GetCreateReportFull(c)
+}
+
+func GetCreateReportFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	locale := utils.GetLocale(c)
+	isAuthenticated := err == nil
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/reports/create?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetCreateReportPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	data := map[string]any{
 		"locale": locale,

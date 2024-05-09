@@ -52,11 +52,40 @@ func IsModerator(c echo.Context) bool {
 
 // Registration process, linked only to register.html template and locale/*/register.json
 func GetRegisterForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetRegisterFormPart(c)
+	}
+	return GetRegisterFormFull(c)
+}
+
+func GetRegisterFormPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	data := map[string]any{
 		"locale": locale,
 	}
 	return c.Render(200, "register", data)
+}
+
+func GetRegisterFormFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	isAuthenticated := false
+	user, err := GetUserOfSession(c)
+	if err == nil {
+		isAuthenticated = true
+	}
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"isActive":        user.Active,
+		"page_to_load":    "/register?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
 }
 
 func Register(c echo.Context) error {
@@ -115,6 +144,35 @@ func Register(c echo.Context) error {
 // Login process, linked only to login.html template and locale/*/login.json
 
 func GetLoginForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetLoginFormPart(c)
+	}
+	return GetLoginFormFull(c)
+}
+
+func GetLoginFormFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	isAuthenticated := false
+	user, err := GetUserOfSession(c)
+	if err == nil {
+		isAuthenticated = true
+	}
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"app_title":       "Portfol.io",
+		"page_to_load":    "/login?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetLoginFormPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	data := map[string]any{
 		"locale": locale,
@@ -193,6 +251,35 @@ func Logout(c echo.Context) error {
 }
 
 func ChangePasswordForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return ChangePasswordFormPart(c)
+	}
+	return ChangePasswordFormFull(c)
+}
+
+func ChangePasswordFormFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/profile/mine/edit/password?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func ChangePasswordFormPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	data := map[string]any{
 		"locale": locale,
@@ -254,6 +341,34 @@ func DeleteProfile(c echo.Context) error {
 }
 
 func GetMyProfile(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetMyProfilePart(c)
+	}
+	return GetMyProfileFull(c)
+}
+
+func GetMyProfileFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.Render(401, "error", nil)
+	}
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          utils.GetLocale(c),
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/profile/mine?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetMyProfilePart(c echo.Context) error {
 	user, err := GetUserOfSession(c)
 	if err != nil {
 		return c.Render(401, "error", nil)
@@ -272,6 +387,35 @@ func GetMyProfile(c echo.Context) error {
 }
 
 func GetProfileEditForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetProfileEditFormPart(c)
+	}
+	return GetProfileEditFormFull(c)
+}
+
+func GetProfileEditFormFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.Render(401, "error", nil)
+	}
+	locale := utils.GetLocale(c)
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/profile/mine/edit?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetProfileEditFormPart(c echo.Context) error {
 	user, err := GetUserOfSession(c)
 	if err != nil {
 		return c.Render(401, "error", nil)
@@ -380,7 +524,7 @@ func isValidEmail(email string, current_user model.User) bool {
 	return err == nil
 }
 
-func GetUserProfile(c echo.Context) error {
+func GetUserProfilePart(c echo.Context) error {
 	username := c.Param("username")
 	user, err := database.FindUserByUsername(username)
 	if err != nil {
@@ -410,6 +554,50 @@ func GetUserProfile(c echo.Context) error {
 	return c.Render(200, "profile", data)
 }
 
+func GetUserProfileFull(c echo.Context) error {
+	username := c.Param("username")
+	user, err := database.FindUserByUsername(username)
+	if err != nil {
+		return c.Render(404, "error", nil)
+	}
+	session_user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	is_current_user := session_user.Username == user.Username
+	user_follow_list, err := database.FindFollowListByUsername(session_user.Username)
+	if err != nil {
+		user_follow_list = model.FollowList{Owner: session_user.Username}
+		err = database.CreateFollowList(&user_follow_list)
+		if err != nil {
+			return c.String(500, "Internal server error")
+		}
+	}
+	is_following := isFollowing(user_follow_list, user)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"username":        user.Username,
+		"fullname":        user.FullName,
+		"locale":          utils.GetLocale(c),
+		"bio":             user.Profile.Bio,
+		"avatar":          user.Profile.PfPUrl,
+		"is_current_user": is_current_user,
+		"is_following":    is_following,
+		"isActive":        session_user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+	}
+	return c.Render(200, "profile_full", data)
+}
+
+func GetUserProfile(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetUserProfilePart(c)
+	}
+	return GetUserProfileFull(c)
+}
 func GetUserSections(c echo.Context) error {
 	username := c.Param("username")
 	locale := utils.GetLocale(c)
@@ -482,6 +670,35 @@ func GetUserSectionPaginated(c echo.Context) error {
 }
 
 func CreateNewSectionForm(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return CreateNewSectionFormPart(c)
+	}
+	return CreateNewSectionFormFull(c)
+}
+
+func CreateNewSectionFormFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/profile/" + user.Username + "/create/section?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func CreateNewSectionFormPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
 	if err != nil || !user.Active {
@@ -692,6 +909,35 @@ func DeleteSection(c echo.Context) error {
 }
 
 func GetMySectionsList(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return GetMySectionsListPart(c)
+	}
+	return GetMySectionsListFull(c)
+}
+
+func GetMySectionsListFull(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	locale := utils.GetLocale(c)
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"isActive":        user.Active,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"page_to_load":    "/profile/" + user.Username + "/edit/sections?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func GetMySectionsListPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
 	if err != nil {
@@ -807,6 +1053,32 @@ func isFollowing(follower_follow_list model.FollowList, followed model.User) boo
 }
 
 func FollowingPostsPaginated(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return FollowingPostsPaginatedPart(c)
+	}
+	return FollowingPostsPaginatedFull(c)
+}
+
+func FollowingPostsPaginatedFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	isAuthenticated := err == nil
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"isActive":        user.Active,
+		"page_to_load":    "/following?which=part",
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func FollowingPostsPaginatedPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
 	if err != nil {
@@ -825,7 +1097,7 @@ func FollowingPostsPaginated(c echo.Context) error {
 	more := len(posts) == 12
 	nextPageLoader := ""
 	if more {
-		nextPageLoader = fmt.Sprintf("/following?page=%d", page+1)
+		nextPageLoader = fmt.Sprintf("/following?page=%d?which=part", page+1)
 	}
 	data := map[string]any{
 		"locale":   locale,
@@ -837,7 +1109,7 @@ func FollowingPostsPaginated(c echo.Context) error {
 	return c.Render(200, "posts", data)
 }
 
-func ListWhoIFollow(c echo.Context) error {
+func ListWhoIFollowPart(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
 	if err != nil {
@@ -864,6 +1136,52 @@ func ListWhoIFollow(c echo.Context) error {
 		"following": users,
 	}
 	return c.Render(200, "following", data)
+}
+
+func ListWhoIFollowFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	user, err := GetUserOfSession(c)
+	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	isAuthenticated := true
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	user_follow_list, err := database.FindFollowListByUsername(user.Username)
+	if err != nil {
+		user_follow_list = model.FollowList{Owner: user.Username}
+		err = database.CreateFollowList(&user_follow_list)
+		if err != nil {
+			return c.String(500, "Internal server error")
+		}
+	}
+	users := make([]map[string]any, len(user_follow_list.Following))
+	for i, user := range user_follow_list.Following {
+		users[i] = map[string]any{
+			"username": user.Username,
+			"fullname": user.FullName,
+			"bio":      user.Profile.Bio,
+		}
+	}
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"username":        user.Username,
+		"following":       users,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"isActive":        user.Active,
+	}
+	return c.Render(200, "following_full", data)
+}
+
+func ListWhoIFollow(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return ListWhoIFollowPart(c)
+	}
+	return ListWhoIFollowFull(c)
 }
 
 func GetModDashBoard(c echo.Context) error {

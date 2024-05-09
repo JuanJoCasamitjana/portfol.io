@@ -1,12 +1,20 @@
 {{define "following"}}
-<div class="container">
-    {{range .following}}
-    <div class="row">
-        <div class="col-md-12 border border-dark rounded mt-3">
-            <button class="btn btn-dark" hx-get="/profile/{{.username}}" hx-target="#main-app"
-            hx-swap="innerHTML">{{.username}}</button>
+{{range .following}}
+<div class="row fade-in fade-out">
+    <div class="col-md-1"></div>
+    <div class="col-md-10 mt-1 mb-3 border border-dark rounded shadow" 
+    style="background-color: #e0fbd0;">
+        <div class="media" style="cursor: pointer;" hx-get="/profile/{{.username}}?which=part" 
+        hx-push-url="/profile/{{.username}}" hx-target="#main-app" hx-swap="innerHTML transition:true">
+            <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+            <div class="media-body">
+                <h4>@{{.username}}</h4>
+                <h5><i>{{.fullname}}</i></h5>
+                <p>{{.bio}}</p>
+            </div>
         </div>
     </div>
-    {{end}}
+    <div class="col-md-1"></div>
 </div>
+{{end}}
 {{end}}

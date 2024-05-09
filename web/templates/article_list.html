@@ -1,7 +1,7 @@
 {{define "article_list"}}
 {{range .articles}}
-<div class="container mt-3">
-    <div hx-get="/article/{{.id}}" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true"
+<div class="container mt-3 fade-in fade-out">
+    <div hx-get="/article/{{.id}}?which=part" hx-trigger="click" hx-target="#main-app" hx-swap="innerHTML" hx-push-url="/article/{{.id}}"
         class="border  border-dark rounded-sm mx-auto w-75 mt3" style="cursor: pointer;"
         onmouseout="this.style.color='#212529'" onmouseover="this.style.color='#007bff'">
         {{if $.isMine}}

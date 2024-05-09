@@ -1,6 +1,6 @@
 {{define "login"}}
-<div class="row justify-content-center  mt-3">
-    <form class="w-25" hx-post="/login" hx-target="#main-app" hx-swap="innerHTML" class="form">
+<div class="row justify-content-center  mt-3 fade-in fade-out">
+    <form class="w-50" hx-post="/login" hx-target="#main-app" hx-swap="innerHTML" class="form">
         <h3 class="text-center">{{Translate .locale "login_form_title"}}</h3>
         <div class="input-group has-validation">
             {{if .errors.other}}

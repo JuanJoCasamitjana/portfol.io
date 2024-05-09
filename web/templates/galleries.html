@@ -1,9 +1,9 @@
 {{define "galleries"}}
-<div class="container row">
+<div class="container row fade-in fade-out">
     {{range .galleries}}
     <div class="col-md-4 mt-3">
-        <div class="card border-dark" style="cursor: pointer; min-height: 100%;" hx-get="/gallery/{{.id}}" 
-        hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">
+        <div class="card border-dark" style="cursor: pointer; min-height: 100%;" hx-get="/gallery/{{.id}}?which=part" 
+        hx-target="#main-app" hx-swap="innerHTML" hx-push-url="/gallery/{{.id}}">
             <div class="card-header">
                 <h5>{{.title}}</h5>
                 <p>{{Translate $.locale "by_preposition"}} @{{.author}}</p>

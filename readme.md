@@ -3,17 +3,20 @@
 Portfol\.io is an example project that aims to provide decent complexity for a handful of examples in projects that use Golang and HTMX. Just keep in mind that I'm also learning while developing this project, so if you want a nice guide on how to build your application in the Go style, you are probably better off looking elsewhere. I just selected a handful of technologies that I thought would make it easier to develop without wasting too much time on configuration. In other words, if you plan to do a small application, this is absolutely not the place to look, and if you want to go big, you should take this code with a grain of salt.
 
 # Techlogies, frameworks, dependencies, etc..
+Licenses and copyright clauses are housed on [dependencies.md](/dependencies.md)
+
 
 * **Echo:** for routing and managing the web server. [Echo](https://echo.labstack.com/)
 * **Gorm:** for managing the database. [Gorm\.io](https://gorm.io/)
 * **Bluemonday:** for HTML sanitization. [Bluemonday](https://github.com/microcosm-cc/bluemonday)
 * **Bcrypt:** for password hashing. [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
 * **Goeasyi18n:** for internazionalization. [goeasyi18n](https://github.com/eduardolat/goeasyi18n?tab=readme-ov-file)
-* **Godotenv:** just because I wanted to use a `.env` file during development. [joho/godotenv](github.com/joho/godotenv)
+* **Godotenv:** just because I wanted to use a `.env` file during development. [joho godotenv](https://github.com/joho/godotenv)
 * **Gorilla sessions:** for managing sessions and coockies. [sessions](https://github.com/gorilla/sessions)
 * **HTMX:** for frontend management. [HTMX](https://htmx.org/)
 * **Bootstrap:** for styling. [Bootstrap 4.6](https://getbootstrap.com/docs/4.6/getting-started/introduction/)
 * **Summernote:** for html editing on the client. [Summernote](https://summernote.org/)
+* **Lumberjack:** for rolling logs. [lumberjack](https://github.com/natefinch/lumberjack)
 
 # Context and features
 

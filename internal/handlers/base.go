@@ -18,12 +18,12 @@ func RenderIndex(c echo.Context) error {
 	isModerator := user.Authority.Level == model.AUTH_MODERATOR.Level
 	isAdmin := user.Authority.Level == model.AUTH_ADMIN.Level
 	data := map[string]any{
-		"title":           "Portfol.io",
+		"app_title":       "Portfol.io",
 		"locale":          locale,
 		"IsAuthenticated": isAuthenticated,
 		"IsModerator":     isModerator,
 		"IsAdmin":         isAdmin,
-		"IsActive":        user.Active,
+		"isActive":        user.Active,
 	}
 	return c.Render(200, "index", data)
 }
@@ -42,7 +42,7 @@ func RenderNavbar(c echo.Context) error {
 		"IsAuthenticated": isAuthenticated,
 		"IsModerator":     isModerator,
 		"IsAdmin":         isAdmin,
-		"IsActive":        user.Active,
+		"isActive":        user.Active,
 	}
 	return c.Render(200, "navbar", data)
 }
@@ -68,4 +68,13 @@ func RestraintAccessMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		return next(c)
 	}
+}
+
+func ShutdownServer(c echo.Context) error {
+	user, err := GetUserOfSession(c)
+	if err != nil || user.Authority.Level < model.AUTH_ADMIN.Level {
+		return c.String(403, "You are not authorized to perform this action")
+	}
+	defer utils.ShutDownSignal()
+	return c.String(200, "Server is shutting down")
 }

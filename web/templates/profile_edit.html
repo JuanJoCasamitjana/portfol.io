@@ -1,5 +1,5 @@
 {{define "profile_edit"}}
-<div class="container">
+<div class="container fade-in fade-out">
     <form hx-post="/profile/mine/edit" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
         <h2>@{{.username}}</h2>
         <label for="fullname">{{Translate .locale "profile_edit_fullname_label"}}</label>

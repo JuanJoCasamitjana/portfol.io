@@ -10,6 +10,7 @@ func SetUpRoutes(e *echo.Echo) {
 	e.GET("/", handlers.RenderIndex)
 	e.GET("/navbar", handlers.RenderNavbar)
 	e.GET("/favicon.ico", handlers.SendFavicon)
+	e.GET("/admin/shutdown", handlers.ShutdownServer)
 	setUpUsersRoutes(e)
 	setUpPostsRoutes(e)
 	setUpReportsRoutes(e)

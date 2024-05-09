@@ -1,5 +1,5 @@
 {{define "upload_image"}}
-<div class="container" hx-get="/gallery/image-upload-form/{{.id}}" hx-swap="outerHTML" 
+<div class="container fade-in fade-out" hx-get="/gallery/image-upload-form/{{.id}}" hx-swap="outerHTML" 
 hx-trigger="gallery-reload from:body">
     <form class="mt-1" hx-post="/gallery/{{.id}}/images" hx-target="#upload-form" hx-swap="innerHTML" 
     enctype="multipart/form-data" hx-indicator="#spinner">

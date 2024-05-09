@@ -1,5 +1,5 @@
 {{define "article_form"}}
-<div class="container">
+<div class="container fade-in fade-out">
     <form class="mt-1" hx-post="{{if .id}}/article/edit/{{.id}}{{else}}/article/create{{end}}" hx-target="#main-app" hx-swap="innerHTML" enctype="multipart/form-data">
         <label for="title" class="sr-only">{{Translate .locale "article_form_main_title_label"}}</label>
         <div class="input-group has-validation">

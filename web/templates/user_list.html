@@ -1,10 +1,11 @@
 {{define "user_list"}}
 {{range .users}}
-<div class="row">
+<div class="row fade-in fade-out">
     <div class="col-md-1"></div>
-    <div class="col-md-10 mt-1 mb-3 border border-dark rounded shadow" style="background-color: #e0fbd0;">
-        <div class="media" style="cursor: pointer;" hx-get="/profile/{{.username}}" hx-push-url="true"
-        hx-target="#main-app" hx-swap="innerHTML">
+    <div class="col-md-10 mt-1 mb-3 border border-dark rounded shadow" 
+    style="background-color: #e0fbd0;">
+        <div class="media" style="cursor: pointer;" hx-get="/profile/{{.username}}?which=part" 
+        hx-push-url="/profile/{{.username}}" hx-target="#main-app" hx-swap="innerHTML transition:true">
             <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
             <div class="media-body">
                 <h4>@{{.username}}</h4>
@@ -17,6 +18,6 @@
 </div>
 {{end}}
 {{if .more}}
-<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3" hx-swap="outerHTML"></div>
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3 fade-in" hx-swap="outerHTML"></div>
 {{end}}
 {{end}}

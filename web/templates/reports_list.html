@@ -1,6 +1,6 @@
 {{define "reports_list"}}
 {{range .reports}}
-<div class="row">
+<div class="row fade-in fade-out">
     <div class="col-md-1"><div style="min-width: 10px;"></div></div>
     <div class="col-md-10 border border-dark rounded mt-2" 
     style="cursor: pointer; max-width: 90%; margin-inline: auto;"
@@ -14,6 +14,6 @@
 </div>
 {{end}}
 {{if .more}}
-<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3"></div>
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3 fade-in fade-out"></div>
 {{end}}
 {{end}}

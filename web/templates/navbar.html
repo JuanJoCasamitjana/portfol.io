@@ -1,72 +1,134 @@
 {{define "navbar"}}
-<nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="background-color: #99ff99;" hx-get="/navbar"
-    hx-trigger="session-changed from:body" hx-swap="outerHTML">
-    <a href="#" class="navbar-brand" hx-get="/main" hx-target="#main-app" hx-swap="innerHTML"
-    hx-push-url="/">
-        <img src="/static/po2.png" alt="Portfolio logo" style="width: 40px;">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse ml-5" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto" id="mobile-menu">
-            <li class="nav-item">
-                <a href="#" hx-get="/reports/create" hx-target="#main-app" hx-swap="innerHTML" 
-                class="nav-link">{{Translate .locale "navbar_report_create"}}</a>
-            </li>
-            {{if .IsAdmin}}
-            <li class="nav-item">
-                <a href="#" class="nav-link" hx-get="/admin/tools/dashboard" hx-target="#main-app"
-                hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_dashboard"}}</a>
-            </li>
-            {{end}}
-            {{if .IsModerator}}
-            <li class="nav-item">
-                <a href="#" class="nav-link" hx-get="/moderation/tools/dashboard" hx-target="#main-app"
-                hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_dashboard"}}</a>
-            </li>
-            {{end}}
-            {{if .IsAuthenticated}}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    {{Translate .locale "navbar_my_space"}}
-                </a>
-                <div class="dropdown-menu">
-                    {{if .IsActive}}
-                    <a href="#" class="dropdown-item" hx-get="/article/create" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_space_write_article"}}</a>
-                    {{end}}
-                    <a href="#" class="dropdown-item" hx-get="/article/mine?page=1" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="/article/mine">{{Translate .locale "navbar_my_space_my_articles"}}</a>
-                    {{if .IsActive}}
-                    <a href="#" class="dropdown-item" hx-get="/gallery/create" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_space_create_gallery"}}</a>
-                    {{end}}
-                    <a href="#" class="dropdown-item" hx-get="/gallery/mine?page=1" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="/gallery/mine">{{Translate .locale "navbar_my_space_my_galleries"}}</a>
-                    <a href="#" class="dropdown-item" hx-get="/following" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_following"}}</a>
-                    <a href="#" class="dropdown-item" hx-get="/profile/mine" hx-target="#main-app"
-                    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "navbar_my_profile"}}</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a href="#" hx-get="/logout" hx-target="#main-app" hx-swap="innerHTML" 
-                class="nav-link">{{Translate .locale "navbar_logout"}}</a>
-            </li>
-            {{else}}
-            <li class="nav-item">
-                <a href="#" hx-get="/register" hx-target="#main-app" hx-swap="innerHTML" 
-                class="nav-link">{{Translate .locale "navbar_register"}}</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" hx-get="/login" hx-target="#main-app" hx-swap="innerHTML" 
-                class="nav-link">{{Translate .locale "navbar_login"}}</a>
-            </li>
-            {{end}}
-        </ul>
+<div id="navbar" class="sticky-top">
+    <style>
+        .wrapper {
+            display: flex;
+            width: 250px;
+            align-items: stretch;
+            margin-left: -250px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+    
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100svh;
+        }
+    
+        #sidebar.active {
+            margin-left: 0px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+    
+        a[data-toggle="collapse"] {
+            position: relative;
+        }
+    
+        @media (max-width: 768px) {
+            #sidebar {
+                margin-left: -250px;
+            }
+    
+            #sidebar.active {
+                margin-left: 0;
+            }
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+    
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+    
+        });
+    </script>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #011b50;" hx-get="/navbar"
+        hx-trigger="session-changed from:body" hx-swap="outerHTML" hx-target="#navbar">
+        <button type="button" id="sidebarCollapse" class="btn btn-dark" style="background-color: transparent; border: 0px;">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="ml-auto">
+            <a href="#" class="navbar-brand fade-in" hx-get="/main" hx-target="#main-app" hx-swap="innerHTML" hx-push-url="/">
+                <img src="/static/logo_4.0.png" alt="Portfolio logo" style="height: 40px;">
+            </a>
+        </div>
+    </nav>
+    <div class="wrapper" id="sidebar"
+        style="background-color: #011b50; color: white; position: fixed; z-index: 1; max-width: 250px;">
+        <nav style="margin-left: 10px; color: white;">
+            <ul class="nav flex-column" style="color: white;">
+                {{if .IsAdmin}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link fade-in" hx-get="/admin/tools/dashboard" hx-target="#main-app"
+                    hx-swap="innerHTML" hx-push-url="true" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_dashboard"}}</a>
+                </li>
+                {{end}}
+                {{if .IsModerator}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link fade-in" hx-get="/moderation/tools/dashboard" hx-target="#main-app"
+                        hx-swap="innerHTML" hx-push-url="true" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_dashboard"}}</a>
+                </li>
+                {{end}}
+                {{if .IsAuthenticated}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" style="opacity: 80%; color: white;" href="#"
+                    id="navbardrop" data-toggle="dropdown">
+                        {{Translate .locale "navbar_my_space"}}
+                    </a>
+                    <div class="dropdown-menu">
+                        {{if .isActive}}
+                        <a href="#" class="dropdown-item fade-in" hx-get="/article/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                            hx-push-url="/article/create">{{Translate .locale "navbar_my_space_write_article"}}</a>
+                        {{end}}
+                        <a href="#" class="dropdown-item fade-in" hx-get="/article/mine?page=1&which=part" hx-target="#main-app"
+                            hx-swap="innerHTML" hx-push-url="/article/mine">{{Translate .locale
+                            "navbar_my_space_my_articles"}}</a>
+                        {{if .isActive}}
+                        <a href="#" class="dropdown-item fade-in" hx-get="/gallery/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                            hx-push-url="/gallery/create">{{Translate .locale "navbar_my_space_create_gallery"}}</a>
+                        {{end}}
+                        <a href="#" class="dropdown-item fade-in" hx-get="/gallery/mine?page=1&which=part" hx-target="#main-app"
+                            hx-swap="innerHTML" hx-push-url="/gallery/mine">{{Translate .locale
+                            "navbar_my_space_my_galleries"}}</a>
+                        <a href="#" class="dropdown-item fade-in" hx-get="/following?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                            hx-push-url="/following">{{Translate .locale "navbar_following"}}</a>
+                        <a href="#" class="dropdown-item" hx-get="/profile/mine?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                            hx-push-url="/profile/mine">{{Translate .locale "navbar_my_profile"}}</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#" hx-get="/logout" hx-target="#main-app" hx-swap="innerHTML" class="nav-link fade-in"
+                    style="opacity: 80%; color: white;">{{Translate .locale "navbar_logout"}}</a>
+                </li>
+                {{else}}
+                <li class="nav-item">
+                    <a href="#" hx-get="/register?which=part" hx-target="#main-app" hx-swap="innerHTML" class="nav-link fade-in"
+                    hx-push-url="/register"
+                    style="opacity: 80%; color: white;">{{Translate .locale "navbar_register"}}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" hx-get="/login?which=part" hx-target="#main-app" hx-swap="innerHTML" class="nav-link fade-in"
+                    hx-push-url="/login"
+                    style="opacity: 80%; color: white;">{{Translate .locale "navbar_login"}}</a>
+                </li>
+                {{end}}
+                <li class="nav-item">
+                    <a href="#" hx-get="/reports/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                        class="nav-link fade-in" style="opacity: 80%; color: white;" hx-push-url="/reports/create"
+                        >{{Translate .locale "navbar_report_create"}}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" style="opacity: 80%; color: white;" class="nav-link fade-in">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" style="opacity: 80%; color: white;" class="nav-link fade-in">Contact</a>
+                </li>
+            </ul>
+        </nav>
+    
     </div>
-</nav>
+</div>
 {{end}}

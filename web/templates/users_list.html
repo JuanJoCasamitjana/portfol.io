@@ -1,10 +1,10 @@
 {{define "users_list"}}
-<form class="form-inline">
+<form class="form-inline fade-in fade-out">
     <input type="text" class="form-control my-3" id="search" name="search" placeholder=""
     hx-trigger="keyup changed delay:500ms" hx-get="/moderation/users/search"
     hx-target="#users-list" hx-swap="innerHTML">
 </form>
-<div class="container" id="users-list">
+<div class="container fade-in fade-out" id="users-list">
     {{template "users_list_page" .}}
 </div>
 {{end}}

@@ -1,5 +1,5 @@
 {{define "profile"}}
-<div class="container" id="user-profile">
+<div class="container fade-in fade-out" id="user-profile">
     <div class="media border p-3 mt-3">
         <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
         <div class="media-body">
@@ -16,24 +16,29 @@
 {{template "ban_notice" .}}
 {{end}}
 {{if .is_current_user}}
-<div class="container m-3 p-3">
+<div class="container m-3 p-3 fade-in fade-out">
     {{if .isActive}}
-    <button class="btn btn-info mb-1 mr-2" hx-get="/profile/{{.username}}/create/section" hx-target="#main-app" 
-    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "profile_owner_button_create_new_section"}}</button>
+    <button class="btn btn-info mb-1 mr-2" hx-get="/profile/{{.username}}/create/section?which=part" hx-target="#main-app" 
+    hx-swap="innerHTML" hx-push-url="/profile/{{.username}}/create/section"
+    >{{Translate .locale "profile_owner_button_create_new_section"}}</button>
     {{end}}
-    <button class="btn btn-dark mb-1 mr-2" hx-get="/profile/{{.username}}/edit/sections" hx-target="#main-app" 
-    hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
-    <button class="btn btn-primary mb-1 mr-2" hx-get="/profile/mine/edit" hx-target="#main-app"
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_edit"}}</button>
-    <button class="btn btn-warning mb-1 mr-2" hx-get="/profile/mine/edit/password" hx-target="#main-app"
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_change_password"}}</button>
+    <button class="btn btn-dark mb-1 mr-2" hx-get="/profile/{{.username}}/edit/sections?which=part" 
+    hx-target="#main-app" hx-swap="innerHTML" hx-push-url="/profile/{{.username}}/edit/sections"
+    >{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
+    <button class="btn btn-primary mb-1 mr-2" hx-get="/profile/mine/edit?which=part" hx-target="#main-app"
+    hx-swap="innerHTML" hx-push-url="/profile/mine/edit"
+    >{{Translate .locale "profile_owner_button_edit"}}</button>
+    <button class="btn btn-warning mb-1 mr-2" hx-get="/profile/mine/edit/password?which=part" hx-target="#main-app"
+    hx-swap="innerHTML" hx-push-url="/profile/mine/edit/password"
+    >{{Translate .locale "profile_owner_button_change_password"}}</button>
     <button class="btn btn-danger mb-1 mr-2" hx-delete="/profile/mine" hx-confirm="Are you sure?" hx-target="#main-app"
     hx-swap="innerHTML">{{Translate .locale "profile_owner_button_delete_profile"}}</button>
-    <button class="btn btn-light mb-1 mr-2" hx-get="/profile/my/follows" hx-target="#main-app"
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_following"}}</button>
+    <button class="btn btn-light mb-1 mr-2" hx-get="/profile/my/follows?which=part" hx-target="#main-app"
+    hx-swap="innerHTML" hx-push-url="/profile/my/follows"
+    >{{Translate .locale "profile_owner_button_following"}}</button>
 </div>
 {{end}}
-<div class="container mt-3" id="user-sections" hx-get="/profile/{{.username}}/sections" 
+<div class="container mt-3 fade-in fade-out" id="user-sections" hx-get="/profile/{{.username}}/sections" 
 hx-swap="innerHTML" hx-trigger="load"></div>
 
 {{end}}
