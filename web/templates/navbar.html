@@ -80,34 +80,42 @@
                 </li>
                 {{end}}
                 {{if .IsAuthenticated}}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" style="opacity: 80%; color: white;" href="#"
-                    id="navbardrop" data-toggle="dropdown">
-                        {{Translate .locale "navbar_my_space"}}
-                    </a>
-                    <div class="dropdown-menu">
-                        {{if .isActive}}
-                        <a href="#" class="dropdown-item fade-in" hx-get="/article/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
-                            hx-push-url="/article/create">{{Translate .locale "navbar_my_space_write_article"}}</a>
-                        {{end}}
-                        <a href="#" class="dropdown-item fade-in" hx-get="/article/mine?page=1&which=part" hx-target="#main-app"
-                            hx-swap="innerHTML" hx-push-url="/article/mine">{{Translate .locale
-                            "navbar_my_space_my_articles"}}</a>
-                        {{if .isActive}}
-                        <a href="#" class="dropdown-item fade-in" hx-get="/gallery/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
-                            hx-push-url="/gallery/create">{{Translate .locale "navbar_my_space_create_gallery"}}</a>
-                        {{end}}
-                        <a href="#" class="dropdown-item fade-in" hx-get="/gallery/mine?page=1&which=part" hx-target="#main-app"
-                            hx-swap="innerHTML" hx-push-url="/gallery/mine">{{Translate .locale
-                            "navbar_my_space_my_galleries"}}</a>
-                        <a href="#" class="dropdown-item fade-in" hx-get="/following?which=part" hx-target="#main-app" hx-swap="innerHTML"
-                            hx-push-url="/following">{{Translate .locale "navbar_following"}}</a>
-                        <a href="#" class="dropdown-item" hx-get="/profile/mine?which=part" hx-target="#main-app" hx-swap="innerHTML"
-                            hx-push-url="/profile/mine">{{Translate .locale "navbar_my_profile"}}</a>
-                    </div>
+                {{if .isActive}}
+                <li class="nav-item">
+                    <a href="#"class="nav-link" hx-get="/article/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                        hx-push-url="/article/create" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_my_space_write_article"}}</a>
+                </li>
+                {{end}}
+                <li class="nav-item">
+                    <a href="#"class="nav-link" hx-get="/article/mine?page=1&which=part" hx-target="#main-app"
+                        hx-swap="innerHTML" hx-push-url="/article/mine" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_my_space_my_articles"}}</a>
+                </li>
+                {{if .isActive}}
+                <li class="nav-item">
+                    <a href="#"class="nav-link" hx-get="/gallery/create?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                        hx-push-url="/gallery/create" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_my_space_create_gallery"}}</a>
+                </li>
+                {{end}}
+                <li class="nav-item">
+                    <a href="#"class="nav-link" hx-get="/gallery/mine?page=1&which=part" hx-target="#main-app"
+                        hx-swap="innerHTML" hx-push-url="/gallery/mine" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_my_space_my_galleries"}}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" hx-get="/logout" hx-target="#main-app" hx-swap="innerHTML" class="nav-link fade-in"
+                    <a href="#"class="nav-link" hx-get="/following?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                        hx-push-url="/following" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_following"}}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" hx-get="/profile/mine?which=part" hx-target="#main-app" hx-swap="innerHTML"
+                        hx-push-url="/profile/mine" style="opacity: 80%; color: white;"
+                        >{{Translate .locale "navbar_my_profile"}}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" hx-get="/logout" hx-target="#main-app" hx-swap="innerHTML" class="nav-link"
                     style="opacity: 80%; color: white;">{{Translate .locale "navbar_logout"}}</a>
                 </li>
                 {{else}}
