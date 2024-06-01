@@ -47,8 +47,7 @@ func setUpUsersRoutes(e *echo.Echo) {
 	profile.GET("/:username/edit/sections/:section", handlers.GetSectionEdit)
 	profile.GET("/:username/create/section", handlers.CreateNewSectionForm)
 	profile.POST("/:username/create/section", handlers.CreateNewSection)
-	profile.PUT("/:username/sections/:section/edit/:post", handlers.AddPostToSection)
-	profile.DELETE("/:username/sections/:section/edit/:post", handlers.RemovePostFromSection)
-	profile.GET("/:username/posts/in/:section", handlers.GetModificablePostsFromSectionPaginated)
-	profile.GET("/:username/posts/not-in/:section", handlers.GetModificablePostsNotFromSectionPaginated)
+	profile.POST("/:username/section/:section/post/:post", handlers.AddPostToSection)
+	profile.DELETE("/:username/section/:section/post/:post", handlers.RemovePostFromSection)
+	profile.GET("/:username/section/:section/edit/posts", handlers.GetMySectionPostsPaginated)
 }

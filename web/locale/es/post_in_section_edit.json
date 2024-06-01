@@ -1,0 +1,10 @@
+[
+    {
+        "Key":"remove_from_section",
+        "Default":"Eliminar de la sección"
+    },
+    {
+        "Key":"add_to_section",
+        "Default":"Añadir a la sección"
+    }
+]

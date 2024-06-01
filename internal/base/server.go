@@ -22,6 +22,7 @@ import (
 )
 
 var port string
+var SECRET string
 var log_format = `{"time":${time_unix_milli},"method":"${method}","uri":"${uri}","status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"}
 `
 
@@ -37,6 +38,12 @@ func init() {
 	if env_port != "" {
 		port = env_port
 	}
+	env_secret := os.Getenv("SECRET")
+	SECRET = "SECRET"
+	if env_secret != "" {
+		SECRET = env_secret
+	}
+
 }
 
 func SetUpAndRunServer() {
@@ -60,7 +67,7 @@ func SetUpAndRunServer() {
 		},
 	),
 	)
-	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte(SECRET))))
 	e.Renderer = NewTemplates()
 	e.Static("/static", "web/static")
 	routes.SetUpRoutes(e)

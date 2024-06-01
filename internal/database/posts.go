@@ -292,3 +292,29 @@ func DeletePostByID(id uint64) error {
 		return errors.New("invalid post owner type")
 	})
 }
+
+func FilterPostsInUserSection(posts []model.Post, username, section string) ([]model.Post, error) {
+	var allIDs []uint64
+	var filteredIDs []uint64
+	var sectionDB model.Section
+	var filteredPosts []model.Post
+	for _, post := range posts {
+		allIDs = append(allIDs, post.ID)
+	}
+	err := DB.Where("owner = ? AND name = ?", username, section).First(&sectionDB).Error
+	if err != nil {
+		return nil, err
+	}
+	err = DB.Table("section_posts").Where("section_id = ? AND post_id IN (?)", sectionDB.ID, allIDs).Pluck("post_id", &filteredIDs).Error
+	if err != nil {
+		return nil, err
+	}
+	for _, post := range posts {
+		for _, id := range filteredIDs {
+			if post.ID == id {
+				filteredPosts = append(filteredPosts, post)
+			}
+		}
+	}
+	return filteredPosts, nil
+}

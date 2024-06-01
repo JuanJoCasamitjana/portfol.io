@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"net/mail"
 	"os"
 	"path/filepath"
@@ -14,14 +15,29 @@ import (
 	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/utils"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
+
+var current_version string
+
+func init() {
+	godotenv.Load()
+	current_version = os.Getenv("SESSION_VERSION")
+}
 
 func GetUserOfSession(c echo.Context) (model.User, error) {
 	sess, err := session.Get("session", c)
 	if err != nil {
 		return model.User{}, err
+	}
+	sessVersion, ok := sess.Values["version"].(string)
+	if !ok {
+		return model.User{}, errors.New("version not found in session")
+	}
+	if sessVersion != current_version {
+		return model.User{}, errors.New("session version mismatch")
 	}
 	userID, ok := sess.Values["user_id"].(uint64)
 	if !ok {
@@ -227,6 +243,7 @@ func login_user_session(user model.User, c echo.Context) error {
 		return err
 	}
 	sess.Values["user_id"] = user.ID
+	sess.Values["version"] = current_version
 	err = sess.Save(c.Request(), c.Response())
 	if err != nil {
 		return err
@@ -780,8 +797,16 @@ func AddPostToSection(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal server error")
 	}
-	c.Response().Header().Set("HX-Trigger", "section-changed")
-	return c.String(200, "OK")
+	data := map[string]any{
+		"locale":      utils.GetLocale(c),
+		"username":    user.Username,
+		"section":     section_name,
+		"id":          post.ID,
+		"isInSection": true,
+		"type":        post.OwnerType,
+		"title":       post.Title,
+	}
+	return c.Render(http.StatusOK, "post_in_section_edit", data)
 }
 
 func RemovePostFromSection(c echo.Context) error {
@@ -807,13 +832,26 @@ func RemovePostFromSection(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal server error")
 	}
-	c.Response().Header().Set("HX-Trigger", "section-changed")
-	return c.String(200, "OK")
+	data := map[string]any{
+		"locale":      utils.GetLocale(c),
+		"username":    user.Username,
+		"section":     section_name,
+		"id":          post.ID,
+		"isInSection": false,
+		"type":        post.OwnerType,
+		"title":       post.Title,
+	}
+	return c.Render(http.StatusOK, "post_in_section_edit", data)
 }
 
-func GetModificablePostsFromSectionPaginated(c echo.Context) error {
+func GetMySectionPostsPaginated(c echo.Context) error {
+	locale := utils.GetLocale(c)
 	user, err := GetUserOfSession(c)
 	if err != nil {
+		return c.String(401, "Unauthorized")
+	}
+	username := c.Param("username")
+	if user.Username != username {
 		return c.String(401, "Unauthorized")
 	}
 	section_name := c.Param("section")
@@ -822,61 +860,47 @@ func GetModificablePostsFromSectionPaginated(c echo.Context) error {
 	if err != nil {
 		page = 1
 	}
-	locale := utils.GetLocale(c)
-	postsDB, err := database.FindPostsByUserAndSectionPaginated(user.Username, section_name, page, 12)
+	posts, err := database.FindPostsByUserPaginated(username, page, 12)
 	if err != nil {
 		return c.String(404, "Not found")
 	}
-	posts := convertPostsToDataMap(postsDB)
-	more := len(posts) == 12
-	nextPageLoader := ""
-	if more {
-		nextPageLoader = fmt.Sprintf("/profile/%s/section/%s?page=%d", user.Username, section_name, page+1)
-	}
-	data := map[string]any{
-		"locale":   locale,
-		"username": user.Username,
-		"section":  section_name,
-		"posts":    posts,
-		"more":     more,
-		"nextPage": nextPageLoader,
-		"add":      false,
-	}
-	return c.Render(200, "posts_modificable", data)
-}
-
-func GetModificablePostsNotFromSectionPaginated(c echo.Context) error {
-	user, err := GetUserOfSession(c)
-	if err != nil {
-		return c.String(401, "Unauthorized")
-	}
-	section_name := c.Param("section")
-	pageStr := c.QueryParam("page")
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-	locale := utils.GetLocale(c)
-	postsDB, err := database.FindPostsByUserNotInSectionPaginated(user.Username, section_name, page, 12)
+	postsInSection, err := database.FilterPostsInUserSection(posts, username, section_name)
 	if err != nil {
 		return c.String(404, "Not found")
 	}
-	posts := convertPostsToDataMap(postsDB)
-	more := len(posts) == 12
+	var postsData []map[string]any
+	for _, post := range posts {
+		isInSection := false
+		for _, postInSection := range postsInSection {
+			if post.ID == postInSection.ID {
+				isInSection = true
+				break
+			}
+		}
+		postsData = append(postsData, map[string]any{
+			"id":          post.ID,
+			"title":       post.Title,
+			"type":        post.OwnerType,
+			"isInSection": isInSection,
+			"locale":      locale,
+			"section":     section_name,
+			"username":    username,
+		})
+	}
+	more := len(postsData) == 12
 	nextPageLoader := ""
 	if more {
-		nextPageLoader = fmt.Sprintf("/profile/%s/section/%s?page=%d", user.Username, section_name, page+1)
+		nextPageLoader = fmt.Sprintf("/profile/%s/section/%s?page=%d", username, section_name, page+1)
 	}
 	data := map[string]any{
 		"locale":   locale,
-		"username": user.Username,
+		"username": username,
 		"section":  section_name,
-		"posts":    posts,
+		"posts":    postsData,
 		"more":     more,
 		"nextPage": nextPageLoader,
-		"add":      true,
 	}
-	return c.Render(200, "posts_modificable", data)
+	return c.Render(200, "posts_section_edit", data)
 }
 
 func DeleteSection(c echo.Context) error {
