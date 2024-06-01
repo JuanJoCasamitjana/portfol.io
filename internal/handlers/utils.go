@@ -96,7 +96,7 @@ func sanitizeHTML(htmlstr string) string {
 	p := bluemonday.NewPolicy()
 	p.AllowStandardURLs()
 	p.AllowAttrs("href").OnElements("a")
-	p.AllowElements("p", "h1", "h2", "h3", "h4", "h5", "h6", "strong",
+	p.AllowElements("p", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "i", "b",
 		"em", "u", "s", "a", "img", "ul", "ol", "li", "blockquote", "code", "pre")
 	p.AllowAttrs("src").OnElements("img")
 	p.AllowAttrs("alt").OnElements("img")

@@ -1,0 +1,27 @@
+{{define "post_in_section_edit"}}
+<div class="row mt-2 mb-2" id="post-{{.id}}" style="min-width: 80%;">
+    <div class="col-md-12">
+        <div class="card border {{if .isInSection}} border-primary {{else}} border-secondary {{end}}">
+            <div class="card-header">
+                <h3>{{.title}}</h3>
+                {{if eq .type "article"}}
+                <span class="badge badge-secondary">{{Translate .locale "card_badge_article"}}</span>
+                {{else if eq .type "gallery"}}
+                <span class="badge badge-primary">{{Translate .locale "card_badge_gallery"}}</span>
+                {{end}}
+            </div>
+            <div class="card-body">
+                {{if .isInSection}}
+                <button class="btn btn-danger" hx-target="#post-{{.id}}"  hx-swap="outerHTML"
+                hx-delete="/profile/{{.username}}/section/{{.section}}/post/{{.id}}"
+                >{{Translate .locale "remove_from_section"}}</button>
+                {{else}}
+                <button class="btn btn-success" hx-target="#post-{{.id}}" hx-swap="outerHTML"
+                hx-post="/profile/{{.username}}/section/{{.section}}/post/{{.id}}"
+                >{{Translate .locale "add_to_section"}}</button>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

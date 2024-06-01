@@ -1,0 +1,8 @@
+{{define "posts_section_edit"}}
+{{range .posts}}
+{{template "post_in_section_edit" .}}
+{{if .more}}
+<div hx-get="{{.nextPage}}" hx-trigger="revealed" class="m-3 p-3" hx-swap="outerHTML"></div>
+{{end}}
+{{end}}
+{{end}}
