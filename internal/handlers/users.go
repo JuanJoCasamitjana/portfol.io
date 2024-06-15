@@ -18,9 +18,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 var current_version string
+var errNeedsReset = errors.New("session needs reset")
 
 func init() {
 	godotenv.Load()
@@ -223,6 +225,21 @@ func Login(c echo.Context) error {
 		return c.Render(200, "login", data)
 	}
 	err = login_user_session(user, c)
+	if err == errNeedsReset {
+		cookie := new(http.Cookie)
+		cookie.Name = "session"
+		cookie.Value = ""
+		cookie.Path = "/"
+		cookie.HttpOnly = true
+		cookie.MaxAge = -1
+		c.SetCookie(cookie)
+		data := map[string]any{
+			"locale":     locale,
+			"errors":     form_errors,
+			"formValues": form_values,
+		}
+		return c.Render(200, "login", data)
+	}
 	if err != nil {
 		form_errors["other"] = utils.Translate(locale, "login_session_error")
 		data := map[string]any{
@@ -240,12 +257,13 @@ func Login(c echo.Context) error {
 func login_user_session(user model.User, c echo.Context) error {
 	sess, err := session.Get("session", c)
 	if err != nil {
-		return err
+		return errNeedsReset
 	}
 	sess.Values["user_id"] = user.ID
 	sess.Values["version"] = current_version
 	err = sess.Save(c.Request(), c.Response())
 	if err != nil {
+		log.Errorf("Error saving session: %v", err)
 		return err
 	}
 	return nil

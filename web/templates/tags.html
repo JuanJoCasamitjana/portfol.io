@@ -5,9 +5,9 @@
         <span class="badge badge-pill"
         style="cursor: pointer; background-color: {{.bgColor}};"
         {{if and (and .post_type .post_id) .add}}
-        hx-post="/{{.post_type}}/{{.post_id}}/tags/{{.name}}"
+        hx-post="/vote?posttype={{.post_type}}&postid={{.post_id}}&tag={{.name}}"
         hx-trigger="click"
-        hx-swap="delete"
+        hx-swap="none"
         hx-target="#tag-{{.name}}"
         data-toggle="tooltip"
         title="{{Translate $.locale "tag_add_to"}}"

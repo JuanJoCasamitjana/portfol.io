@@ -1,0 +1,10 @@
+{{define "votes"}}
+<div class="container-fluid d-flex flex-wrap">
+    {{range .votes}}
+    <p class="mt-1 mr-2" style="font-size: 1.25rem; color: white;">
+        <span class="badge badge-pill" style="background-color: {{.color}};"
+        >{{.tag}} - {{.votes}}</span>
+    </p>
+    {{end}}
+</div>
+{{end}}
