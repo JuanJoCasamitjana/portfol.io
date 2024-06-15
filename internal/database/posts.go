@@ -19,19 +19,19 @@ func FindPostsPaginated(page, page_size int) ([]model.Post, error) {
 
 func FindArticleByID(id uint64) (model.Article, error) {
 	var article model.Article
-	err := DB.Preload("Tags").First(&article, id).Error
+	err := DB.Preload("Votes.Tag").First(&article, id).Error
 	return article, err
 }
 
 func FindProjectByID(id uint64) (model.Project, error) {
 	var project model.Project
-	err := DB.Preload("Tags").First(&project, id).Error
+	err := DB.Preload("Votes.Tag").First(&project, id).Error
 	return project, err
 }
 
 func FindGalleryByID(id uint64) (model.Gallery, error) {
 	var gallery model.Gallery
-	err := DB.Preload("Images").Preload("Tags").First(&gallery, id).Error
+	err := DB.Preload("Images").Preload("Votes.Tag").First(&gallery, id).Error
 	return gallery, err
 }
 
@@ -104,12 +104,6 @@ func FindAllGalleriesByAuthorPaginated(author string, page, size int) ([]model.G
 	return galleries, err
 }
 
-func AddTagToArticle(article *model.Article, tag *model.Tag) error {
-	return DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(article).Association("Tags").Append(tag)
-	})
-}
-
 func FindTagByName(name string) (model.Tag, error) {
 	var tag model.Tag
 	err := DB.Where("name = ?", name).First(&tag).Error
@@ -119,12 +113,6 @@ func FindTagByName(name string) (model.Tag, error) {
 func CreateTag(tag *model.Tag) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&model.Tag{}).Create(tag).Error
-	})
-}
-
-func RemoveTagFromArticle(article *model.Article, tag *model.Tag) error {
-	return DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(article).Association("Tags").Delete(tag)
 	})
 }
 
@@ -140,19 +128,6 @@ func DeleteGallery(gallery *model.Gallery) error {
 	})
 }
 
-func FindPostableByTypeAndID(postableType string, id uint64) (model.Postable, error) {
-	switch postableType {
-	case "article":
-		return FindArticleByID(id)
-	case "project":
-		return FindProjectByID(id)
-	case "gallery":
-		return FindGalleryByID(id)
-	default:
-		return nil, errors.New("invalid postable type")
-	}
-}
-
 func FindAllArticlesByTagPaginated(tag string, page, size int) ([]model.Article, error) {
 	if page < 1 {
 		page = 1
@@ -163,24 +138,6 @@ func FindAllArticlesByTagPaginated(tag string, page, size int) ([]model.Article,
 		Joins("JOIN tags ON article_tags.tag_id = tags.id").Where("tags.name = ?", tag).Order("updated_at desc").
 		Offset(offset).Limit(size).Find(&articles).Error
 	return articles, err
-}
-
-func RemoveTagsFromArticle(tags []model.Tag, article *model.Article) error {
-	return DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(article).Association("Tags").Delete(tags)
-	})
-}
-
-func AddTagToGallery(gallery *model.Gallery, tag *model.Tag) error {
-	return DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(gallery).Association("Tags").Append(tag)
-	})
-}
-
-func RemoveTagsFromGallery(tags []model.Tag, gallery *model.Gallery) error {
-	return DB.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(gallery).Association("Tags").Delete(tags)
-	})
 }
 
 func FindAllGalleriesByTagPaginated(tag string, page, size int) ([]model.Gallery, error) {
@@ -317,4 +274,89 @@ func FilterPostsInUserSection(posts []model.Post, username, section string) ([]m
 		}
 	}
 	return filteredPosts, nil
+}
+
+func GetFirstFiftyMostVotedTagsForArticle(articleID uint64) ([]model.Tag, error) {
+	var tags []model.Tag
+	err := DB.Table("tags").
+		Select("tags.id, tags.name").Joins("JOIN votes ON votes.tag_id = tags.id").
+		Joins("JOIN article_votes ON article_votes.vote_id = votes.id").
+		Where("article_votes.article_id = ?", articleID).Group("tags.id, tags.name").
+		Order("COUNT(votes.id) DESC").Limit(50).Scan(&tags).Error
+	if err != nil {
+		return nil, err
+	}
+	return tags, nil
+}
+
+func GetFirstFiftyMostVotedTagsForGallery(galleryID uint64) ([]model.Tag, error) {
+	var tags []model.Tag
+	err := DB.Table("tags").
+		Select("tags.id, tags.name").Joins("JOIN votes ON votes.tag_id = tags.id").
+		Joins("JOIN gallery_votes ON gallery_votes.vote_id = votes.id").
+		Where("gallery_votes.article_id = ?", galleryID).Group("tags.id, tags.name").
+		Order("COUNT(votes.id) DESC").Limit(50).Scan(&tags).Error
+	if err != nil {
+		return nil, err
+	}
+	return tags, nil
+}
+
+func VoteTagForArticle(article *model.Article, vote *model.Vote) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(article).Association("Votes").Append(vote)
+	})
+}
+
+func VoteTagForGallery(gallery *model.Gallery, vote *model.Vote) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(gallery).Association("Votes").Append(vote)
+	})
+}
+
+func UnvoteTagForArticle(article *model.Article, vote *model.Vote) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(article).Association("Votes").Delete(vote)
+	})
+}
+
+func UnvoteTagForGallery(gallery *model.Gallery, vote *model.Vote) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(gallery).Association("Votes").Delete(vote)
+	})
+}
+func RemoveAllVotesForArticle(article *model.Article) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(article).Association("Votes").Clear()
+	})
+}
+
+func RemoveAllVotesForGallery(gallery *model.Gallery) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(gallery).Association("Votes").Clear()
+	})
+}
+
+func FindAllTagsOfPost(ownerType string, ownerID uint64) ([]model.Tag, error) {
+	var tags []model.Tag
+	err := DB.Table("tags").Select("tags.id, tags.name").
+		Joins("JOIN "+ownerType+"_tags ON "+ownerType+"_tags.tag_id = tags.id").
+		Where(ownerType+"_tags."+ownerType+"_id = ?", ownerID).Scan(&tags).Error
+	return tags, err
+}
+
+func FindVoteByTagAndUser(tagID uint64, username string) (model.Vote, error) {
+	var vote model.Vote
+	err := DB.Model(vote).Where("tag_id = ? AND voter = ?", tagID, username).First(&vote).Error
+	return vote, err
+}
+
+func VoteExistsForTagUserAndPost(tagID uint64, voter string, postID uint64, postType string) bool {
+	var count int64
+	err := DB.Table("votes").Joins("JOIN "+postType+"_votes ON votes.id = "+postType+"_votes.vote_id").
+		Where("votes.tag_id = ? AND votes.voter = ? AND "+postType+"_votes."+postType+"_id = ?", tagID, voter, postID).Count(&count).Error
+	if err != nil {
+		return false
+	}
+	return count > 0
 }

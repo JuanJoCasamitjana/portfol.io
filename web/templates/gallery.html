@@ -8,7 +8,7 @@
     </div>
 </div>
 <div class="container fade-in fade-out">
-    <div hx-get="/gallery/{{.id}}/tags" hx-trigger="load, tags-reload from:body" hx-swap="innerHTML"></div>
+    <div hx-get="/vote/gallery/{{.id}}" hx-trigger="load, votes-reload from:body" hx-swap="innerHTML"></div>
     {{if .isAuthor}}
     <div class="mx-auto mt-3">
         {{if .isActive}}

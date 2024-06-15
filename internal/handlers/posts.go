@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"sort"
 	"strconv"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
@@ -437,7 +438,7 @@ func DeleteArticle(c echo.Context) error {
 	if article.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
-	err = database.RemoveTagsFromArticle(article.Tags, &article)
+	err = database.RemoveAllVotesForArticle(&article)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
@@ -446,57 +447,6 @@ func DeleteArticle(c echo.Context) error {
 		return c.String(500, "Internal Server Error")
 	}
 	return c.Render(200, "success", nil)
-}
-
-func AddTagToArticle(c echo.Context) error {
-	id_str := c.Param("id")
-	article_id, err := strconv.ParseUint(id_str, 10, 64)
-	if err != nil {
-		return c.String(400, "Bad Request")
-	}
-	tag_str := c.Param("tag")
-	tag, err := database.FindTagByName(tag_str)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	article, err := database.FindArticleByID(article_id)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	err = database.AddTagToArticle(&article, &tag)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	c.Response().Header().Set("HX-Trigger", "tags-reload")
-	return c.String(200, "Tag added successfully!")
-}
-
-func GetTagsOfArticle(c echo.Context) error {
-	locale := utils.GetLocale(c)
-	id_str := c.Param("id")
-	article_id, err := strconv.ParseUint(id_str, 10, 64)
-	if err != nil {
-		return c.String(400, "Bad Request")
-	}
-	article, err := database.FindArticleByID(article_id)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	postType := "article"
-	tags := make([]map[string]any, len(article.Tags))
-	for i := range article.Tags {
-		tags[i] = map[string]any{
-			"name":      article.Tags[i].Name,
-			"post_id":   article.ID,
-			"bgColor":   article.Tags[i].ColorOfTag(),
-			"post_type": postType,
-		}
-	}
-	data := map[string]any{
-		"tags":   tags,
-		"locale": locale,
-	}
-	return c.Render(200, "tags", data)
 }
 
 //Mostly about galleries and images
@@ -934,7 +884,7 @@ func DeleteGallery(c echo.Context) error {
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
-	err = database.RemoveTagsFromGallery(gallery.Tags, &gallery)
+	err = database.RemoveAllVotesForGallery(&gallery)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
@@ -1020,57 +970,6 @@ func EditGallery(c echo.Context) error {
 		return c.Render(200, "gallery_form", data)
 	}
 	return c.Render(200, "success", nil)
-}
-
-func GetTagsOfGallery(c echo.Context) error {
-	locale := utils.GetLocale(c)
-	idstr := c.Param("id")
-	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
-	if err != nil {
-		return c.String(400, "Bad Request")
-	}
-	gallery, err := database.FindGalleryByID(gallery_id)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	postType := "gallery"
-	tags := make([]map[string]any, len(gallery.Tags))
-	for i := range gallery.Tags {
-		tags[i] = map[string]any{
-			"post_id":   gallery.ID,
-			"post_type": postType,
-			"name":      gallery.Tags[i].Name,
-			"bgColor":   gallery.Tags[i].ColorOfTag(),
-		}
-	}
-	data := map[string]any{
-		"tags":   tags,
-		"locale": locale,
-	}
-	return c.Render(200, "tags", data)
-}
-
-func AddTagToGallery(c echo.Context) error {
-	idstr := c.Param("id")
-	gallery_id, err := strconv.ParseUint(idstr, 10, 64)
-	if err != nil {
-		return c.String(400, "Bad Request")
-	}
-	tag_str := c.Param("tag")
-	tag, err := database.FindTagByName(tag_str)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	gallery, err := database.FindGalleryByID(gallery_id)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	err = database.AddTagToGallery(&gallery, &tag)
-	if err != nil {
-		return c.String(500, "Internal Server Error")
-	}
-	c.Response().Header().Set("HX-Trigger", "tags-reload")
-	return c.String(200, "Tag added successfully!")
 }
 
 func GalleriesByTagPaginated(c echo.Context) error {
@@ -1160,19 +1059,14 @@ func FindTags(c echo.Context) error {
 	if err != nil {
 		return c.String(400, "Bad Request")
 	}
-	postable, err := database.FindPostableByTypeAndID(postType, postID)
-	res := tags_db
-	if err == nil {
-		res = filterTags(tags_db, postable.GetTags())
-	}
-	tags := make([]map[string]any, len(res))
-	for i := range res {
+	tags := make([]map[string]any, len(tags_db))
+	for i := range tags_db {
 		tags[i] = map[string]any{
-			"name":      res[i].Name,
+			"name":      tags_db[i].Name,
 			"add":       isAdd,
 			"post_type": postType,
 			"post_id":   postID,
-			"bgColor":   res[i].ColorOfTag(),
+			"bgColor":   tags_db[i].ColorOfTag(),
 		}
 	}
 	data := map[string]any{
@@ -1182,23 +1076,24 @@ func FindTags(c echo.Context) error {
 	return c.Render(200, "tags", data)
 }
 
-func filterTags(toBeFiltered, filter []model.Tag) []model.Tag {
-	var filtered []model.Tag
-	for i := range toBeFiltered {
-		add := true
-		for j := range filter {
-			if toBeFiltered[i].Name == filter[j].Name {
-				add = false
-				break
+/*
+	 func filterTags(toBeFiltered, filter []model.Tag) []model.Tag {
+		var filtered []model.Tag
+		for i := range toBeFiltered {
+			add := true
+			for j := range filter {
+				if toBeFiltered[i].Name == filter[j].Name {
+					add = false
+					break
+				}
+			}
+			if add {
+				filtered = append(filtered, toBeFiltered[i])
 			}
 		}
-		if add {
-			filtered = append(filtered, toBeFiltered[i])
-		}
+		return filtered
 	}
-	return filtered
-}
-
+*/
 func ArticlesByTagPaginated(c echo.Context) error {
 	locale := utils.GetLocale(c)
 	tagName := c.Param("name")
@@ -1426,4 +1321,121 @@ func DeletePostModerators(c echo.Context) error {
 		return c.String(500, "Internal Server Error")
 	}
 	return c.String(200, "Post deleted successfully!")
+}
+
+func VoteTagForPost(c echo.Context) error {
+	tagName := c.QueryParam("tag")
+	ownerIDstr := c.QueryParam("postid")
+	ownerType := c.QueryParam("posttype")
+	var vote model.Vote
+	ownerID, err := strconv.ParseUint(ownerIDstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+
+	article := new(model.Article)
+	gallery := new(model.Gallery)
+	switch ownerType {
+	case "article":
+		articleDB, err := database.FindArticleByID(ownerID)
+		if err != nil {
+			return c.String(500, "Internal Server Error")
+		}
+		article = &articleDB
+	case "gallery":
+		galleryDB, err := database.FindGalleryByID(ownerID)
+		if err != nil {
+			return c.String(500, "Internal Server Error")
+		}
+		gallery = &galleryDB
+	default:
+		return c.String(400, "Bad Request")
+	}
+	user, err := GetUserOfSession(c)
+	if err != nil || !user.Active {
+		return c.String(401, "Unauthorized")
+	}
+	tag, err := database.FindTagByName(tagName)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	alreadyVoted := database.VoteExistsForTagUserAndPost(tag.ID, user.Username, ownerID, ownerType)
+	if alreadyVoted {
+		return c.String(403, "Forbidden")
+	}
+	vote.TagID = tag.ID
+	vote.Voter = user.Username
+	switch ownerType {
+	case "article":
+		err = database.VoteTagForArticle(article, &vote)
+		if err != nil {
+			return c.String(500, "Internal Server Error")
+		}
+	case "gallery":
+		err = database.VoteTagForGallery(gallery, &vote)
+		if err != nil {
+			return c.String(500, "Internal Server Error")
+		}
+	}
+	c.Response().Header().Set("HX-Trigger", "votes-reload")
+	return c.String(200, "Tag voted successfully!")
+}
+
+func FindVotesOfGallery(c echo.Context) error {
+	galleryIDstr := c.Param("id")
+	galleryID, err := strconv.ParseUint(galleryIDstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindGalleryByID(galleryID)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	votes := convertVotesToDataMap(gallery.Votes)
+	data := map[string]any{
+		"votes":  votes,
+		"locale": utils.GetLocale(c),
+	}
+	return c.Render(200, "votes", data)
+}
+
+func FindVotesOfArticle(c echo.Context) error {
+	articleIDstr := c.Param("id")
+	articleID, err := strconv.ParseUint(articleIDstr, 10, 64)
+	if err != nil {
+		return c.String(400, "Bad Request")
+	}
+	gallery, err := database.FindArticleByID(articleID)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	votes := convertVotesToDataMap(gallery.Votes)
+	data := map[string]any{
+		"votes":  votes,
+		"locale": utils.GetLocale(c),
+	}
+	return c.Render(200, "votes", data)
+}
+
+func convertVotesToDataMap(votes []model.Vote) []map[string]any {
+	tagByNumberOfVotes := make(map[string][]any)
+	var votesContent []map[string]any
+	for i := range votes {
+		if _, ok := tagByNumberOfVotes[votes[i].Tag.Name]; !ok {
+			tagByNumberOfVotes[votes[i].Tag.Name] = []any{1, votes[i].Tag.ColorOfTag()}
+		} else {
+			tagByNumberOfVotes[votes[i].Tag.Name][0] = tagByNumberOfVotes[votes[i].Tag.Name][0].(int) + 1
+		}
+	}
+	for tagName, tagInfo := range tagByNumberOfVotes {
+		votesContent = append(votesContent, map[string]any{
+			"tag":   tagName,
+			"votes": tagInfo[0],
+			"color": tagInfo[1],
+		})
+	}
+	sort.Slice(votesContent, func(i, j int) bool {
+		return votesContent[i]["votes"].(int) > votesContent[j]["votes"].(int)
+	})
+	return votesContent
 }

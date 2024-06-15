@@ -25,16 +25,25 @@ type Tag struct {
 	Name string `gorm:"unique"`
 }
 
+// A user can vote for a specific tag on a post
+type Vote struct {
+	ID    uint64
+	Voter string
+	User  User `gorm:"foreignKey:Voter;references:Username"`
+	TagID uint64
+	Tag   Tag `gorm:"foreignKey:TagID;references:ID"`
+}
+
 type Article struct {
 	BasePost
-	Tags    []Tag `gorm:"many2many:article_tags;"`
+	Votes   []Vote `gorm:"many2many:article_votes;"`
 	Content string
 }
 
 type Project struct {
 	BasePost
 	Description string
-	Tags        []Tag `gorm:"many2many:project_tags;"`
+	Votes       []Vote `gorm:"many2many:project_votes;"`
 	Link        string
 }
 
@@ -52,13 +61,13 @@ type Image struct {
 
 type Gallery struct {
 	BasePost
-	Tags   []Tag `gorm:"many2many:gallery_tags;"`
+	Votes  []Vote `gorm:"many2many:gallery_votes;"`
 	Images []Image
 }
 
 type Post struct {
 	BasePost
-	Tags      []Tag `gorm:"many2many:post_tags;"`
+	Votes     []Vote `gorm:"many2many:post_votes;"`
 	OwnerID   uint64
 	OwnerType string
 }
@@ -71,7 +80,7 @@ type Postable interface {
 	GetAuthor() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
-	GetTags() []Tag
+	GetVotes() []Vote
 }
 
 func (p BasePost) GetID() uint64 {
@@ -94,20 +103,20 @@ func (p BasePost) GetUpdatedAt() time.Time {
 	return p.UpdatedAt
 }
 
-func (a Article) GetTags() []Tag {
-	return a.Tags
+func (a Article) GetVotes() []Vote {
+	return a.Votes
 }
 
-func (p Project) GetTags() []Tag {
-	return p.Tags
+func (p Project) GetVotes() []Vote {
+	return p.Votes
 }
 
-func (g Gallery) GetTags() []Tag {
-	return g.Tags
+func (g Gallery) GetVotes() []Vote {
+	return g.Votes
 }
 
-func (p Post) GetTags() []Tag {
-	return p.Tags
+func (p Post) GetVotes() []Vote {
+	return p.Votes
 }
 
 // AfterCreate is a hook that creates a post after creating an article
@@ -156,11 +165,11 @@ func (g *Gallery) AfterCreate(tx *gorm.DB) error {
 
 func (a *Article) AfterSave(tx *gorm.DB) error {
 	var post Post
-	tx.Where("owner_id = ? AND owner_type = ?", a.ID, "article").Preload("Tags").First(&post)
+	tx.Where("owner_id = ? AND owner_type = ?", a.ID, "article").Preload("Votes").First(&post)
 	post.Title = a.Title
 	post.Author = a.Author
 	post.Published = a.Published
-	post.Tags = a.Tags
+	post.Votes = a.Votes
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Save(&post).Error
 	})
@@ -168,11 +177,11 @@ func (a *Article) AfterSave(tx *gorm.DB) error {
 
 func (p *Project) AfterSave(tx *gorm.DB) error {
 	var post Post
-	tx.Where("owner_id = ? AND owner_type = ?", p.ID, "project").Preload("Tags").First(&post)
+	tx.Where("owner_id = ? AND owner_type = ?", p.ID, "project").Preload("Votes").First(&post)
 	post.Title = p.Title
 	post.Author = p.Author
 	post.Published = p.Published
-	post.Tags = p.Tags
+	post.Votes = p.Votes
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Save(&post).Error
 	})
@@ -180,11 +189,11 @@ func (p *Project) AfterSave(tx *gorm.DB) error {
 
 func (g *Gallery) AfterSave(tx *gorm.DB) error {
 	var post Post
-	tx.Where("owner_id = ? AND owner_type = ?", g.ID, "gallery").Preload("Tags").First(&post)
+	tx.Where("owner_id = ? AND owner_type = ?", g.ID, "gallery").Preload("Votes").First(&post)
 	post.Title = g.Title
 	post.Author = g.Author
 	post.Published = g.Published
-	post.Tags = g.Tags
+	post.Votes = g.Votes
 	return tx.Transaction(func(tx *gorm.DB) error {
 		return tx.Save(&post).Error
 	})
@@ -212,7 +221,7 @@ func (a *Article) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", a.ID, "article").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&post).Association("Tags").Clear()
+		err := tx.Model(&post).Association("Votes").Clear()
 		if err != nil {
 			return err
 		}
@@ -224,7 +233,7 @@ func (p *Project) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", p.ID, "project").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&post).Association("Tags").Clear()
+		err := tx.Model(&post).Association("Votes").Clear()
 		if err != nil {
 			return err
 		}
@@ -236,7 +245,7 @@ func (g *Gallery) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", g.ID, "gallery").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&post).Association("Tags").Clear()
+		err := tx.Model(&post).Association("Votes").Clear()
 		if err != nil {
 			return err
 		}

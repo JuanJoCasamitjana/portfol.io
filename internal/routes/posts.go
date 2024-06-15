@@ -23,8 +23,6 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.POST("/article/create", handlers.CreateArticle)
 	e.POST("/article/publish", handlers.CreateAndPublishArticle)
 	e.GET("/article/mine", handlers.GetMyArticles)
-	e.POST("/article/:id/tags/:tag", handlers.AddTagToArticle)
-	e.GET("/article/:id/tags", handlers.GetTagsOfArticle)
 	e.GET("/article/edit/:id", handlers.EditArticleForm)
 	e.POST("/article/edit/:id", handlers.EditArticle)
 	e.POST("/article/publish/:id", handlers.PublishArticle)
@@ -41,8 +39,6 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.DELETE("/image/:id", handlers.DeleteImage)
 	e.GET("/gallery/image-upload-form/:id", handlers.GetImageUploadForm)
 	e.GET("/gallery/mine", handlers.GetMyGalleries)
-	e.GET("gallery/:id/tags", handlers.GetTagsOfGallery)
-	e.POST("/gallery/:id/tags/:tag", handlers.AddTagToGallery)
 	e.GET("/gallery/tag/:name", handlers.GalleriesByTagPaginated)
 	e.DELETE("/gallery/delete/:id", handlers.DeleteGallery)
 	e.GET("/gallery/edit/:id", handlers.EditGalleryForm)
@@ -51,5 +47,8 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.POST("/tag/create", handlers.CreateTag)
 	e.GET("/tag/create", handlers.CreateTagForm)
 	e.GET("/tag/find", handlers.FindTags)
-
+	//Votes
+	e.POST("/vote", handlers.VoteTagForPost)
+	e.GET("/vote/gallery/:id", handlers.FindVotesOfGallery)
+	e.GET("/vote/article/:id", handlers.FindVotesOfArticle)
 }

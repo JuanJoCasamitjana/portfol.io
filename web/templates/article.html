@@ -21,7 +21,7 @@
         <button hx-delete="/article/delete/{{.id}}" class="btn btn-danger">{{Translate .locale "article_author_delete_button"}}</button>
     </div>
     {{end}}
-    <div hx-get="/article/{{.id}}/tags" hx-trigger="load, tags-reload from:body" hx-swap="innerHTML"></div>
+    <div hx-get="/vote/article/{{.id}}" hx-trigger="load, votes-reload from:body" hx-swap="innerHTML"></div>
     <div class="container row">
         <div class="col-md-12">
             <div class="row">

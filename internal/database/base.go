@@ -47,7 +47,7 @@ func init() {
 		log.Fatal(err)
 	}
 	err = DB.AutoMigrate(&model.User{}, &model.Article{}, &model.Project{}, &model.Image{}, &model.Gallery{},
-		&model.Post{}, &model.Section{}, &model.FollowList{}, &model.Report{}, &model.Tag{})
+		&model.Post{}, &model.Section{}, &model.FollowList{}, &model.Report{}, &model.Tag{}, &model.Vote{})
 	if err != nil {
 		log.Fatal(err)
 	}
