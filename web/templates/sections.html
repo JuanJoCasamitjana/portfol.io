@@ -4,11 +4,11 @@
         {{range .sections}}
         {{if eq . $.section}}
         <li class="nav-item">
-            <a class="nav-link active" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}">{{.}}</a>
+            <a class="nav-link active" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}"><p class="pl-3 pr-3 m-0">{{.}}</p></a>
         </li>
         {{else}}
         <li class="nav-item">
-            <a class="nav-link" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}">{{.}}</a>
+            <a class="nav-link" href="#{{.}}" data-toggle="tab" id="{{$.username}}-{{.}}"><p class="pl-3 pr-3 m-0">{{.}}</p></a>
         </li>
         {{end}}
         {{end}}

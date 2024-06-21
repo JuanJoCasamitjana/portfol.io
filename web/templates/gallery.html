@@ -1,27 +1,27 @@
 {{define "gallery"}}
 <div class="container fade-in fade-out">
-    <div id="details" class="mt-3 mx-3 rounded" style="background: #bdffe8">
+    <div id="details" class="mt-3 mx-3 rounded" style="background-color: #e0e0e0;">
         <h1 class="ml-3">{{.title}}</h1>
-        <p class="ml-3 p-2 rounded" style="cursor: pointer; width: fit-content; background:#49fb91;" 
-        hx-get="/user/profile/{{.author}}" hx-target="#main-app" hx-swap="innerHTML" 
+        <p class="ml-3 p-2 rounded" style="cursor: pointer; width: fit-content;" 
+        hx-get="/profile/{{.author}}?which=part" hx-push-url="/profile/{{.author}}" hx-target="#main-app" hx-swap="innerHTML" 
         hx-trigger="click">{{Translate $.locale "by_preposition"}} <strong>@{{.author}}</strong></p>
     </div>
+    {{if .isAuthor}}
+    <div class="mx-auto mt-3 ml-3">
+        {{if .isActive}}
+        <button class="btn btn-info ml-3" hx-get="/gallery/edit/{{.id}}"
+        hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true"><p class="pl-3 pr-3 m-0">{{Translate .locale "gallery_author_edit_button"}}</p></button>
+        {{if not .published}}
+        <button class="btn btn-warning ml-3" hx-post="/gallery/{{.id}}/publish"
+        hx-target="#main-app" hx-swap="innerHTML"><p class="pl-3 pr-3 m-0">{{Translate .locale "gallery_author_publish_button"}}</p></button>
+        {{end}}
+        {{end}}
+        <button hx-delete="/gallery/delete/{{.id}}" class="btn btn-danger ml-3"><p class="pl-3 pr-3 m-0">{{Translate .locale "gallery_author_delete_button"}}</p></button>
+    </div>
+    {{end}}
 </div>
 <div class="container fade-in fade-out">
     <div hx-get="/vote/gallery/{{.id}}" hx-trigger="load, votes-reload from:body" hx-swap="innerHTML"></div>
-    {{if .isAuthor}}
-    <div class="mx-auto mt-3">
-        {{if .isActive}}
-        <button class="btn btn-info" hx-get="/gallery/edit/{{.id}}"
-        hx-target="#main-app" hx-swap="innerHTML" hx-push-url="true">{{Translate .locale "gallery_author_edit_button"}}</button>
-        {{if not .published}}
-        <button class="btn btn-warning" hx-post="/gallery/{{.id}}/publish"
-        hx-target="#main-app" hx-swap="innerHTML">{{Translate .locale "gallery_author_publish_button"}}</button>
-        {{end}}
-        {{end}}
-        <button hx-delete="/gallery/delete/{{.id}}" class="btn btn-danger">{{Translate .locale "gallery_author_delete_button"}}</button>
-    </div>
-    {{end}}
     <div class="row">
         <div class="col-md-12">
             <div class="row">

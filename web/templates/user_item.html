@@ -3,7 +3,7 @@
     <div class="col-md-2"></div>
     <div class="col-md-8">
     <div class="media border p-3 m-1" 
-    {{if not .active}} style="background-color: #defb7b;" {{else}} style="background-color: #7bfb8c;" {{end}}>
+    {{if not .active}} style="background-color: #fb837b;"{{end}}>
         <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
         <div class="media-body">
             <h4>@{{.username}}</h4>
@@ -13,11 +13,11 @@
                 {{if and .active .action}}
                 <button class="btn btn-danger" hx-post="/moderation/deactivate/{{.username}}" hx-swap="outerHTML" 
                 hx-target="#{{.username}}" hx-confirm="Are you sure?"
-                >{{Translate .locale "users_list_button_dectivate"}}</button>
+                ><p class="pl-3 pr-3 m-0">{{Translate .locale "users_list_button_dectivate"}}</p></button>
                 {{else if and (not .active) .action}}
                 <button class="btn btn-dark" hx-post="/moderation/activate/{{.username}}" hx-swap="outerHTML"
                 hx-target="#{{.username}}" hx-confirm="Are you sure?"
-                >{{Translate .locale "users_list_button_activate"}}</button>
+                ><p class="pl-3 pr-3 m-0">{{Translate .locale "users_list_button_activate"}}</p></button>
                 {{end}}
             </div>
         </div>

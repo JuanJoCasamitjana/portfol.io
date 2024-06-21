@@ -4,6 +4,6 @@
 >{{Translate .locale "profile_button_unfollow"}}</button>
 {{else}}
 <button class="btn btn-light"hx-post="/profile/{{.username}}/follow" hx-swap="outerHTML"
->{{Translate .locale "profile_button_follow"}}</button>
+><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_button_follow"}}</p></button>
 {{end}}
 {{end}}

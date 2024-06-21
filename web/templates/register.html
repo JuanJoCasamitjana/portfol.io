@@ -1,51 +1,57 @@
 {{define "register"}}
-<div class="row justify-content-center mt-3 fade-in fade-out">
-    <form id="registrationForm" class="w-50" hx-post="/register" hx-target="#main-app" hx-swap="innerHTML">
-        <h3 class="text-center">{{Translate .locale "title_register_form"}}</h3>
+<div class="row justify-content-center fade-in fade-out"  style="margin-top: 6svh;">
+    <form id="registrationForm" class="ml-2 mr-2" hx-post="/register" hx-target="#main-app" hx-swap="innerHTML"
+    style=" padding: 2rem; border-radius: 10px; background-color: #e2f2ff; min-width: 70%; max-width:50%;">
+        <h3 class="text-center"  style="margin-bottom: 4svh;">{{Translate .locale "title_register_form"}}</h3>
         <div class="input-group has-validation">
         {{if .errors.other}}
             <div class="invalid-feedback">{{.errors.other}}</div>
         {{end}}
             <div class="input-group has-validation">
-                <label for="username" class="">{{Translate .locale "register_form_username_input_label"}}</label>
                 <div class="input-group has-validation">
+                    <label for="username" class="" style="margin-right: auto;">{{Translate .locale "register_form_username_input_label"}}</label>
                     <input class="form-control rounded  mb-1 {{if .errors.username}} is-invalid {{end}}" 
                     placeholder={{Translate .locale "register_form_username_input_placeholder"}} 
+                    style="max-width: 70%; min-width: 40%; margin-left: auto;"
                     type="text" id="username" name="username" required value="{{.formValues.username}}">
                     {{if .errors.username}}
                         <div class="invalid-feedback">{{.errors.username}}</div>
                     {{end}}
                 </div>
-                <label for="fullname" class="">{{Translate .locale "register_form_fullname_input_label"}}</label>
+                
                 <div class="input-group has-validation">
+                    <label for="fullname" class="" style="margin-right: auto;">{{Translate .locale "register_form_fullname_input_label"}}</label>
                     <input class="form-control rounded  mb-1 {{if .errors.fullname}} is-invalid {{end}}" 
                     placeholder={{Translate .locale "register_form_fullname_input_placeholder"}} 
+                    style="max-width: 70%; min-width: 40%; margin-left: auto;"
                     type="text" id="fullname" name="fullname" value="{{.formValues.fullname}}">
                     {{if .errors.fullname}}
                         <div class="invalid-feedback">{{.errors.fullname}}</div>
                     {{end}}
                 </div>
-                <label for="password" class="">{{Translate .locale "register_form_password_input_label"}}</label>
                 <div class="input-group has-validation">
+                    <label for="password" class="" style="margin-right: auto;">{{Translate .locale "register_form_password_input_label"}}</label>
                     <input class="form-control rounded  mb-1 {{if .errors.password}} is-invalid {{end}}" 
                     placeholder={{Translate .locale "register_form_password_input_placeholder"}} 
+                    style="max-width: 70%; min-width: 40%; margin-left: auto;"
                     type="password" id="password" name="password" required>
                     {{if .errors.password}}
                         <div class="invalid-feedback">{{.errors.password}}</div>
                     {{end}}
                 </div>
-                <label for="password2" class="">{{Translate .locale "register_form_confirm_password_input_label"}}</label>
                 <div class="input-group has-validation">
+                    <label for="password2" class="" style="margin-right: auto;">{{Translate .locale "register_form_confirm_password_input_label"}}</label>
                     <input class="form-control rounded  mb-1 {{if .errors.password2}} is-invalid {{end}}" 
                     placeholder={{Translate .locale "register_form_confirm_password_input_placeholder"}} 
+                    style="max-width: 70%; min-width: 40%; margin-left: auto;"
                     type="password" id="password2" name="password2" required>
                     {{if .errors.password2}}
                         <div class="invalid-feedback">{{.errors.password2}}</div>
                     {{end}}
                 </div>
             </div>
-        <button class="btn btn-lg btn-primary btn-block mt-3" 
-        type="submit">{{Translate .locale "register_form_register_submit_button"}}</button>
+        <button class="btn btn-lg btn-primary" style="margin-left: auto; margin-right: auto; margin-top: 4svh;" 
+        type="submit"><p class="pl-3 pr-3 m-0">{{Translate .locale "register_form_register_submit_button"}}</p></button>
     </form>
 </div>
 {{end}}

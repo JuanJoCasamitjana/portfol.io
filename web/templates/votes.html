@@ -1,7 +1,8 @@
 {{define "votes"}}
 <div class="container-fluid d-flex flex-wrap">
     {{range .votes}}
-    <p class="mt-1 mr-2" style="font-size: 1.25rem; color: white;">
+    <p class="mt-1 mr-2" style="font-size: 1.25rem; color: white; cursor:pointer"
+    hx-get="/posts/all/tag/{{.tag}}?which=part" hx-swap="innerHTML" hx-target="#main-app" hx-push-url="/posts/all/tag/{{.tag}}">
         <span class="badge badge-pill" style="background-color: {{.color}};"
         >{{.tag}} - {{.votes}}</span>
     </p>

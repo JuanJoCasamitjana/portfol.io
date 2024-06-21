@@ -2,13 +2,12 @@
 {{range .users}}
 <div class="row fade-in fade-out">
     <div class="col-md-1"></div>
-    <div class="col-md-10 mt-1 mb-3 border border-dark rounded shadow" 
-    style="background-color: #e0fbd0;">
+    <div class="col-md-10 mt-1 mb-3 border border-dark rounded shadow">
         <div class="media" style="cursor: pointer;" hx-get="/profile/{{.username}}?which=part" 
         hx-push-url="/profile/{{.username}}" hx-target="#main-app" hx-swap="innerHTML transition:true">
-            <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+            <img src="{{.avatar}}" alt="{{.username}}" class="mr-3 mt-1 mb-1 rounded-circle" style="width:60px;">
             <div class="media-body">
-                <h4>@{{.username}}</h4>
+                <h4 class="mt-1">@{{.username}}</h4>
                 <h5><i>{{.fullname}}</i></h5>
                 <p>{{.bio}}</p>
             </div>

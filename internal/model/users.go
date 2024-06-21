@@ -65,6 +65,7 @@ func NewUser() User {
 	return User{
 		Authority: AUTH_BASE_USER,
 		Active:    true,
+		Profile:   Profile{PfPUrl: "/static/default-avatar.png"},
 	}
 }
 

@@ -20,22 +20,22 @@
     {{if .isActive}}
     <button class="btn btn-info mb-1 mr-2" hx-get="/profile/{{.username}}/create/section?which=part" hx-target="#main-app" 
     hx-swap="innerHTML" hx-push-url="/profile/{{.username}}/create/section"
-    >{{Translate .locale "profile_owner_button_create_new_section"}}</button>
+    ><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_create_new_section"}}</p></button>
     {{end}}
     <button class="btn btn-dark mb-1 mr-2" hx-get="/profile/{{.username}}/edit/sections?which=part" 
     hx-target="#main-app" hx-swap="innerHTML" hx-push-url="/profile/{{.username}}/edit/sections"
-    >{{Translate .locale "profile_owner_button_edit_my_sections"}}</button>
+    ><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_edit_my_sections"}}</p></button>
     <button class="btn btn-primary mb-1 mr-2" hx-get="/profile/mine/edit?which=part" hx-target="#main-app"
     hx-swap="innerHTML" hx-push-url="/profile/mine/edit"
-    >{{Translate .locale "profile_owner_button_edit"}}</button>
+    ><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_edit"}}</p></button>
     <button class="btn btn-warning mb-1 mr-2" hx-get="/profile/mine/edit/password?which=part" hx-target="#main-app"
     hx-swap="innerHTML" hx-push-url="/profile/mine/edit/password"
-    >{{Translate .locale "profile_owner_button_change_password"}}</button>
+    ><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_change_password"}}</p></button>
     <button class="btn btn-danger mb-1 mr-2" hx-delete="/profile/mine" hx-confirm="Are you sure?" hx-target="#main-app"
-    hx-swap="innerHTML">{{Translate .locale "profile_owner_button_delete_profile"}}</button>
+    hx-swap="innerHTML"><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_delete_profile"}}</p></button>
     <button class="btn btn-light mb-1 mr-2" hx-get="/profile/my/follows?which=part" hx-target="#main-app"
     hx-swap="innerHTML" hx-push-url="/profile/my/follows"
-    >{{Translate .locale "profile_owner_button_following"}}</button>
+    ><p class="pl-3 pr-3 m-0">{{Translate .locale "profile_owner_button_following"}}</p></button>
 </div>
 {{end}}
 <div class="container mt-3 fade-in fade-out" id="user-sections" hx-get="/profile/{{.username}}/sections" 

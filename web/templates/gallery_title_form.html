@@ -13,8 +13,8 @@ style="min-width: 100%;">
             {{end}}
         </div>
         <button class="btn btn-warning m-1" type="submit"
-        >{{Translate .locale "gallery_title_form_change_button"}}</button>
+        ><p class="pl-3 pr-3 m-0">{{Translate .locale "gallery_title_form_change_button"}}</p></button>
         <button class="btn btn-danger" hx-delete="/gallery/delete/{{.id}}"
-        >{{Translate .locale "gallery_title_form_delete_button"}}</button>
+        ><p class="pl-3 pr-3 m-0">{{Translate .locale "gallery_title_form_delete_button"}}</p></button>
 </form>
 {{end}}

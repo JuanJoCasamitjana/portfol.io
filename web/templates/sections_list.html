@@ -11,10 +11,10 @@
         </div>
         <div class="col-md-4">
             <button class="btn btn-danger m-1" hx-delete="/profile/{{$.username}}/sections/{{.}}" hx-target="#main-app"
-            hx-swap="innerHTML">{{Translate $.locale "section_list_delete_button"}}</button>
+            hx-swap="innerHTML"><p class="pl-3 pr-3 m-0">{{Translate $.locale "section_list_delete_button"}}</p></button>
             {{if $.isActive}}
             <button class="btn btn-warning m-1" hx-get="/profile/{{$.username}}/edit/sections/{{.}}" hx-target="#main-app"
-            >{{Translate $.locale "section_list_edit_button"}}</button>
+            ><p class="pl-3 pr-3 m-0">{{Translate $.locale "section_list_edit_button"}}</p></button>
             {{end}}
         </div>
         <div class="col-md-2"></div>
