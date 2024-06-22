@@ -359,8 +359,16 @@ func FindPaginatedPostsByTagOrderedByNumberOfVotes(tagName string, page, size in
 	}
 	offset := (page - 1) * size
 	var posts []model.Post
-	err := DB.Table("posts").Select("posts.*").Joins("JOIN votes ON votes.tag_id = posts.id").
-		Joins("JOIN tags ON tags.id = votes.tag_id").Where("tags.name = ?", tagName).Group("posts.id").
-		Order("COUNT(votes.id) DESC").Offset(offset).Limit(size).Scan(&posts).Error
+	err := DB.Table("posts").
+		Select("posts.*").
+		Joins("JOIN post_votes ON post_votes.post_id = posts.id").
+		Joins("JOIN votes ON votes.id = post_votes.vote_id").
+		Joins("JOIN tags ON tags.id = votes.tag_id").
+		Where("tags.name = ?", tagName).
+		Group("posts.id").
+		Offset(offset).
+		Limit(size).
+		Find(&posts).Error
 	return posts, err
 }
+	
