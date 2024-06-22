@@ -63,6 +63,7 @@ func init() {
 		Username:  ADMIN_USERNAME,
 		Authority: model.AUTH_ADMIN,
 		FullName:  ADMIN_FULLNAME,
+		Profile:   model.Profile{PfPUrl: "/static/default-avatar.png"},
 	}
 	err = admin.Password.SetPasswordAsHash(ADMIN_PASSWORD)
 	if err != nil {

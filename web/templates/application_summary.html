@@ -29,7 +29,7 @@
         <div class="col-md-1"></div>
     </div>
     <button class="btn btn-lg btn-dark" id="backup">
-        {{Translate .locale "download_database_backup"}}
+        <p class="pl-3 pr-3 m-0">{{Translate .locale "download_database_backup"}}</p>
     </button>
     <script>
         document.getElementById("backup").onclick = function() {
@@ -37,7 +37,7 @@
         }
     </script>
     <button class="btn btn-lg btn-info" id="logs">
-        {{Translate .locale "download_logs_backup"}}
+        <p class="pl-3 pr-3 m-0">{{Translate .locale "download_logs_backup"}}</p>
     </button>
     <script>
         document.getElementById("logs").onclick = function() {

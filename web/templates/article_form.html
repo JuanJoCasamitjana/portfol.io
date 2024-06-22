@@ -42,7 +42,7 @@
         {{if not .id}}
         <button class="btn btn-info mt-2" type="submit" hx-post="/article/publish"
             hx-target="#main-app" hx-swap="innerHTML" hx-sync="closest form:drop"
-        >{{Translate .locale "article_form_publish_button"}}</button>
+        ><p class="pl-3 pr-3 m-0">{{Translate .locale "article_form_publish_button"}}</p></button>
         {{end}}
     </form>
 </div>

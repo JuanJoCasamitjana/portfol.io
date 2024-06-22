@@ -1439,3 +1439,68 @@ func convertVotesToDataMap(votes []model.Vote) []map[string]any {
 	})
 	return votesContent
 }
+
+func FindPostsByTagPaginatedPart(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	tagName := c.Param("name")
+	page_str := c.QueryParam("page")
+	page, err := strconv.Atoi(page_str)
+	if err != nil {
+		page = 1
+	}
+	posts_db, err := database.FindPaginatedPostsByTagOrderedByNumberOfVotes(tagName, page, 12)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	posts_content := convertPostsToDataMap(posts_db)
+	next_page := page + 1
+	more := len(posts_db) == 12
+	next_page_loader := ""
+	if more {
+		next_page_loader = fmt.Sprintf("/posts/all/tag/%s?page=%d", tagName, next_page)
+	}
+	data := map[string]any{
+		"posts":    posts_content,
+		"nextPage": template.HTML(next_page_loader), //skipcq  GSC-G203
+		"more":     more,
+		"locale":   locale,
+		"tag":      tagName,
+	}
+	return c.Render(200, "posts", data)
+}
+
+func FindPostsByTagPaginatedFull(c echo.Context) error {
+	locale := utils.GetLocale(c)
+	isAuthenticated := false
+	user, err := GetUserOfSession(c)
+	if err == nil {
+		isAuthenticated = true
+	}
+	tagName := c.Param("name")
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+	isModerator := IsModerator(c)
+	isAdmin := IsAdmin(c)
+	pageToLoad := fmt.Sprintf("/posts/all/tag/%s?which=part&page=%d", tagName, page)
+	data := map[string]any{
+		"app_title":       "Portfol.io",
+		"locale":          locale,
+		"IsAuthenticated": isAuthenticated,
+		"IsModerator":     isModerator,
+		"IsAdmin":         isAdmin,
+		"isActive":        user.Active,
+		"page_to_load":    pageToLoad,
+	}
+	return c.Render(200, "full_page_load", data)
+}
+
+func FindPostsByTagPaginated(c echo.Context) error {
+	which := c.QueryParam("which")
+	if which == "part" {
+		return FindPostsByTagPaginatedPart(c)
+	}
+	return FindPostsByTagPaginatedFull(c)
+}

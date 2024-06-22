@@ -1,3 +1,5 @@
+![Portfolio logo](https://github.com/JuanJoCasamitjana/portfol.io/blob/main/web/static/logo_4.0.png)
+
 # Portfol\.io
 
 Portfol\.io is an example project that aims to provide decent complexity for a handful of examples in projects that use Golang and HTMX. Just keep in mind that I'm also learning while developing this project, so if you want a nice guide on how to build your application in the Go style, you are probably better off looking elsewhere. I just selected a handful of technologies that I thought would make it easier to develop without wasting too much time on configuration. In other words, if you plan to do a small application, this is absolutely not the place to look, and if you want to go big, you should take this code with a grain of salt.

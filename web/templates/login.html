@@ -1,29 +1,38 @@
 {{define "login"}}
-<div class="row justify-content-center  mt-3 fade-in fade-out">
-    <form class="w-50" hx-post="/login" hx-target="#main-app" hx-swap="innerHTML" class="form">
-        <h3 class="text-center">{{Translate .locale "login_form_title"}}</h3>
-        <div class="input-group has-validation">
+<div class="row justify-content-center fade-in fade-out" style="margin-top: 16svh;">
+    <form class="ml-2 mr-2" hx-post="/login" hx-target="#main-app" hx-swap="innerHTML" class="form" 
+    style=" padding: 2rem; border-radius: 10px; background-color: #e2f2ff; min-width: 70%; max-width:50%;">
+        <h3 class="text-center" style="margin-bottom: 4svh;">{{Translate .locale "login_form_title"}}</h3>
+        <div class="input-group has-validation container">
             {{if .errors.other}}
                 <div class="invalid-feedback">{{.errors.other}}</div>
             {{end}}
-            <label for="username" class="">{{Translate .locale "login_username_label"}}</label>
-                <div class="input-group has-validation">
-                    <input class="form-control rounded mb-1 {{if .errors.username}} is-invalid {{end}}" 
-                    placeholder="{{Translate .locale "login_username_placeholder"}}" type="text" id="username" name="username" 
-                    required value="{{.formValues.username}}">
-                    {{if .errors.username}}
-                        <div class="invalid-feedback">{{.errors.username}}</div>
-                    {{end}}
+                <div class="row w-100 mb-3">
+                    <div class="col-md-6">
+                        <label for="username" class="w-100" style="text-align: right; margin-right: 0.5rem;"><strong>{{Translate .locale "login_username_label"}}</strong></label>
+                    </div>
+                    <div class="input-group has-validation col-md-6">
+                        <input class="form-control rounded {{if .errors.username}} is-invalid {{end}}"
+                        placeholder="{{Translate .locale "login_username_placeholder"}}" type="text" id="username" name="username"
+                        required value="{{.formValues.username}}">
+                        {{if .errors.username}}
+                            <div class="invalid-feedback">{{.errors.username}}</div>
+                        {{end}}
+                    </div>
                 </div>
-                <label for="password" class="">{{Translate .locale "login_password_label"}}</label>
-                <div class="input-group has-validation">
-                    <input class="form-control rounded {{if .errors.password}} is-invalid {{end}}" 
-                    placeholder="{{Translate .locale "login_password_placeholder"}}" type="password" id="password" name="password" required>
-                    {{if .errors.password}}
-                        <div class="invalid-feedback">{{.errors.password}}</div>
-                    {{end}}
+                <div class="row w-100 mb-3">
+                    <div class="col-md-6">
+                        <label for="password" class="w-100"  style="text-align: right; margin-right: auto;"><strong>{{Translate .locale "login_password_label"}}</strong></label>
+                    </div>
+                    <div class="input-group has-validation col-md-6">
+                        <input class="form-control rounded {{if .errors.password}} is-invalid {{end}}"
+                        placeholder="{{Translate .locale "login_password_placeholder"}}" type="password" id="password" name="password" required>
+                        {{if .errors.password}}
+                            <div class="invalid-feedback">{{.errors.password}}</div>
+                        {{end}}
+                    </div>
                 </div>
-            <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">{{Translate .locale "login_submit_button"}}</button>
+            <button class="btn btn-lg btn-primary" style="margin-left: auto; margin-right: auto; margin-top: 4svh;" type="submit"><p class="pl-3 pr-3 m-0">{{Translate .locale "login_submit_button"}}</p></button>
         </div>
     </form>
 </div>

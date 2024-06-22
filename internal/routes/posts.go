@@ -47,6 +47,7 @@ func setUpPostsRoutes(e *echo.Echo) {
 	e.POST("/tag/create", handlers.CreateTag)
 	e.GET("/tag/create", handlers.CreateTagForm)
 	e.GET("/tag/find", handlers.FindTags)
+	e.GET("/posts/all/tag/:name", handlers.FindPostsByTagPaginated)
 	//Votes
 	e.POST("/vote", handlers.VoteTagForPost)
 	e.GET("/vote/gallery/:id", handlers.FindVotesOfGallery)

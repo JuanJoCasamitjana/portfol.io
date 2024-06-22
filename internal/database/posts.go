@@ -337,14 +337,6 @@ func RemoveAllVotesForGallery(gallery *model.Gallery) error {
 	})
 }
 
-func FindAllTagsOfPost(ownerType string, ownerID uint64) ([]model.Tag, error) {
-	var tags []model.Tag
-	err := DB.Table("tags").Select("tags.id, tags.name").
-		Joins("JOIN "+ownerType+"_tags ON "+ownerType+"_tags.tag_id = tags.id").
-		Where(ownerType+"_tags."+ownerType+"_id = ?", ownerID).Scan(&tags).Error
-	return tags, err
-}
-
 func FindVoteByTagAndUser(tagID uint64, username string) (model.Vote, error) {
 	var vote model.Vote
 	err := DB.Model(vote).Where("tag_id = ? AND voter = ?", tagID, username).First(&vote).Error
@@ -359,4 +351,16 @@ func VoteExistsForTagUserAndPost(tagID uint64, voter string, postID uint64, post
 		return false
 	}
 	return count > 0
+}
+
+func FindPaginatedPostsByTagOrderedByNumberOfVotes(tagName string, page, size int) ([]model.Post, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * size
+	var posts []model.Post
+	err := DB.Table("posts").Select("posts.*").Joins("JOIN votes ON votes.tag_id = posts.id").
+		Joins("JOIN tags ON tags.id = votes.tag_id").Where("tags.name = ?", tagName).Group("posts.id").
+		Order("COUNT(votes.id) DESC").Offset(offset).Limit(size).Scan(&posts).Error
+	return posts, err
 }

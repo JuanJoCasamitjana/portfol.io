@@ -14,9 +14,11 @@
                 {{else}}
                 <span class="badge badge-warning badge-pill">{{Translate $.locale "mod_post_list_not_published"}}</span>
                 {{end}}
-                <button class="btn btn-danger m-1" hx-delete="/posts/moderation/{{.postID}}" hx-swap="delete"
-                hx-target="#article-{{.id}}" hx-confirm="{{Translate $.locale "mod_post_list_delete_confirm"}}"
-                >{{Translate $.locale "mod_post_list_delete_button"}}</button>
+                <p class="pl-3 pr-3 m-0">
+                    <button class="btn btn-danger m-1" hx-delete="/posts/moderation/{{.postID}}" hx-swap="delete"
+                    hx-target="#article-{{.id}}" hx-confirm="{{Translate $.locale "mod_post_list_delete_confirm"}}"
+                    >{{Translate $.locale "mod_post_list_delete_button"}}</button>
+                </p>
             </div>
         </div>
         {{else if eq .type "gallery"}}
@@ -32,7 +34,7 @@
                 {{end}}
                 <button class="btn btn-danger m-1" hx-delete="/posts/moderation/{{.postID}}" hx-swap="delete"
                 hx-target="#gallery-{{.id}}" hx-confirm="{{Translate $.locale "mod_post_list_delete_confirm"}}"
-                >{{Translate $.locale "mod_post_list_delete_button"}}</button>
+                ><p class="pl-3 pr-3 m-0">{{Translate $.locale "mod_post_list_delete_button"}}</p></button>
             </div>
         </div>
         {{end}}
