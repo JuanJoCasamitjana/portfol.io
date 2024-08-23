@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
-	"github.com/glebarez/sqlite"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
