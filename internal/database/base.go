@@ -1,12 +1,14 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
 	"github.com/joho/godotenv"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -29,6 +31,9 @@ func init() {
 	if newDBname != "" {
 		DBname = newDBname
 	}
+	tursoDBUrl := os.Getenv("TURSO_DB_URL")
+	tursoDBToken := os.Getenv("TURSO_DB_TOKEN")
+	tursoDSN := fmt.Sprintf("%s?authToken=%s", tursoDBUrl, tursoDBToken)
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -39,7 +44,12 @@ func init() {
 			Colorful:                  false,                  // Disable color
 		},
 	)
-	DB, err = gorm.Open(sqlite.Open(DBname), &gorm.Config{
+	tursoDialector := sqlite.New(sqlite.Config{DriverName: "libsql", DSN: tursoDSN})
+	dialectorFinal := sqlite.Open(DBname)
+	if tursoDBUrl != "" {
+		dialectorFinal = tursoDialector
+	}
+	DB, err = gorm.Open(dialectorFinal, &gorm.Config{
 		Logger:                 newLogger,
 		SkipDefaultTransaction: false, //This ensures data consistency by wrapping atomic operations in transactions
 	})
