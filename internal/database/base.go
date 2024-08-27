@@ -82,6 +82,7 @@ func init() {
 	admin_db := model.User{}
 	err = DB.Model(admin_db).Where("username = ?", ADMIN_USERNAME).First(&admin_db).Error
 	if err == nil {
+		log.Println(admin_db.Username)
 		log.Println("Admin user already exists")
 		return
 	}
