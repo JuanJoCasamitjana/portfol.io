@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-
+/tmp
 # Test binary, built with `go test -c`
 *.test
 
@@ -22,7 +22,7 @@ go.work
 
 # Database 
 *.db
-
+/replicas
 # Log files
 *.log
 *.gz
@@ -32,3 +32,6 @@ go.work
 
 # .env file
 .env
+
+# air
+.air.toml
