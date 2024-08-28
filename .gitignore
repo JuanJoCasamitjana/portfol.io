@@ -22,7 +22,7 @@ go.work
 
 # Database 
 *.db
-
+/replicas
 # Log files
 *.log
 *.gz

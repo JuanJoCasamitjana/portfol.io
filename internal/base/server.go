@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/routes"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/utils"
 	"github.com/gorilla/sessions"
@@ -90,6 +91,7 @@ func SetUpAndRunServer() {
 		fmt.Println("Error shutting down server", err)
 	}
 	fmt.Println("Server is shutting down")
+	os.RemoveAll(database.Replicas)
 	defer os.Exit(0)
 }
 
