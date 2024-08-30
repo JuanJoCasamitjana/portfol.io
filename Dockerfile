@@ -1,23 +1,27 @@
-# Etapa 1: Construcción
-FROM golang:1.22.6-alpine AS builder
+# Container 
+FROM golang:1.22.6-bookworm 
+
+ENV ADMIN_PASSWORD=""
+ENV ADMIN_USERNAME=""
+ENV IMGBB_API_KEY=""
+ENV SECRET="ANY"
+ENV SESSION_VERSION="1"
+ENV TURSO_DB_URL=""
+ENV TURSO_DB_TOKEN=""
+ENV PORT="8080"
+
 
 WORKDIR /app
 COPY . .
 
-RUN apk add --no-cache gcc g++ musl-dev
-RUN go mod tidy
-RUN CGO_ENABLED=1 go build -o myapp
+RUN ls -la /app 
 
-# Etapa 2: Imagen mínima para ejecutar
-FROM alpine:latest
-
-WORKDIR /root/
-
-COPY --from=builder /app/myapp .
-
-ENV PORT=8080
+RUN apt-get update && \
+    apt-get install -y build-essential && \
+    go mod tidy && \
+    go build -o /app/portfolio /app/cmd/main.go  
 
 EXPOSE ${PORT}
 
-# Usar la variable de entorno para ejecutar la aplicación en el puerto correcto
-CMD ["sh", "-c", "./myapp"]
+CMD ["/app/portfolio"]
+
