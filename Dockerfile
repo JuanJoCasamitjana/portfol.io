@@ -15,7 +15,7 @@ RUN apt-get update && \
 
     RUN ls -la /app && chmod +x /app/portfolio
 
-EXPOSE 8080
+EXPOSE ${PORT}
 
 CMD ["/app/portfolio"]
 
