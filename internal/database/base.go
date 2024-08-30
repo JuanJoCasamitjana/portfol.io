@@ -32,7 +32,7 @@ func Remigrate() {
 func init() {
 	rep, err := os.MkdirTemp(ReplicasDirStr, "libsql-*")
 	if err != nil {
-		log.Println("replicas directory could not be created")
+		log.Println("replicas directory could not be created: ", err)
 	}
 	Replicas = rep
 	err = godotenv.Load()
