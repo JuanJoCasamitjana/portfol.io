@@ -1,19 +1,28 @@
 package database
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/JuanJoCasamitjana/portfol.io/internal/database/sqlite"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
-	"github.com/glebarez/sqlite"
 	"github.com/joho/godotenv"
+	"github.com/tursodatabase/go-libsql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var DBname = "dev.db"
 var DB *gorm.DB
+var Connector *libsql.Connector
+
+const ReplicasDirStr = "./replicas"
+
+var Replicas string
 
 func Remigrate() {
 	DB.AutoMigrate(&model.User{}, &model.Article{}, &model.Project{}, &model.Image{}, &model.Gallery{},
@@ -21,7 +30,22 @@ func Remigrate() {
 }
 
 func init() {
-	err := godotenv.Load()
+	_, err := os.Stat(ReplicasDirStr)
+	if os.IsNotExist(err) {
+		err = os.Mkdir(ReplicasDirStr, 0775)
+		if err != nil {
+			log.Println("error creating directory for replicas: ", err)
+		}
+	} else if err != nil {
+		log.Println("error trying to check replcas dir: ", err)
+	}
+
+	rep, err := os.MkdirTemp(ReplicasDirStr, "libsql-*")
+	if err != nil {
+		log.Println("replicas directory could not be created: ", err)
+	}
+	Replicas = rep
+	err = godotenv.Load()
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
@@ -29,6 +53,19 @@ func init() {
 	if newDBname != "" {
 		DBname = newDBname
 	}
+	dbPath := filepath.Join(rep, DBname)
+	tursoDBUrl := os.Getenv("TURSO_DB_URL")
+	tursoDBToken := os.Getenv("TURSO_DB_TOKEN")
+	connector, err := libsql.NewEmbeddedReplicaConnector(dbPath, tursoDBUrl, libsql.WithAuthToken(tursoDBToken), libsql.WithSyncInterval(60*time.Second))
+	replicaConnectorCreated := err == nil
+	if !replicaConnectorCreated {
+		log.Println(err)
+	}
+	log.Println("connector: ", connector)
+	log.Println("is connector created: ", replicaConnectorCreated)
+	db := sql.OpenDB(connector)
+	Connector = connector
+	tursoDSN := fmt.Sprintf("%s?authToken=%s", tursoDBUrl, tursoDBToken)
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -39,7 +76,16 @@ func init() {
 			Colorful:                  false,                  // Disable color
 		},
 	)
-	DB, err = gorm.Open(sqlite.Open(DBname), &gorm.Config{
+	tursoDialector := sqlite.New(sqlite.Config{DriverName: "libsql", DSN: tursoDSN})
+	tursoReplicaDialector := sqlite.New(sqlite.Config{DriverName: "libsql", Conn: db})
+	dialectorFinal := sqlite.Open(DBname)
+	if tursoDBUrl != "" {
+		dialectorFinal = tursoDialector
+	}
+	if replicaConnectorCreated {
+		dialectorFinal = tursoReplicaDialector
+	}
+	DB, err = gorm.Open(dialectorFinal, &gorm.Config{
 		Logger:                 newLogger,
 		SkipDefaultTransaction: false, //This ensures data consistency by wrapping atomic operations in transactions
 	})
@@ -72,6 +118,7 @@ func init() {
 	admin_db := model.User{}
 	err = DB.Model(admin_db).Where("username = ?", ADMIN_USERNAME).First(&admin_db).Error
 	if err == nil {
+		log.Println(admin_db.Username)
 		log.Println("Admin user already exists")
 		return
 	}
