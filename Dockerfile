@@ -1,14 +1,6 @@
 # Container 
 FROM golang:1.22.6-bookworm 
 
-ENV ADMIN_PASSWORD=""
-ENV ADMIN_USERNAME=""
-ENV IMGBB_API_KEY=""
-ENV SECRET="ANY"
-ENV SESSION_VERSION="1"
-ENV TURSO_DB_URL=""
-ENV TURSO_DB_TOKEN=""
-ENV PORT="8080"
 
 
 WORKDIR /app
@@ -21,7 +13,9 @@ RUN apt-get update && \
     go mod tidy && \
     go build -o /app/portfolio /app/cmd/main.go  
 
-EXPOSE ${PORT}
+    RUN ls -la /app && chmod +x /app/portfolio
+
+EXPOSE 8080
 
 CMD ["/app/portfolio"]
 
