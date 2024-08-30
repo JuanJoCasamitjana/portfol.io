@@ -30,6 +30,16 @@ func Remigrate() {
 }
 
 func init() {
+	_, err := os.Stat(ReplicasDirStr)
+	if os.IsNotExist(err) {
+		err = os.Mkdir(ReplicasDirStr, 0775)
+		if err != nil {
+			log.Println("error creating directory for replicas: ", err)
+		}
+	} else if err != nil {
+		log.Println("error trying to check replcas dir: ", err)
+	}
+
 	rep, err := os.MkdirTemp(ReplicasDirStr, "libsql-*")
 	if err != nil {
 		log.Println("replicas directory could not be created: ", err)
