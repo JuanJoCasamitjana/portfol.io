@@ -7,20 +7,19 @@ require (
 	github.com/gorilla/sessions v1.2.2
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/microcosm-cc/bluemonday v1.0.26
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240812094001-348a4e45b535
+	github.com/tursodatabase/go-libsql v0.0.0-20240819180805-a9b092b8bc77
 	golang.org/x/crypto v0.19.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.11
 )
 
 require (
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
-	github.com/coder/websocket v1.8.12 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
