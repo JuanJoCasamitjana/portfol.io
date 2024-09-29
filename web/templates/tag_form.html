@@ -1,13 +1,13 @@
 {{define "tag_form"}}
-<div class="container fade-in fade-out" id="tag-search">
+<div class="tag-form fade-in fade-out" id="tag-search">
     <h1>{{Translate .locale "tag_form_title"}}</h1>
-    <form class="form-inline mt-3" hx-post="/tag/create?post-type={{.postType}}&post-id={{.postID}}" hx-swap="outerHTML" hx-target="#tag-search">
+    <form hx-post="/tag/create?post-type={{.postType}}&post-id={{.postID}}" hx-swap="outerHTML" hx-target="#tag-search">
         <input type="text" id="query" name="query" hx-trigger="keyup changed delay:500ms, load" 
         hx-get="/tag/find?post-type={{.postType}}&post-id={{.postID}}" hx-target="#results" hx-swap="innerHTML" 
         placeholder="{{Translate .locale "tag_form_input_placeholder"}}">
-        <button class="btn btn-warning mt-3 ml-1 mr-1" ><p class="pl-3 pr-3 m-0">{{Translate .locale "tag_form_create_button"}}</p></button>
+        <button><p>{{Translate .locale "tag_form_create_button"}}</p></button>
         <h2>{{Translate .locale "search_reults_tag_form"}}</h2>
-        <div id="results" class="border border-dark rounded" style="max-width: 100%;"></div>
+        <div id="results"></div>
     </form>
 </div>
 {{end}}

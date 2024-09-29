@@ -371,4 +371,9 @@ func FindPaginatedPostsByTagOrderedByNumberOfVotes(tagName string, page, size in
 		Find(&posts).Error
 	return posts, err
 }
-	
+
+func FindPostByOwnerIdAndType(articleID uint64, postType string) (model.Post, error) {
+	var post model.Post
+	err := DB.Where("owner_id = ? AND owner_type = ?", articleID, postType).First(&post).Error
+	return post, err
+}

@@ -19,6 +19,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"gorm.io/gorm"
 )
 
 var current_version string
@@ -568,7 +569,7 @@ func GetUserProfilePart(c echo.Context) error {
 	session_user, _ := GetUserOfSession(c)
 	is_current_user := session_user.Username == user.Username
 	user_follow_list, err := database.FindFollowListByUsername(session_user.Username)
-	if err != nil {
+	if err != nil && !(err == gorm.ErrRecordNotFound) {
 		user_follow_list = model.FollowList{Owner: session_user.Username}
 		err = database.CreateFollowList(&user_follow_list)
 		if err != nil {
@@ -601,7 +602,7 @@ func GetUserProfileFull(c echo.Context) error {
 	isAdmin := IsAdmin(c)
 	is_current_user := session_user.Username == user.Username
 	user_follow_list, err := database.FindFollowListByUsername(session_user.Username)
-	if err != nil {
+	if err != nil && !(err == gorm.ErrRecordNotFound) {
 		user_follow_list = model.FollowList{Owner: session_user.Username}
 		err = database.CreateFollowList(&user_follow_list)
 		if err != nil {

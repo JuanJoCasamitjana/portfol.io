@@ -1,13 +1,13 @@
 {{define "posts_modificable"}}
 <div class="container fade-in fade-out">
     {{range .posts}}
-    <div class="row mt-1">
-        <div class="col-md-12">
-            <div class="border {{if not $.add}} border-success {{else}} border-warning {{end}} rounded"
+    <div class="wide-row mt-1">
+        <div>
+            <div class="main-post-modificable {{if not $.add}} border-success {{else}} border-warning {{end}}"
             {{if $.add}} hx-put="/profile/{{$.username}}/sections/{{$.section}}/edit/{{.post_id}}" 
             {{else}} hx-delete="/profile/{{$.username}}/sections/{{$.section}}/edit/{{.post_id}}" {{end}}
             hx-swap="none" style="cursor: pointer;">
-                <div class="m-3">
+                <div>
                     {{if eq .post_type "article"}}
                     <div>
                         <h3>{{.title}}</h3>

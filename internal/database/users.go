@@ -239,3 +239,21 @@ func FindUsersPaginatedBySearch(search string, page, pageSize int) ([]model.User
 	result := DB.Where("username LIKE ?", "%"+search+"%").Offset(offset).Limit(pageSize).Find(&users)
 	return users, result.Error
 }
+
+func RemovePostFromAllSections(post *model.Post) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		var sections []model.Section
+		err := tx.Model(&model.Section{}).Joins("JOIN section_posts ON sections.id = section_posts.section_id").
+			Where("section_posts.post_id = ?", post.ID).Find(&sections).Error
+		if err != nil {
+			return err
+		}
+		for _, section := range sections {
+			err = tx.Model(&section).Association("Posts").Delete(post)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
