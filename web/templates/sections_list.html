@@ -2,14 +2,14 @@
 <div class="container fade-in fade-out">
     <h1>{{Translate .locale "section_list_title"}}</h1>
     {{range .sections}}
-    <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-4">
+    <div class="columns-2-4-4-2">
+        <div></div>
+        <div>
             <div class="m-1 border">
             <h2>{{.}}</h2>
             </div>
         </div>
-        <div class="col-md-4">
+        <div>
             <button class="btn btn-danger m-1" hx-delete="/profile/{{$.username}}/sections/{{.}}" hx-target="#main-app"
             hx-swap="innerHTML"><p class="pl-3 pr-3 m-0">{{Translate $.locale "section_list_delete_button"}}</p></button>
             {{if $.isActive}}
@@ -17,7 +17,7 @@
             ><p class="pl-3 pr-3 m-0">{{Translate $.locale "section_list_edit_button"}}</p></button>
             {{end}}
         </div>
-        <div class="col-md-2"></div>
+        <div></div>
     </div>
     {{end}}
 </div>

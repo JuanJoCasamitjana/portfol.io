@@ -3,13 +3,13 @@
     <form hx-post="/profile/{{.username}}/create/section" hx-target="#main-app" hx-swap="innerHTML" 
     enctype="application/x-www-form-urlencoded">
     <label for="name">{{Translate .locale "section_new_form_name_label"}}</label>
-    <div class="input-group has-validation">
+    <div class="form-input-w-val">
         <input type="text" name="name" id="name" 
-        class="form-control {{if .errors.name}} is-invalid {{end}} rounded mb-1"
+        class="{{if .errors.name}} is-invalid {{end}}"
         placeholder="{{Translate .locale "section_new_form_name_placeholder"}}"
         value="{{.name}}">
         {{if .errors.name}}
-        <div class="invalid-feedback">{{.errors.name}}</div>
+        <div>{{.errors.name}}</div>
         {{end}}
     </div>
     <button type="submit" class="btn btn-primary"><p class="pl-3 pr-3 m-0">{{Translate .locale "section_new_form_submit"}}</p></button>

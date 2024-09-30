@@ -435,10 +435,18 @@ func DeleteArticle(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	post, err := database.FindPostByOwnerIdAndType(id, "article")
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
 	if article.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
 	err = database.RemoveAllVotesForArticle(&article)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
+	err = database.RemovePostFromAllSections(&post)
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
@@ -881,8 +889,16 @@ func DeleteGallery(c echo.Context) error {
 	if err != nil {
 		return c.String(500, "Internal Server Error")
 	}
+	post, err := database.FindPostByOwnerIdAndType(gallery_id, "gallery")
+	if err != nil {
+		return c.String(500, "Internal Server Error")
+	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
+	}
+	err = database.RemovePostFromAllSections(&post)
+	if err != nil {
+		return c.String(500, "Internal Server Error")
 	}
 	err = database.RemoveAllVotesForGallery(&gallery)
 	if err != nil {

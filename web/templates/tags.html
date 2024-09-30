@@ -1,9 +1,9 @@
 {{define "tags"}}
-<div class="container-fluid d-flex flex-wrap fade-in fade-out">
+<div class="tags fade-in fade-out">
     {{range .tags}}
-    <p class="mt-1 mr-2" id="tag-{{.name}}" style="font-size: 1.25rem; color: white;">
+    <p id="tag-{{.name}}">
         <span class="badge badge-pill"
-        style="cursor: pointer; background-color: {{.bgColor}};"
+        style="background-color: {{.bgColor}};"
         {{if and (and .post_type .post_id) .add}}
         hx-post="/vote?posttype={{.post_type}}&postid={{.post_id}}&tag={{.name}}"
         hx-trigger="click"

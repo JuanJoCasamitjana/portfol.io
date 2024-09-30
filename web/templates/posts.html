@@ -1,41 +1,39 @@
 {{define "posts"}}
 <div class="container fade-in fade-out">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row">
+    <div class="wide-row">
+        <div>
+            <div class="columns-by-3">
                 {{range .posts}}
                 {{if eq .post_type "article"}}
-                <div class="col-md-4 mt-3">
-                    <div id="post-{{.id}}-{{.post_type}}" class="border border-secondary rounded" style="min-height: 100%; cursor: pointer;"
+                <div>
+                    <div id="post-{{.id}}-{{.post_type}}" class="post-type-article"
                     hx-get="/article/{{.id}}?which=part" hx-push-url="/article/{{.id}}" hx-target="#main-app">
-                        <div class="m-3">
+                        <div>
                             <h3>{{.title}}</h3>
                             <p hx-get="/profile/{{.author}}?which=part" hx-push-url="/profile/{{.author}}"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
-                            class="ml-1 p-2 rounded" style="background:  #c2c2c2;"
                             >{{Translate $.locale "by_preposition"}} <strong>@{{.author}}</strong></p>
-                            <span class="badge badge-secondary">{{Translate $.locale "card_badge_article"}}</span>
+                            <span>{{Translate $.locale "card_badge_article"}}</span>
                         </div>
                     </div>
                 </div>
                 {{else if eq .post_type "gallery"}}
-                <div class="col-md-4 mt-3">
-                    <div id="post-{{.id}}-{{.post_type}}" class="card border-primary" style="min-height: 100%; cursor: pointer;"
+                <div>
+                    <div id="post-{{.id}}-{{.post_type}}" class="post-type-gallery"
                     hx-get="/gallery/{{.id}}?which=part" hx-target="#main-app" hx-push-url="/gallery/{{.id}}">
-                        <div class="card-header">
+                        <div>
                             <h3>{{.title}}</h3>
                             <p hx-get="/profile/{{.author}}?which=part" hx-push-url="/profile/{{.author}}"
                             hx-target="#main-app" hx-swap="innerHTML" hx-trigger="click" 
                             hx-sync="#post-{{.id}}-{{.post_type}}:drop"
-                            class="ml-1 p-2 rounded" style="background:  #c2c2c2;"
                             >{{Translate $.locale "by_preposition"}} <strong>@{{.author}}</strong></p>
-                            <span class="badge badge-primary">{{Translate $.locale "card_badge_gallery"}}</span>
+                            <span>{{Translate $.locale "card_badge_gallery"}}</span>
                         </div>
-                        <div class="card-body">
-                            <div style=" display: flex; justify-content: center; width: 100%;">
-                                <img src="{{.url}}" alt="{{.title}} {{Translate $.locale "by_preposition"}} {{.author}}" class="img-fluid" style="max-height: 7rem;">
-                                <div class="bg-primary text-center text-light" style="font-size: 2rem;"><p class="mx-3"></p>{{.amount}}</div>
+                        <div>
+                            <div>
+                                <img src="{{.url}}" alt="{{.title}} {{Translate $.locale "by_preposition"}} {{.author}}">
+                                <div><p></p>{{.amount}}</div>
                             </div>
                         </div>
                     </div>

@@ -233,7 +233,18 @@ func (p *Project) BeforeDelete(tx *gorm.DB) error {
 	var post Post
 	tx.Where("owner_id = ? AND owner_type = ?", p.ID, "project").First(&post)
 	return tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&post).Association("Votes").Clear()
+		var sections []Section
+		err := tx.Model(post).Association("Sections").Find(&sections)
+		if err != nil {
+			return err
+		}
+		for _, section := range sections {
+			err = tx.Model(section).Association("Posts").Delete(post)
+			if err != nil {
+				return err
+			}
+		}
+		err = tx.Model(&post).Association("Votes").Clear()
 		if err != nil {
 			return err
 		}
