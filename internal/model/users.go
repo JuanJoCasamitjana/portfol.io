@@ -24,8 +24,8 @@ type User struct {
 	Password   Password `gorm:"embedded"`
 	Profile    Profile  `gorm:"embedded"`
 	Email      string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	CreatedAt  time.Time `gorm:"autoCreateTime"`
+	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
 	FullName   string
 	FollowList FollowList `gorm:"foreignKey:Owner;references:Username"`
 	Active     bool       `gorm:"default:true"`
