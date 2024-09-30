@@ -23,8 +23,8 @@ type User struct {
 	Password   Password `gorm:"embedded"`
 	Profile    Profile  `gorm:"embedded"`
 	Email      string
-	CreatedAt  ISOTime `gorm:"autoCreateTime"`
-	UpdatedAt  ISOTime `gorm:"autoUpdateTime"`
+	CreatedAt  RFC3339NanoTime `gorm:"autoCreateTime"`
+	UpdatedAt  RFC3339NanoTime `gorm:"autoUpdateTime"`
 	FullName   string
 	FollowList FollowList `gorm:"foreignKey:Owner;references:Username"`
 	Active     bool       `gorm:"default:true"`
@@ -38,7 +38,7 @@ type FollowList struct {
 }
 type Password struct {
 	HashedPassword string
-	UpdatedAt      ISOTime `gorm:"autoUpdateTime"`
+	UpdatedAt      RFC3339NanoTime `gorm:"autoUpdateTime"`
 }
 
 type Profile struct {
