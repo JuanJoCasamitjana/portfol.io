@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
@@ -91,7 +92,7 @@ func ListReportsPaginated(c echo.Context) error {
 		reports[i] = map[string]any{
 			"id":          report.ID,
 			"description": desc,
-			"createdAt":   report.CreatedAt.Format("2006-01-02 15:04:05"),
+			"createdAt":   time.Unix(report.CreatedAt, 0).Format("2006-01-02 15:04:05"),
 		}
 	}
 	more := len(reports) == 10
@@ -127,7 +128,7 @@ func GetReport(c echo.Context) error {
 		"locale":      locale,
 		"id":          report.ID,
 		"description": report.Description,
-		"createdAt":   report.CreatedAt.Format("2006-01-02 15:04:05"),
+		"createdAt":   time.Unix(report.CreatedAt, 0).Format("2006-01-02 15:04:05"),
 	}
 	return c.Render(200, "report", data)
 }

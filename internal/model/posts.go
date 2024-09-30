@@ -15,8 +15,8 @@ type BasePost struct {
 	Author    string
 	User      User `gorm:"foreignKey:Author;references:Username"`
 	Published bool
-	CreatedAt RFC3339NanoTime `gorm:"autoCreateTime"`
-	UpdatedAt RFC3339NanoTime `gorm:"autoUpdateTime"`
+	CreatedAt int64 `gorm:"autoCreateTime"`
+	UpdatedAt int64 `gorm:"autoUpdateTime"`
 }
 
 type Tag struct {
@@ -77,8 +77,8 @@ type Postable interface {
 	GetID() uint64
 	GetTitle() string
 	GetAuthor() string
-	GetCreatedAt() RFC3339NanoTime
-	GetUpdatedAt() RFC3339NanoTime
+	GetCreatedAt() int64
+	GetUpdatedAt() int64
 	GetVotes() []Vote
 }
 
@@ -94,11 +94,11 @@ func (p BasePost) GetAuthor() string {
 	return p.Author
 }
 
-func (p BasePost) GetCreatedAt() RFC3339NanoTime {
+func (p BasePost) GetCreatedAt() int64 {
 	return p.CreatedAt
 }
 
-func (p BasePost) GetUpdatedAt() RFC3339NanoTime {
+func (p BasePost) GetUpdatedAt() int64 {
 	return p.UpdatedAt
 }
 

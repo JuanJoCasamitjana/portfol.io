@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/database"
 	"github.com/JuanJoCasamitjana/portfol.io/internal/model"
@@ -249,8 +250,8 @@ func convertArticlesToDataMap(articles []model.Article) []map[string]interface{}
 			"id":        articles[i].ID,
 			"title":     articles[i].Title,
 			"author":    articles[i].Author,
-			"createdAt": articles[i].CreatedAt.Format("2006-01-02 15:04:05"),
-			"updatedAt": articles[i].UpdatedAt.Format("2006-01-02 15:04:05"),
+			"createdAt": time.Unix(articles[i].CreatedAt, 0).Format("2006-01-02 15:04:05"),
+			"updatedAt": time.Unix(articles[i].UpdatedAt, 0).Format("2006-01-02 15:04:05"),
 			"published": articles[i].Published,
 		}
 	}
@@ -277,8 +278,8 @@ func GetArticleByIDPart(c echo.Context) error {
 		"id":        article.ID,
 		"title":     article.Title,
 		"author":    article.Author,
-		"createdAt": article.CreatedAt.Format("2006-01-02 15:04:05"),
-		"updatedAt": article.UpdatedAt.Format("2006-01-02 15:04:05"),
+		"createdAt": time.Unix(article.CreatedAt, 0).Format("2006-01-02 15:04:05"),
+		"updatedAt": time.Unix(article.UpdatedAt, 0).Format("2006-01-02 15:04:05"),
 		"content":   template.HTML(article.Content), //skipcq  GSC-G203
 		"published": article.Published,
 		"locale":    locale,
@@ -1312,8 +1313,8 @@ func convertPostsToPostList(posts []model.Post) []map[string]any {
 			"postID":    posts[i].ID,
 			"author":    posts[i].Author,
 			"title":     posts[i].Title,
-			"createdAt": posts[i].CreatedAt.Format("2006-01-02 15:04:05"),
-			"updatedAt": posts[i].UpdatedAt.Format("2006-01-02 15:04:05"),
+			"createdAt": time.Unix(posts[i].CreatedAt, 0).Format("2006-01-02 15:04:05"),
+			"updatedAt": time.Unix(posts[i].UpdatedAt, 0).Format("2006-01-02 15:04:05"),
 			"published": posts[i].Published,
 			"type":      posts[i].OwnerType,
 			"id":        posts[i].OwnerID,
