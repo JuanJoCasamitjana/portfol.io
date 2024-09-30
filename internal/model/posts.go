@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"text/template"
-	"time"
 
 	"github.com/JuanJoCasamitjana/portfol.io/internal/utils"
 	"gorm.io/gorm"
@@ -16,8 +15,8 @@ type BasePost struct {
 	Author    string
 	User      User `gorm:"foreignKey:Author;references:Username"`
 	Published bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt ISOTime `gorm:"autoCreateTime"`
+	UpdatedAt ISOTime `gorm:"autoUpdateTime"`
 }
 
 type Tag struct {
@@ -78,8 +77,8 @@ type Postable interface {
 	GetID() uint64
 	GetTitle() string
 	GetAuthor() string
-	GetCreatedAt() time.Time
-	GetUpdatedAt() time.Time
+	GetCreatedAt() ISOTime
+	GetUpdatedAt() ISOTime
 	GetVotes() []Vote
 }
 
@@ -95,11 +94,11 @@ func (p BasePost) GetAuthor() string {
 	return p.Author
 }
 
-func (p BasePost) GetCreatedAt() time.Time {
+func (p BasePost) GetCreatedAt() ISOTime {
 	return p.CreatedAt
 }
 
-func (p BasePost) GetUpdatedAt() time.Time {
+func (p BasePost) GetUpdatedAt() ISOTime {
 	return p.UpdatedAt
 }
 

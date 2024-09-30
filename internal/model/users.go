@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"regexp"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,8 +23,8 @@ type User struct {
 	Password   Password `gorm:"embedded"`
 	Profile    Profile  `gorm:"embedded"`
 	Email      string
-	CreatedAt  time.Time `gorm:"autoCreateTime"`
-	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
+	CreatedAt  ISOTime `gorm:"autoCreateTime"`
+	UpdatedAt  ISOTime `gorm:"autoUpdateTime"`
 	FullName   string
 	FollowList FollowList `gorm:"foreignKey:Owner;references:Username"`
 	Active     bool       `gorm:"default:true"`
@@ -39,7 +38,7 @@ type FollowList struct {
 }
 type Password struct {
 	HashedPassword string
-	UpdatedAt      time.Time
+	UpdatedAt      ISOTime `gorm:"autoUpdateTime"`
 }
 
 type Profile struct {
