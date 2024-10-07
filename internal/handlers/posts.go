@@ -22,7 +22,7 @@ func GetPostsPaginated(c echo.Context) error {
 	}
 	posts, err := database.FindPostsPaginated(page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	posts_content := convertPostsToDataMap(posts)
 	next_page := page + 1
@@ -224,7 +224,7 @@ func GetMyArticlesPart(c echo.Context) error {
 	}
 	articles_db, err := database.FindAllArticlesByAuthorPaginated(user.Username, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	articles := convertArticlesToDataMap(articles_db)
 	next_page := page + 1
@@ -267,7 +267,7 @@ func GetArticleByIDPart(c echo.Context) error {
 	}
 	article, err := database.FindArticleByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, err := GetUserOfSession(c)
 	if !article.Published && (err != nil || user.Username != article.Author) {
@@ -298,7 +298,7 @@ func GetArticleByIDFull(c echo.Context) error {
 	}
 	article, err := database.FindArticleByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, err := GetUserOfSession(c)
 	if !article.Published && (err != nil || user.Username != article.Author) {
@@ -344,7 +344,7 @@ func EditArticleForm(c echo.Context) error {
 	}
 	article, err := database.FindArticleByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	formValues := map[string]any{
 		"title": article.Title,
@@ -409,7 +409,7 @@ func PublishArticle(c echo.Context) error {
 	}
 	article, err := database.FindArticleByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if article.Author != user.Username {
 		return c.String(401, "Unauthorized")
@@ -417,7 +417,7 @@ func PublishArticle(c echo.Context) error {
 	article.Published = true
 	err = database.UpdateArticle(&article)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	return c.Render(200, "success", nil)
 }
@@ -434,26 +434,26 @@ func DeleteArticle(c echo.Context) error {
 	}
 	article, err := database.FindArticleByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	post, err := database.FindPostByOwnerIdAndType(id, "article")
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if article.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
 	err = database.RemoveAllVotesForArticle(&article)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	err = database.RemovePostFromAllSections(&post)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	err = database.DeleteArticle(&article)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	return c.Render(200, "success", nil)
 }
@@ -470,7 +470,7 @@ func CreateGalleryPart(c echo.Context) error {
 	gallery.Author = user.Username
 	err = database.CreateGallery(&gallery)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	data := map[string]any{
 		"locale":      utils.GetLocale(c),
@@ -520,7 +520,7 @@ func AddImageToGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if len(gallery.Images) >= 10 {
 		return c.String(400, "Bad Request")
@@ -535,7 +535,7 @@ func AddImageToGallery(c echo.Context) error {
 	}
 	file_bytes, err := convertFileToBytes(file)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	image.GalleryID = gallery_id
 	url_map, err := uploadImageToImgbb(file_bytes)
@@ -549,7 +549,7 @@ func AddImageToGallery(c echo.Context) error {
 	image.Owner = user.Username
 	err = database.CreateImage(&image)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	amount := len(gallery.Images) + 1
 	isLimit := amount >= 10
@@ -576,7 +576,7 @@ func GetChangeTitleOfGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	data := map[string]any{
 		"id":          gallery.ID,
@@ -598,7 +598,7 @@ func ChangeTitleOfGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
@@ -607,7 +607,7 @@ func ChangeTitleOfGallery(c echo.Context) error {
 	gallery.Title = title
 	err = database.UpdateGallery(&gallery)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	data := map[string]any{
 		"id":          gallery.ID,
@@ -629,7 +629,7 @@ func PublishGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
@@ -637,7 +637,7 @@ func PublishGallery(c echo.Context) error {
 	gallery.Published = true
 	err = database.UpdateGallery(&gallery)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	return c.Render(200, "success", nil)
 }
@@ -654,14 +654,14 @@ func DeleteImage(c echo.Context) error {
 	}
 	image, err := database.FindImageByID(image_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if image.Owner != user.Username {
 		return c.String(401, "Unauthorized")
 	}
 	err = database.DeleteImage(&image)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	c.Response().Header().Set("HX-Trigger", "gallery-reload")
 	data := map[string]string{
@@ -679,7 +679,7 @@ func GetImageUploadForm(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, err := GetUserOfSession(c)
 	if err != nil || !user.Active || gallery.Author != user.Username {
@@ -705,7 +705,7 @@ func GetImagesOfGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, _ := GetUserOfSession(c)
 	images := convertImagesToDataMap(gallery.Images, "isAuthor", user.Username == gallery.Author)
@@ -748,7 +748,7 @@ func GetGalleryByIDPart(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, err := GetUserOfSession(c)
 	if !gallery.Published && (err != nil || user.Username != gallery.Author) {
@@ -780,7 +780,7 @@ func GetGalleryByIDFull(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	user, err := GetUserOfSession(c)
 	if !gallery.Published && (err != nil || user.Username != gallery.Author) {
@@ -858,7 +858,7 @@ func GetMyGalleriesPart(c echo.Context) error {
 	}
 	galleries_db, err := database.FindAllGalleriesByAuthorPaginated(user.Username, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	galleries := convertGalleriesToDataMap(galleries_db, true)
 	next_page := page + 1
@@ -888,26 +888,26 @@ func DeleteGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(gallery_id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	post, err := database.FindPostByOwnerIdAndType(gallery_id, "gallery")
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	if gallery.Author != user.Username {
 		return c.String(401, "Unauthorized")
 	}
 	err = database.RemovePostFromAllSections(&post)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	err = database.RemoveAllVotesForGallery(&gallery)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	err = database.DeleteGallery(&gallery)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	return c.Render(200, "success", nil)
 }
@@ -944,7 +944,7 @@ func EditGalleryForm(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(id)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	isLimit := len(gallery.Images) >= 10
 	isZero := len(gallery.Images) == 0
@@ -999,7 +999,7 @@ func GalleriesByTagPaginated(c echo.Context) error {
 	}
 	galleries_db, err := database.FindAllGalleriesByTagPaginated(tagName, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	galleries := convertGalleriesToDataMap(galleries_db, false)
 	next_page := page + 1
@@ -1049,7 +1049,7 @@ func CreateTag(c echo.Context) error {
 	tag := model.Tag{Name: name}
 	err = database.CreateTag(&tag)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	data := map[string]any{
 		"locale":   locale,
@@ -1070,7 +1070,7 @@ func FindTags(c echo.Context) error {
 	}
 	tags_db, err := database.FindTagLikeName(query, 25)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	postID, err := strconv.ParseUint(postIDstr, 10, 64)
 	if err != nil {
@@ -1121,7 +1121,7 @@ func ArticlesByTagPaginated(c echo.Context) error {
 	}
 	articles_db, err := database.FindAllArticlesByTagPaginated(tagName, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	articles := convertArticlesToDataMap(articles_db)
 	next_page := page + 1
@@ -1168,7 +1168,7 @@ func PostsSearchPaginated(c echo.Context) error {
 	}
 	posts_db, err := database.FindPostsByQueryPaginated(query, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	posts_content := convertPostsToDataMap(posts_db)
 	next_page := page + 1
@@ -1204,7 +1204,7 @@ func ArticleSearchPaginated(c echo.Context) error {
 	}
 	articles_db, err := database.FindArticlesByQueryPaginated(query, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	articles := convertArticlesToDataMap(articles_db)
 	next_page := page + 1
@@ -1240,7 +1240,7 @@ func GallerySearchPaginated(c echo.Context) error {
 	}
 	galleries_db, err := database.FindGalleriesByQueryPaginated(query, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	galleries := convertGalleriesToDataMap(galleries_db, false)
 	next_page := page + 1
@@ -1288,7 +1288,7 @@ func GetAllPostsForModeration(c echo.Context) error {
 	query := c.QueryParam("query")
 	postsDB, err := database.FindAllPostsByqueryPaginated(page, 12, query)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	posts := convertPostsToPostList(postsDB)
 	more := len(postsDB) == 12
@@ -1335,7 +1335,7 @@ func DeletePostModerators(c echo.Context) error {
 	}
 	err = database.DeletePostByID(postID)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	return c.String(200, "Post deleted successfully!")
 }
@@ -1356,13 +1356,13 @@ func VoteTagForPost(c echo.Context) error {
 	case "article":
 		articleDB, err := database.FindArticleByID(ownerID)
 		if err != nil {
-			return c.String(500, "Internal Server Error")
+			return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 		}
 		article = &articleDB
 	case "gallery":
 		galleryDB, err := database.FindGalleryByID(ownerID)
 		if err != nil {
-			return c.String(500, "Internal Server Error")
+			return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 		}
 		gallery = &galleryDB
 	default:
@@ -1374,7 +1374,7 @@ func VoteTagForPost(c echo.Context) error {
 	}
 	tag, err := database.FindTagByName(tagName)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	alreadyVoted := database.VoteExistsForTagUserAndPost(tag.ID, user.Username, ownerID, ownerType)
 	if alreadyVoted {
@@ -1386,12 +1386,12 @@ func VoteTagForPost(c echo.Context) error {
 	case "article":
 		err = database.VoteTagForArticle(article, &vote)
 		if err != nil {
-			return c.String(500, "Internal Server Error")
+			return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 		}
 	case "gallery":
 		err = database.VoteTagForGallery(gallery, &vote)
 		if err != nil {
-			return c.String(500, "Internal Server Error")
+			return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 		}
 	}
 	c.Response().Header().Set("HX-Trigger", "votes-reload")
@@ -1406,7 +1406,7 @@ func FindVotesOfGallery(c echo.Context) error {
 	}
 	gallery, err := database.FindGalleryByID(galleryID)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	votes := convertVotesToDataMap(gallery.Votes)
 	data := map[string]any{
@@ -1424,7 +1424,7 @@ func FindVotesOfArticle(c echo.Context) error {
 	}
 	gallery, err := database.FindArticleByID(articleID)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	votes := convertVotesToDataMap(gallery.Votes)
 	data := map[string]any{
@@ -1467,7 +1467,7 @@ func FindPostsByTagPaginatedPart(c echo.Context) error {
 	}
 	posts_db, err := database.FindPaginatedPostsByTagOrderedByNumberOfVotes(tagName, page, 12)
 	if err != nil {
-		return c.String(500, "Internal Server Error")
+		return c.String(500, fmt.Sprintf("Internal Server Error: %s", err))
 	}
 	posts_content := convertPostsToDataMap(posts_db)
 	next_page := page + 1

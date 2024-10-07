@@ -124,6 +124,10 @@ func FindTagLikeName(name string, limit int) ([]model.Tag, error) {
 
 func DeleteGallery(gallery *model.Gallery) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(gallery).Association("Images").Clear()
+		if err != nil {
+			return err
+		}
 		return tx.Model(gallery).Delete(gallery).Error
 	})
 }
