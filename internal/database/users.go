@@ -107,8 +107,17 @@ func FindPostsByUserNotInSectionPaginated(username, section string, page, page_s
 
 func DeleteSectionByUsernameAndName(username, name string) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
-		result := tx.Where("owner = ? AND name = ?", username, name).Delete(&model.Section{})
-		return result.Error
+		section := model.Section{}
+		if err := tx.Where("owner = ? AND name = ?", username, name).First(&section).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&section).Association("Posts").Clear(); err != nil {
+			return err
+		}
+		if err := tx.Delete(&section).Error; err != nil {
+			return err
+		}
+		return nil
 	})
 }
 

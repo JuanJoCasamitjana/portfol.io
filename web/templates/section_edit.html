@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-12">
             <h1>{{.name}}</h1>
-            <button class="btn btn-danger" hx-delete="/profile/{{$.username}}/sections/{{.}}" hx-target="#main-app"
+            <button class="btn btn-danger" hx-delete="/profile/{{$.username}}/sections/{{.name}}" hx-target="#main-app"
             hx-swap="innerHTML"><p class="pl-3 pr-3 m-0">{{Translate .locale "section_edit_button_delete"}}</p></button>
         </div>
     </div>
